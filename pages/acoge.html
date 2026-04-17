@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa de Acogida · Peludos Los Pedroches</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    
+    <section style="background: linear-gradient(135deg, #f4a261, #e76f51); color: white; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <h1 style="font-size: 2.5rem; margin-bottom: 15px;">CASA DE ACOGIDA</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Convierte tu hogar en un refugio temporal para un perro necesitado</p>
+        </div>
+    </section>
+
+    <section style="padding: 60px 0;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-bottom: 60px;">
+                <div>
+                    <h2 style="color: #2c5f2d; font-size: 2rem; margin-bottom: 20px;">¿Qué es una casa de acogida?</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Una casa de acogida ofrece un hogar temporal a un perro mientras encuentra su familia definitiva.</p>
+                    <p style="margin-bottom: 15px; color: #666;"><strong>La protectora se hace cargo de todos los gastos:</strong> alimentación, veterinario, medicación... Tú solo pones el cariño y el espacio.</p>
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 30px;">
+                        <h3 style="color: #e04f2e; margin-bottom: 15px;">Beneficios de ser casa de acogida</h3>
+                        <ul style="list-style: none; color: #666;">
+                            <li style="margin-bottom: 10px;">✓ Ayudas directamente a un perro necesitado</li>
+                            <li style="margin-bottom: 10px;">✓ Sin compromiso económico</li>
+                            <li style="margin-bottom: 10px;">✓ La duración la decides tú</li>
+                            <li style="margin-bottom: 10px;">✓ Experiencia muy gratificante</li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="placeholder-image" style="min-height: 300px;">🏠🐕</div>
+                </div>
+            </div>
+            
+            <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+                <h2 style="color: #2c5f2d; text-align: center; margin-bottom: 30px;">Hazte Casa de Acogida</h2>
+                <form id="acogeForm">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Nombre completo *</label>
+                        <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Email *</label>
+                        <input type="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Teléfono *</label>
+                        <input type="tel" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tipo de vivienda *</label>
+                        <select required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="">Selecciona</option>
+                            <option value="piso">Piso</option>
+                            <option value="casa">Casa con jardín</option>
+                            <option value="finca">Finca</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">¿Tienes otros animales?</label>
+                        <select style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="no">No</option>
+                            <option value="si">Sí</option>
+                        </select>
+                    </div>
+                    <button type="submit" style="width: 100%; padding: 15px; background: #e04f2e; color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">QUIERO SER CASA DE ACOGIDA 🏠</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    
+    <script>
+        document.getElementById('acogeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Gracias por ofrecerte como casa de acogida! Te contactaremos pronto.');
+        });
+    </script>
+</body>
+</html>
