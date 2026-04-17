@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog · Peludos Los Pedroches</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header (copiar el mismo de index.html) -->
+    
+    <section class="page-header">
+        <div class="container">
+            <h1>BLOG Y NOTICIAS</h1>
+            <p>Mantente informado sobre nuestra labor y la vida en el refugio</p>
+        </div>
+    </section>
 
+    <section style="padding: 60px 0;">
+        <div class="container">
+            <div class="blog-grid" id="allBlogPosts"></div>
+        </div>
+    </section>
+
+    <!-- Modal para el blog -->
+    <div class="modal" id="blogModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    
+    <script src="../js/main.js"></script>
+    <script>
+        // Cargar todas las entradas del blog
+        function loadAllBlogPosts() {
+            const container = document.getElementById('allBlogPosts');
+            const blogPosts = JSON.parse(localStorage.getItem('blogPosts')) || [];
+            
+            if (blogPosts.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">No hay entradas publicadas aún.</p>';
+                return;
+            }
+            
+            container.innerHTML = blogPosts.filter(p => p.status === 'Publicado' || !p.status).map(post => `
+                <article class="blog-card fade-in" onclick="openBlogModal(${post.id})">
+                    <div class="blog-image">
+                        <div class="placeholder-image">${post.image || '📰'}</div>
+                    </div>
+                    <div class="blog-content">
+                        <div class="blog-date"><i class="far fa-calendar"></i> ${post.date}</div>
+                        <h3 class="blog-title">${post.title}</h3>
+                        <p class="blog-excerpt">${post.excerpt}</p>
+                        <span class="card-link">Leer más <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </article>
+            `).join('');
+        }
+        
+        loadAllBlogPosts();
+    </script>
+</body>
+</html>
