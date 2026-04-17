@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apadrina · Peludos Los Pedroches</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header (copiar) -->
+    
+    <section style="background: linear-gradient(135deg, #e04f2e, #c43d1e); color: white; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <h1 style="font-size: 2.5rem; margin-bottom: 15px;">APADRINA UN PELUDO</h1>
+            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Ayúdanos a mantener a nuestros perros mientras esperan un hogar definitivo</p>
+        </div>
+    </section>
+
+    <section style="padding: 60px 0;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-bottom: 60px;">
+                <div>
+                    <h2 style="color: #2c5f2d; font-size: 2rem; margin-bottom: 20px;">¿Qué es apadrinar?</h2>
+                    <p style="margin-bottom: 15px; color: #666;">Apadrinar es una forma de ayudar a un perro concreto del refugio aportando una cantidad mensual para cubrir sus gastos de alimentación, cuidados veterinarios y mantenimiento.</p>
+                    <p style="margin-bottom: 15px; color: #666;">Recibirás fotos y noticias periódicas de tu apadrinado, y podrás visitarlo en el refugio con cita previa.</p>
+                    <p style="margin-bottom: 15px; color: #666;"><strong>Desde solo 15€ al mes</strong> puedes cambiar la vida de un peludo.</p>
+                </div>
+                <div>
+                    <div class="placeholder-image" style="min-height: 300px;">🐕❤️</div>
+                </div>
+            </div>
+            
+            <h2 class="section-title">PELUDOS QUE PUEDES APADRINAR</h2>
+            <div class="dogs-grid" id="sponsorDogs"></div>
+            
+            <div style="max-width: 600px; margin: 60px auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+                <h2 style="color: #2c5f2d; text-align: center; margin-bottom: 30px;">Formulario de Apadrinamiento</h2>
+                <form id="sponsorForm">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Perro a apadrinar *</label>
+                        <select required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="">Selecciona</option>
+                            <option value="Luna">Luna</option>
+                            <option value="Rocky">Rocky</option>
+                            <option value="Nala">Nala</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Aportación mensual *</label>
+                        <select required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                            <option value="15">15€/mes</option>
+                            <option value="25">25€/mes</option>
+                            <option value="50">50€/mes</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Nombre completo *</label>
+                        <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Email *</label>
+                        <input type="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                    </div>
+                    <button type="submit" style="width: 100%; padding: 15px; background: #e04f2e; color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">APADRINAR ❤️</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    
+    <script>
+        // Cargar perros para apadrinar
+        const dogs = [
+            { name: 'Luna', breed: 'Mastina', age: '2 años', desc: 'Cariñosa y juguetona.' },
+            { name: 'Rocky', breed: 'Mastín', age: '4 años', desc: 'Tranquilo y protector.' },
+            { name: 'Nala', breed: 'Podenco', age: '3 años', desc: 'Muy cariñosa.' }
+        ];
+        
+        let html = '';
+        dogs.forEach(dog => {
+            html += `
+                <div class="dog-card">
+                    <div class="dog-image"><div class="placeholder-image">🐕</div></div>
+                    <div class="dog-info">
+                        <h3 class="dog-name">${dog.name}</h3>
+                        <div class="dog-details">
+                            <span><i class="fas fa-paw"></i> ${dog.breed}</span>
+                            <span><i class="fas fa-calendar"></i> ${dog.age}</span>
+                        </div>
+                        <p class="dog-description">${dog.desc}</p>
+                        <a href="#formulario" class="btn-adopt">Apadrinar</a>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('sponsorDogs').innerHTML = html;
+        
+        document.getElementById('sponsorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Gracias por apadrinar! Te contactaremos para finalizar el proceso.');
+        });
+    </script>
+</body>
+</html>
