@@ -1,14 +1,14 @@
 // ========================================
-// PELUDOS LOS PEDROCHES - JAVASCRIPT COMPLETO
+// PELUDOS LOS PEDROCHES - JAVASCRIPT CORREGIDO
 // ========================================
 
-// Datos iniciales (simulando base de datos)
+// Datos iniciales
 let blogPosts = JSON.parse(localStorage.getItem('blogPosts')) || [
     {
         id: 1,
         title: 'Bendición de animales por San Antón',
         excerpt: 'Un año más celebramos la tradicional bendición de animales en Pozoblanco. ¡Gracias a todos los que participasteis!',
-        content: 'El pasado 17 de enero celebramos la tradicional bendición de animales por San Antón en Pozoblanco. Fue un día maravilloso donde decenas de familias trajeron a sus mascotas para recibir la bendición. Desde Peludos Los Pedroches queremos agradecer a todos los asistentes y recordar la importancia de cuidar y respetar a nuestros animales.',
+        content: '<p>El pasado 17 de enero celebramos la tradicional bendición de animales por San Antón en Pozoblanco. Fue un día maravilloso donde decenas de familias trajeron a sus mascotas para recibir la bendición.</p><p>Desde Peludos Los Pedroches queremos agradecer a todos los asistentes y recordar la importancia de cuidar y respetar a nuestros animales. ¡Nos vemos el año que viene!</p>',
         date: '20 Enero, 2024',
         image: '🐕'
     },
@@ -16,7 +16,7 @@ let blogPosts = JSON.parse(localStorage.getItem('blogPosts')) || [
         id: 2,
         title: 'Nuestro refugio al límite de capacidad',
         excerpt: 'Superamos los 70 perros y necesitamos más casas de acogida urgentemente. La situación es crítica.',
-        content: 'Actualmente tenemos más de 70 perros en nuestro refugio, una cifra que supera nuestra capacidad. Necesitamos urgentemente casas de acogida que puedan dar un hogar temporal a estos peludos mientras encuentran una familia definitiva. Si puedes ayudar, por favor contacta con nosotros. Todos los gastos corren a cargo de la protectora.',
+        content: '<p>Actualmente tenemos más de 70 perros en nuestro refugio, una cifra que supera nuestra capacidad. Necesitamos urgentemente casas de acogida que puedan dar un hogar temporal a estos peludos mientras encuentran una familia definitiva.</p><p>Si puedes ayudar, por favor contacta con nosotros. Todos los gastos corren a cargo de la protectora: alimentación, veterinario, medicación... Tú solo pones el cariño y el espacio.</p><p><strong>¡Cada casa de acogida salva vidas!</strong></p>',
         date: '15 Diciembre, 2023',
         image: '🏠'
     },
@@ -24,7 +24,7 @@ let blogPosts = JSON.parse(localStorage.getItem('blogPosts')) || [
         id: 3,
         title: 'Colaboración con Fundación Gypaetus',
         excerpt: 'Seguimos trabajando en el proyecto Life contra el uso de cebos envenenados en la comarca.',
-        content: 'Continuamos nuestra colaboración con la Fundación Gypaetus en el proyecto Life contra el uso de cebos envenenados. Estamos trabajando en la educación y adiestramiento de perros pastores para ganaderos de la zona, una iniciativa que ayuda a proteger tanto al ganado como a la fauna silvestre de la comarca de Los Pedroches.',
+        content: '<p>Continuamos nuestra colaboración con la Fundación Gypaetus en el proyecto Life contra el uso de cebos envenenados. Estamos trabajando en la educación y adiestramiento de perros pastores para ganaderos de la zona.</p><p>Esta iniciativa ayuda a proteger tanto al ganado como a la fauna silvestre de la comarca de Los Pedroches. Los perros pastores adiestrados son una alternativa eficaz y ecológica para proteger al ganado de los ataques de depredadores.</p>',
         date: '5 Noviembre, 2023',
         image: '🦅'
     }
@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initNewsletter();
     loadFeaturedDogs();
     loadBlogPreview();
-    initBlogModals();
     initSmoothScroll();
     
     // Cargar perros en página de adopción
@@ -212,7 +211,7 @@ function createDogCard(dog) {
                     <span><i class="fas fa-${dog.gender === 'Macho' ? 'mars' : 'venus'}"></i> ${dog.gender}</span>
                 </div>
                 <p class="dog-description">${dog.description}</p>
-                <button class="btn-adopt" onclick="openAdoptionModal('${dog.name}')">Quiero adoptar</button>
+                <a href="adopta.html#formulario" class="btn-adopt" onclick="setSelectedDog('${dog.name}')">Quiero adoptar</a>
             </div>
         </div>
     `;
@@ -256,7 +255,7 @@ function loadSponsorDogs() {
     const container = document.getElementById('sponsorDogs');
     if (!container) return;
     
-    container.innerHTML = dogs.slice(0, 3).map(dog => `
+    container.innerHTML = dogs.filter(d => d.status !== 'Adoptado').slice(0, 3).map(dog => `
         <div class="dog-card fade-in">
             <div class="dog-image">
                 <div class="placeholder-image">${dog.image || '🐕'}</div>
@@ -268,7 +267,7 @@ function loadSponsorDogs() {
                     <span><i class="fas fa-calendar"></i> ${dog.age}</span>
                 </div>
                 <p class="dog-description">${dog.description}</p>
-                <button class="btn-adopt" onclick="openSponsorModal('${dog.name}')">Apadrinar</button>
+                <a href="apadrina.html#formulario" class="btn-adopt" onclick="setSelectedDog('${dog.name}')">Apadrinar</a>
             </div>
         </div>
     `).join('');
@@ -281,7 +280,7 @@ function loadBlogPreview() {
     const container = document.getElementById('blogPreview');
     if (!container) return;
     
-    const previewPosts = blogPosts.slice(0, 3);
+    const previewPosts = blogPosts.filter(p => p.status === 'Publicado' || !p.status).slice(0, 3);
     container.innerHTML = previewPosts.map(post => `
         <article class="blog-card fade-in" onclick="openBlogModal(${post.id})">
             <div class="blog-image">
@@ -300,29 +299,6 @@ function loadBlogPreview() {
 // ========================================
 // MODAL DE BLOG
 // ========================================
-function initBlogModals() {
-    // Crear modal si no existe
-    if (!document.getElementById('blogModal')) {
-        const modal = document.createElement('div');
-        modal.id = 'blogModal';
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="modalTitle"></h2>
-                    <button class="modal-close" onclick="closeModal()">&times;</button>
-                </div>
-                <div class="modal-body" id="modalBody"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) closeModal();
-        });
-    }
-}
-
 function openBlogModal(postId) {
     const post = blogPosts.find(p => p.id === postId);
     if (!post) return;
@@ -330,41 +306,20 @@ function openBlogModal(postId) {
     const modal = document.getElementById('blogModal');
     document.getElementById('modalTitle').textContent = post.title;
     document.getElementById('modalBody').innerHTML = `
-        <div class="placeholder-image" style="height: 250px; margin-bottom: 20px;">${post.image || '📰'}</div>
-        <div class="blog-date" style="margin-bottom: 15px;"><i class="far fa-calendar"></i> ${post.date}</div>
+        <div class="placeholder-image" style="height: 200px; margin-bottom: 20px; border-radius: 10px;">${post.image || '📰'}</div>
+        <div class="blog-date" style="margin-bottom: 15px; color: #e04f2e;"><i class="far fa-calendar"></i> ${post.date}</div>
         <div style="line-height: 1.8; color: #333;">${post.content || post.excerpt}</div>
     `;
     modal.classList.add('active');
+    
+    // Cerrar con Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
 }
 
 function closeModal() {
     document.getElementById('blogModal')?.classList.remove('active');
-}
-
-// ========================================
-// MODAL DE ADOPCIÓN
-// ========================================
-function openAdoptionModal(dogName) {
-    const select = document.querySelector('select[name="perro"]');
-    if (select) {
-        const option = Array.from(select.options).find(opt => opt.value === dogName);
-        if (option) option.selected = true;
-        document.querySelector('#formulario')?.scrollIntoView({ behavior: 'smooth' });
-    } else {
-        window.location.href = 'adopta.html#formulario';
-    }
-}
-
-// ========================================
-// MODAL DE APADRINAMIENTO
-// ========================================
-function openSponsorModal(dogName) {
-    const select = document.querySelector('select[name="perro"]');
-    if (select) {
-        const option = Array.from(select.options).find(opt => opt.value === dogName);
-        if (option) option.selected = true;
-    }
-    showToast(`Has seleccionado apadrinar a ${dogName}`, 'success');
 }
 
 // ========================================
@@ -500,11 +455,30 @@ function showToast(message, type = 'info') {
 }
 
 // ========================================
+// FUNCIONES AUXILIARES
+// ========================================
+function setSelectedDog(dogName) {
+    localStorage.setItem('selectedDog', dogName);
+}
+
+// Obtener perro seleccionado en formularios
+document.addEventListener('DOMContentLoaded', function() {
+    const selectedDog = localStorage.getItem('selectedDog');
+    if (selectedDog) {
+        const select = document.querySelector('select[name="perro"]');
+        if (select) {
+            const option = Array.from(select.options).find(opt => opt.value === selectedDog);
+            if (option) option.selected = true;
+        }
+        localStorage.removeItem('selectedDog');
+    }
+});
+
+// ========================================
 // FUNCIONES GLOBALES
 // ========================================
 window.openBlogModal = openBlogModal;
 window.closeModal = closeModal;
-window.openAdoptionModal = openAdoptionModal;
-window.openSponsorModal = openSponsorModal;
+window.setSelectedDog = setSelectedDog;
 
 console.log('🐾 Peludos Los Pedroches - Web cargada correctamente');
