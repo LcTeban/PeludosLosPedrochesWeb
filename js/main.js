@@ -498,3 +498,13 @@ function showToast(message, type = 'info') {
         setTimeout(() => toast.remove(), 300);
     }, 4000);
 }
+
+// ========================================
+// FUNCIONES GLOBALES
+// ========================================
+window.openBlogModal = openBlogModal;
+window.closeModal = closeModal;
+window.openAdoptionModal = openAdoptionModal;
+window.openSponsorModal = openSponsorModal;
+
+console.log('🐾 Peludos Los Pedroches - Web cargada correctamente');
