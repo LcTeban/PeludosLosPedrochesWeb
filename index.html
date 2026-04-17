@@ -20,9 +20,9 @@
                 <a href="mailto:peludoslospedroches@gmail.com"><i class="fas fa-envelope"></i> peludoslospedroches@gmail.com</a>
             </div>
             <div class="header-social">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
             </div>
         </div>
     </div>
@@ -93,30 +93,30 @@
             <p class="section-subtitle">Tu apoyo es fundamental para seguir rescatando peludos</p>
             
             <div class="help-cards">
-                <div class="help-card">
+                <a href="pages/adopta.html" class="help-card">
                     <div class="help-icon"><i class="fas fa-home"></i></div>
                     <h3>Apadrina, acoge o adopta</h3>
                     <p>Ofrece un hogar temporal o definitivo a uno de nuestros peludos.</p>
-                    <a href="pages/adopta.html" class="card-link">Saber más <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="help-card">
+                    <span class="card-link">Saber más <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="pages/voluntario.html" class="help-card">
                     <div class="help-icon"><i class="fas fa-hands-helping"></i></div>
                     <h3>Hazte Voluntario</h3>
                     <p>Necesitamos manos para pasear, limpiar y ayudar en eventos.</p>
-                    <a href="pages/voluntario.html" class="card-link">Saber más <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="help-card">
+                    <span class="card-link">Saber más <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="pages/socio.html" class="help-card">
                     <div class="help-icon"><i class="fas fa-user-plus"></i></div>
                     <h3>Hazte Socio</h3>
                     <p>Con una cuota mensual ayudas a mantener el refugio.</p>
-                    <a href="pages/socio.html" class="card-link">Saber más <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="help-card">
+                    <span class="card-link">Saber más <i class="fas fa-arrow-right"></i></span>
+                </a>
+                <a href="pages/donacion.html" class="help-card">
                     <div class="help-icon"><i class="fas fa-euro-sign"></i></div>
                     <h3>Haz tu donación</h3>
                     <p>Cada euro cuenta. Destinamos el 100% al cuidado animal.</p>
-                    <a href="pages/donacion.html" class="card-link">Saber más <i class="fas fa-arrow-right"></i></a>
-                </div>
+                    <span class="card-link">Saber más <i class="fas fa-arrow-right"></i></span>
+                </a>
             </div>
         </div>
     </section>
@@ -229,9 +229,9 @@
                     <h3>Peludos Los Pedroches</h3>
                     <p>Asociación protectora de animales sin ánimo de lucro que actúa en la comarca de Los Pedroches (Córdoba) rescatando perros abandonados y/o maltratados.</p>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
                 
@@ -253,8 +253,8 @@
                         <li><a href="pages/quienes-somos.html">Quiénes Somos</a></li>
                         <li><a href="pages/blog.html">Blog</a></li>
                         <li><a href="pages/contacto.html">Contacto</a></li>
-                        <li><a href="#">Aviso Legal</a></li>
-                        <li><a href="#">Privacidad</a></li>
+                        <li><a href="pages/aviso-legal.html">Aviso Legal</a></li>
+                        <li><a href="pages/privacidad.html">Privacidad</a></li>
                     </ul>
                 </div>
                 
@@ -274,6 +274,17 @@
             </div>
         </div>
     </footer>
+
+    <!-- Modal para el blog -->
+    <div class="modal" id="blogModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
 
     <script src="js/main.js"></script>
 </body>
