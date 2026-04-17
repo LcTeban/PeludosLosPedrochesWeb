@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donaciones · Peludos Los Pedroches</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header (copiar el mismo header de index.html) -->
+    
+    <main>
+        <section class="page-header" style="background: linear-gradient(135deg, #e04f2e, #c43d1e); padding: 60px 0; color: white; text-align: center;">
+            <div class="container">
+                <h1 style="font-size: 2.5rem; margin-bottom: 15px;">HAZ TU DONACIÓN</h1>
+                <p style="font-size: 1.2rem;">Tu ayuda es fundamental para seguir rescatando peludos</p>
+            </div>
+        </section>
+        
+        <section style="padding: 60px 0;">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div>
+                        <h2 style="color: #2c5f2d; margin-bottom: 30px;">Elige tu aportación</h2>
+                        
+                        <form id="donationForm">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Tipo de donación</label>
+                                <div style="display: flex; gap: 20px;">
+                                    <label><input type="radio" name="type" value="single" checked> Única</label>
+                                    <label><input type="radio" name="type" value="monthly"> Mensual</label>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Cantidad</label>
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                                    <button type="button" class="amount-btn" data-amount="10" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">10€</button>
+                                    <button type="button" class="amount-btn active" data-amount="20" style="padding: 15px; border: 2px solid #e04f2e; background: #e04f2e; color: white; border-radius: 8px; cursor: pointer;">20€</button>
+                                    <button type="button" class="amount-btn" data-amount="50" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">50€</button>
+                                    <button type="button" class="amount-btn" data-amount="100" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">100€</button>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Otra cantidad (€)</label>
+                                <input type="number" id="customAmount" min="1" placeholder="Cantidad personalizada" style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Nombre completo *</label>
+                                <input type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Email *</label>
+                                <input type="email" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                            </div>
+                            
+                            <div style="margin-bottom: 30px;">
+                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Método de pago</label>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
+                                        <input type="radio" name="payment" value="card" checked> 💳 Tarjeta
+                                    </label>
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
+                                        <input type="radio" name="payment" value="paypal"> 🅿️ PayPal
+                                    </label>
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
+                                        <input type="radio" name="payment" value="bizum"> 📱 Bizum
+                                    </label>
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
+                                        <input type="radio" name="payment" value="transfer"> 🏦 Transferencia
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" style="width: 100%; padding: 18px; background: #e04f2e; color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: 600; cursor: pointer;">REALIZAR DONACIÓN ❤️</button>
+                        </form>
+                    </div>
+                    
+                    <div>
+                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+                            <h3 style="color: #2c5f2d; margin-bottom: 20px;"><i class="fas fa-heart" style="color: #e04f2e;"></i> ¿Qué consigues con tu donación?</h3>
+                            <ul style="list-style: none;">
+                                <li style="margin-bottom: 15px;">🐾 <strong>10€</strong> - Alimentación de un perro durante una semana</li>
+                                <li style="margin-bottom: 15px;">💉 <strong>20€</strong> - Vacunación completa</li>
+                                <li style="margin-bottom: 15px;">🏥 <strong>50€</strong> - Esterilización de un perro</li>
+                                <li style="margin-bottom: 15px;">🩺 <strong>100€</strong> - Tratamiento veterinario completo</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+                            <h3 style="color: #2c5f2d; margin-bottom: 20px;"><i class="fas fa-shield-alt"></i> Pago 100% seguro</h3>
+                            <p>Tus datos están protegidos con encriptación SSL.</p>
+                        </div>
+                        
+                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px;">
+                            <h3 style="color: #2c5f2d; margin-bottom: 20px;"><i class="fas fa-file-invoice"></i> Desgravación fiscal</h3>
+                            <p>Somos una asociación sin ánimo de lucro. Tu donación desgrava en la declaración de la renta.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer (copiar el mismo footer de index.html) -->
+    
+    <script>
+        // Manejar botones de cantidad
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.amount-btn').forEach(b => {
+                    b.style.background = 'white';
+                    b.style.color = 'black';
+                    b.style.borderColor = '#ddd';
+                });
+                this.style.background = '#e04f2e';
+                this.style.color = 'white';
+                this.style.borderColor = '#e04f2e';
+                document.getElementById('customAmount').value = '';
+            });
+        });
+        
+        // Enviar formulario
+        document.getElementById('donationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('¡Gracias por tu donación! Serás redirigido a la pasarela de pago seguro.');
+        });
+    </script>
+</body>
+</html>
