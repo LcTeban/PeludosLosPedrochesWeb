@@ -7,43 +7,64 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .admin-wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Open Sans', sans-serif; background: #f5f5f5; }
+        .admin-wrapper { display: flex; min-height: 100vh; }
         .admin-sidebar {
-            width: 250px;
-            background: #2c5f2d;
+            width: 260px;
+            background: linear-gradient(180deg, #2c5f2d 0%, #1a3a1b 100%);
             color: white;
             padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
         .admin-sidebar h3 {
             margin-bottom: 30px;
             padding-bottom: 20px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
+            font-size: 1.3rem;
         }
-        .admin-sidebar ul {
-            list-style: none;
-        }
-        .admin-sidebar li {
-            margin-bottom: 10px;
-        }
+        .admin-sidebar ul { list-style: none; }
+        .admin-sidebar li { margin-bottom: 8px; }
         .admin-sidebar a {
-            color: white;
+            color: rgba(255,255,255,0.8);
             text-decoration: none;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
+        .admin-sidebar a i { width: 20px; }
         .admin-sidebar a:hover,
         .admin-sidebar a.active {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.15);
+            color: white;
         }
         .admin-content {
             flex: 1;
+            margin-left: 260px;
             padding: 30px;
-            background: #f5f5f5;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .admin-header h1 { color: #2c5f2d; }
+        .btn-logout {
+            background: #e04f2e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .stats-grid {
             display: grid;
@@ -53,132 +74,669 @@
         }
         .stat-card {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
-        .stat-card h4 {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-        .stat-card .number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #2c5f2d;
-        }
-        .admin-table {
-            width: 100%;
+        .stat-card h4 { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
+        .stat-card .number { font-size: 2.2rem; font-weight: bold; color: #2c5f2d; }
+        .admin-section {
             background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
         }
-        .admin-table th {
-            background: #2c5f2d;
-            color: white;
-            padding: 15px;
-            text-align: left;
+        .admin-section h2 {
+            color: #2c5f2d;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .admin-table td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        .btn-logout {
+        .btn-add {
             background: #e04f2e;
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 50px;
             cursor: pointer;
-            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        .admin-table {
             width: 100%;
+            border-collapse: collapse;
+        }
+        .admin-table th {
+            text-align: left;
+            padding: 12px;
+            background: #f5f5f5;
+            color: #333;
+            font-weight: 600;
+        }
+        .admin-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-pendiente { background: #fff3cd; color: #856404; }
+        .status-aprobada { background: #d4edda; color: #155724; }
+        .status-rechazada { background: #f8d7da; color: #721c24; }
+        .btn-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px 10px;
+            color: #666;
+            font-size: 1rem;
+        }
+        .btn-icon:hover { color: #e04f2e; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body { padding: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .btn-save {
+            width: 100%;
+            padding: 15px;
+            background: #2c5f2d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .admin-sidebar { width: 80px; padding: 15px 10px; }
+            .admin-sidebar h3 span,
+            .admin-sidebar a span { display: none; }
+            .admin-sidebar a { justify-content: center; }
+            .admin-content { margin-left: 80px; padding: 20px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="admin-wrapper">
         <aside class="admin-sidebar">
-            <h3>🐾 Panel Admin</h3>
+            <h3><span>🐾 </span><span>Panel Admin</span></h3>
             <ul>
-                <li><a href="index.html" class="active"><i class="fas fa-dashboard"></i> Dashboard</a></li>
-                <li><a href="#"><i class="fas fa-dog"></i> Perros</a></li>
-                <li><a href="#"><i class="fas fa-home"></i> Adopciones</a></li>
-                <li><a href="#"><i class="fas fa-newspaper"></i> Blog</a></li>
-                <li><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
+                <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-dashboard"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" data-page="dogs"><i class="fas fa-dog"></i> <span>Perros</span></a></li>
+                <li><a href="#" data-page="adoptions"><i class="fas fa-home"></i> <span>Adopciones</span></a></li>
+                <li><a href="#" data-page="blog"><i class="fas fa-newspaper"></i> <span>Blog</span></a></li>
+                <li><a href="#" data-page="settings"><i class="fas fa-cog"></i> <span>Configuración</span></a></li>
             </ul>
-            <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+            <button class="btn-logout" onclick="logout()" style="margin-top: 30px; width: 100%;">
+                <i class="fas fa-sign-out-alt"></i> <span>Cerrar sesión</span>
+            </button>
         </aside>
         
-        <main class="admin-content">
-            <h1 style="color: #2c5f2d; margin-bottom: 30px;">Dashboard</h1>
-            
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h4>Perros en refugio</h4>
-                    <div class="number">70+</div>
-                </div>
-                <div class="stat-card">
-                    <h4>Adopciones este mes</h4>
-                    <div class="number">12</div>
-                </div>
-                <div class="stat-card">
-                    <h4>Voluntarios activos</h4>
-                    <div class="number">45</div>
-                </div>
-                <div class="stat-card">
-                    <h4>Donaciones este mes</h4>
-                    <div class="number">1.250€</div>
-                </div>
-            </div>
-            
-            <h2 style="color: #2c5f2d; margin: 30px 0 20px;">Últimas solicitudes</h2>
-            
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Solicitante</th>
-                        <th>Perro</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>15/01/2024</td>
-                        <td>María García</td>
-                        <td>Luna</td>
-                        <td><span style="background: #fff3cd; color: #856404; padding: 5px 10px; border-radius: 20px;">Pendiente</span></td>
-                        <td>
-                            <button style="background: none; border: none; color: #2c5f2d; cursor: pointer;"><i class="fas fa-eye"></i></button>
-                            <button style="background: none; border: none; color: #e04f2e; cursor: pointer;"><i class="fas fa-check"></i></button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>14/01/2024</td>
-                        <td>Juan Pérez</td>
-                        <td>Arena</td>
-                        <td><span style="background: #d4edda; color: #155724; padding: 5px 10px; border-radius: 20px;">Aprobada</span></td>
-                        <td>
-                            <button style="background: none; border: none; color: #2c5f2d; cursor: pointer;"><i class="fas fa-eye"></i></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+        <main class="admin-content" id="adminContent">
+            <!-- Contenido dinámico -->
         </main>
     </div>
     
+    <!-- Modal para añadir/editar -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Añadir perro</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    
     <script>
-        // Verificar autenticación
+        // ========================================
+        // DATOS Y ESTADO
+        // ========================================
+        let dogs = JSON.parse(localStorage.getItem('adminDogs')) || [
+            { id: 1, name: 'Luna', breed: 'Mastina', age: '2 años', status: 'Disponible', description: 'Cariñosa y juguetona' },
+            { id: 2, name: 'Arena', breed: 'Cruce labrador', age: '2 años', status: 'En acogida', description: 'Activa y noble' },
+            { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', status: 'Disponible', description: 'Joven y juguetón' }
+        ];
+        
+        let blogPosts = JSON.parse(localStorage.getItem('adminBlog')) || [
+            { id: 1, title: 'Bendición de animales', date: '20/01/2024', status: 'Publicado' },
+            { id: 2, title: 'Refugio al límite', date: '15/12/2023', status: 'Publicado' }
+        ];
+        
+        let adoptions = JSON.parse(localStorage.getItem('adminAdoptions')) || [
+            { id: 1, date: '15/01/2024', name: 'María García', dog: 'Luna', status: 'Pendiente' },
+            { id: 2, date: '14/01/2024', name: 'Juan Pérez', dog: 'Arena', status: 'Aprobada' }
+        ];
+        
+        let currentPage = 'dashboard';
+        let editingId = null;
+        let editingType = null;
+        
+        // ========================================
+        // INICIALIZACIÓN
+        // ========================================
         if (!localStorage.getItem('adminToken')) {
             window.location.href = 'login.html';
+        }
+        
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('[data-page]').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                currentPage = this.dataset.page;
+                renderPage();
+            });
+        });
+        
+        renderPage();
+        
+        // ========================================
+        // RENDERIZAR PÁGINA
+        // ========================================
+        function renderPage() {
+            const content = document.getElementById('adminContent');
+            
+            if (currentPage === 'dashboard') {
+                content.innerHTML = renderDashboard();
+            } else if (currentPage === 'dogs') {
+                content.innerHTML = renderDogsPage();
+            } else if (currentPage === 'adoptions') {
+                content.innerHTML = renderAdoptionsPage();
+            } else if (currentPage === 'blog') {
+                content.innerHTML = renderBlogPage();
+            } else if (currentPage === 'settings') {
+                content.innerHTML = renderSettingsPage();
+            }
+        }
+        
+        function renderDashboard() {
+            return `
+                <div class="admin-header">
+                    <h1>Dashboard</h1>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Perros en refugio</h4>
+                        <div class="number">${dogs.filter(d => d.status !== 'Adoptado').length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Adopciones este mes</h4>
+                        <div class="number">${adoptions.filter(a => a.status === 'Aprobada').length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Voluntarios activos</h4>
+                        <div class="number">45</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Donaciones este mes</h4>
+                        <div class="number">1.250€</div>
+                    </div>
+                </div>
+                
+                <div class="admin-section">
+                    <h2>Últimas solicitudes de adopción</h2>
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Fecha</th><th>Solicitante</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody>
+                            ${adoptions.slice(0, 5).map(a => `
+                                <tr>
+                                    <td>${a.date}</td>
+                                    <td>${a.name}</td>
+                                    <td>${a.dog}</td>
+                                    <td><span class="status-badge status-${a.status.toLowerCase()}">${a.status}</span></td>
+                                    <td>
+                                        <button class="btn-icon" onclick="updateAdoptionStatus(${a.id}, 'Aprobada')">✅</button>
+                                        <button class="btn-icon" onclick="updateAdoptionStatus(${a.id}, 'Rechazada')">❌</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="admin-section">
+                    <h2>Perros disponibles</h2>
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr>
+                        </thead>
+                        <tbody>
+                            ${dogs.filter(d => d.status !== 'Adoptado').slice(0, 5).map(d => `
+                                <tr>
+                                    <td>${d.name}</td>
+                                    <td>${d.breed}</td>
+                                    <td>${d.age}</td>
+                                    <td><span class="status-badge status-${d.status.toLowerCase().replace(' ', '-')}">${d.status}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function renderDogsPage() {
+            return `
+                <div class="admin-header">
+                    <h1>Gestión de Perros</h1>
+                </div>
+                
+                <div class="admin-section">
+                    <h2>
+                        Listado de perros
+                        <button class="btn-add" onclick="openModal('dog')">
+                            <i class="fas fa-plus"></i> Añadir perro
+                        </button>
+                    </h2>
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="dogsTableBody">
+                            ${dogs.map(d => `
+                                <tr>
+                                    <td>${d.id}</td>
+                                    <td>${d.name}</td>
+                                    <td>${d.breed}</td>
+                                    <td>${d.age}</td>
+                                    <td>
+                                        <select onchange="updateDogStatus(${d.id}, this.value)" style="padding: 5px; border-radius: 5px;">
+                                            <option value="Disponible" ${d.status === 'Disponible' ? 'selected' : ''}>Disponible</option>
+                                            <option value="En acogida" ${d.status === 'En acogida' ? 'selected' : ''}>En acogida</option>
+                                            <option value="Adoptado" ${d.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
+                                        <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function renderAdoptionsPage() {
+            return `
+                <div class="admin-header">
+                    <h1>Solicitudes de Adopción</h1>
+                </div>
+                
+                <div class="admin-section">
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>Fecha</th><th>Solicitante</th><th>Email</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody>
+                            ${adoptions.map(a => `
+                                <tr>
+                                    <td>${a.date}</td>
+                                    <td>${a.name}</td>
+                                    <td>${a.email || '---'}</td>
+                                    <td>${a.dog}</td>
+                                    <td><span class="status-badge status-${a.status.toLowerCase()}">${a.status}</span></td>
+                                    <td>
+                                        ${a.status === 'Pendiente' ? `
+                                            <button class="btn-icon" onclick="updateAdoptionStatus(${a.id}, 'Aprobada')" title="Aprobar">✅</button>
+                                            <button class="btn-icon" onclick="updateAdoptionStatus(${a.id}, 'Rechazada')" title="Rechazar">❌</button>
+                                        ` : ''}
+                                        <button class="btn-icon" onclick="deleteAdoption(${a.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function renderBlogPage() {
+            return `
+                <div class="admin-header">
+                    <h1>Gestión del Blog</h1>
+                </div>
+                
+                <div class="admin-section">
+                    <h2>
+                        Entradas del blog
+                        <button class="btn-add" onclick="openModal('blog')">
+                            <i class="fas fa-plus"></i> Nueva entrada
+                        </button>
+                    </h2>
+                    <table class="admin-table">
+                        <thead>
+                            <tr><th>ID</th><th>Título</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody>
+                            ${blogPosts.map(p => `
+                                <tr>
+                                    <td>${p.id}</td>
+                                    <td>${p.title}</td>
+                                    <td>${p.date}</td>
+                                    <td><span class="status-badge status-${p.status === 'Publicado' ? 'aprobada' : 'pendiente'}">${p.status}</span></td>
+                                    <td>
+                                        <button class="btn-icon" onclick="openModal('blog', ${p.id})">✏️</button>
+                                        <button class="btn-icon" onclick="deleteBlogPost(${p.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function renderSettingsPage() {
+            return `
+                <div class="admin-header">
+                    <h1>Configuración</h1>
+                </div>
+                
+                <div class="admin-section">
+                    <h2>Información de contacto</h2>
+                    <div class="form-group">
+                        <label>Teléfono principal</label>
+                        <input type="text" id="phone1" value="661 44 79 42">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono secundario</label>
+                        <input type="text" id="phone2" value="666 86 16 20">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="email" value="peludoslospedroches@gmail.com">
+                    </div>
+                    <button class="btn-save" onclick="saveSettings()">Guardar cambios</button>
+                </div>
+                
+                <div class="admin-section">
+                    <h2>Exportar datos</h2>
+                    <button class="btn-add" onclick="exportData()">📥 Exportar todo</button>
+                </div>
+            `;
+        }
+        
+        // ========================================
+        // MODALES
+        // ========================================
+        function openModal(type, id = null) {
+            editingType = type;
+            editingId = id;
+            const modal = document.getElementById('editModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            
+            if (type === 'dog') {
+                const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', status: 'Disponible', description: '', gender: 'Macho', size: 'Mediano' };
+                title.textContent = id ? 'Editar perro' : 'Añadir perro';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="dogName" value="${dog.name}">
+                    </div>
+                    <div class="form-group">
+                        <label>Raza</label>
+                        <input type="text" id="dogBreed" value="${dog.breed}">
+                    </div>
+                    <div class="form-group">
+                        <label>Edad</label>
+                        <input type="text" id="dogAge" value="${dog.age}">
+                    </div>
+                    <div class="form-group">
+                        <label>Sexo</label>
+                        <select id="dogGender">
+                            <option value="Macho" ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option>
+                            <option value="Hembra" ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tamaño</label>
+                        <select id="dogSize">
+                            <option value="Pequeño" ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option>
+                            <option value="Mediano" ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option>
+                            <option value="Grande" ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="dogStatus">
+                            <option value="Disponible" ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option>
+                            <option value="En acogida" ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option>
+                            <option value="Adoptado" ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <textarea id="dogDescription" rows="3">${dog.description || ''}</textarea>
+                    </div>
+                    <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar</button>
+                `;
+            } else if (type === 'blog') {
+                const post = id ? blogPosts.find(p => p.id === id) : { title: '', content: '', excerpt: '', status: 'Borrador' };
+                title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" id="postTitle" value="${post.title}">
+                    </div>
+                    <div class="form-group">
+                        <label>Extracto</label>
+                        <input type="text" id="postExcerpt" value="${post.excerpt || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Contenido</label>
+                        <textarea id="postContent" rows="6">${post.content || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="postStatus">
+                            <option value="Borrador" ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option>
+                            <option value="Publicado" ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option>
+                        </select>
+                    </div>
+                    <button class="btn-save" onclick="saveBlogPost(${id || 'null'})">Guardar</button>
+                `;
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingId = null;
+            editingType = null;
+        }
+        
+        // ========================================
+        // FUNCIONES CRUD
+        // ========================================
+        function saveDog(id) {
+            const dogData = {
+                name: document.getElementById('dogName').value,
+                breed: document.getElementById('dogBreed').value,
+                age: document.getElementById('dogAge').value,
+                gender: document.getElementById('dogGender').value,
+                size: document.getElementById('dogSize').value,
+                status: document.getElementById('dogStatus').value,
+                description: document.getElementById('dogDescription').value
+            };
+            
+            if (id) {
+                const index = dogs.findIndex(d => d.id === id);
+                dogs[index] = { ...dogs[index], ...dogData };
+            } else {
+                const newId = Math.max(...dogs.map(d => d.id), 0) + 1;
+                dogs.push({ id: newId, ...dogData });
+            }
+            
+            localStorage.setItem('adminDogs', JSON.stringify(dogs));
+            localStorage.setItem('dogs', JSON.stringify(dogs));
+            closeModal();
+            renderPage();
+            showToast('Perro guardado correctamente');
+        }
+        
+        function deleteDog(id) {
+            if (confirm('¿Eliminar este perro?')) {
+                dogs = dogs.filter(d => d.id !== id);
+                localStorage.setItem('adminDogs', JSON.stringify(dogs));
+                localStorage.setItem('dogs', JSON.stringify(dogs));
+                renderPage();
+                showToast('Perro eliminado');
+            }
+        }
+        
+        function updateDogStatus(id, status) {
+            const dog = dogs.find(d => d.id === id);
+            if (dog) {
+                dog.status = status;
+                localStorage.setItem('adminDogs', JSON.stringify(dogs));
+                localStorage.setItem('dogs', JSON.stringify(dogs));
+                showToast(`Estado actualizado a ${status}`);
+            }
+        }
+        
+        function saveBlogPost(id) {
+            const postData = {
+                title: document.getElementById('postTitle').value,
+                excerpt: document.getElementById('postExcerpt').value,
+                content: document.getElementById('postContent').value,
+                status: document.getElementById('postStatus').value,
+                date: new Date().toLocaleDateString('es-ES')
+            };
+            
+            if (id) {
+                const index = blogPosts.findIndex(p => p.id === id);
+                blogPosts[index] = { ...blogPosts[index], ...postData };
+            } else {
+                const newId = Math.max(...blogPosts.map(p => p.id), 0) + 1;
+                blogPosts.push({ id: newId, ...postData });
+            }
+            
+            localStorage.setItem('adminBlog', JSON.stringify(blogPosts));
+            localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+            closeModal();
+            renderPage();
+            showToast('Entrada guardada correctamente');
+        }
+        
+        function deleteBlogPost(id) {
+            if (confirm('¿Eliminar esta entrada?')) {
+                blogPosts = blogPosts.filter(p => p.id !== id);
+                localStorage.setItem('adminBlog', JSON.stringify(blogPosts));
+                localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+                renderPage();
+                showToast('Entrada eliminada');
+            }
+        }
+        
+        function updateAdoptionStatus(id, status) {
+            const adoption = adoptions.find(a => a.id === id);
+            if (adoption) {
+                adoption.status = status;
+                localStorage.setItem('adminAdoptions', JSON.stringify(adoptions));
+                renderPage();
+                showToast(`Solicitud ${status.toLowerCase()}`);
+            }
+        }
+        
+        function deleteAdoption(id) {
+            if (confirm('¿Eliminar esta solicitud?')) {
+                adoptions = adoptions.filter(a => a.id !== id);
+                localStorage.setItem('adminAdoptions', JSON.stringify(adoptions));
+                renderPage();
+                showToast('Solicitud eliminada');
+            }
+        }
+        
+        function saveSettings() {
+            showToast('Configuración guardada');
+        }
+        
+        function exportData() {
+            const data = { dogs, blogPosts, adoptions };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'peludos-backup.json';
+            a.click();
+        }
+        
+        // ========================================
+        // UTILIDADES
+        // ========================================
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; bottom: 20px; right: 20px; background: #2c5f2d;
+                color: white; padding: 15px 20px; border-radius: 8px; z-index: 9999;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
         
         function logout() {
             localStorage.removeItem('adminToken');
             window.location.href = 'login.html';
         }
+        
+        // Hacer funciones globales
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+        window.saveDog = saveDog;
+        window.deleteDog = deleteDog;
+        window.updateDogStatus = updateDogStatus;
+        window.saveBlogPost = saveBlogPost;
+        window.deleteBlogPost = deleteBlogPost;
+        window.updateAdoptionStatus = updateAdoptionStatus;
+        window.deleteAdoption = deleteAdoption;
+        window.saveSettings = saveSettings;
+        window.exportData = exportData;
+        window.logout = logout;
     </script>
 </body>
 </html>
