@@ -10,6 +10,20 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Open Sans', sans-serif; background: #f5f5f5; overflow-x: hidden; }
+        
+        /* Verificación de autenticación - Pantalla de carga */
+        #authCheck {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            font-size: 1.5rem;
+            color: #2c5f2d;
+        }
+        
         .admin-wrapper { display: flex; min-height: 100vh; }
         .admin-sidebar {
             width: 260px;
@@ -34,6 +48,7 @@
             padding: 12px 15px;
             border-radius: 8px;
             transition: all 0.3s;
+            cursor: pointer;
         }
         .admin-sidebar a i { width: 20px; }
         .admin-sidebar a:hover,
@@ -174,9 +189,7 @@
             border-radius: 8px;
             font-size: 0.95rem;
         }
-        .form-group input[type="file"] {
-            padding: 8px;
-        }
+        .form-group input[type="file"] { padding: 8px; }
         .btn-save {
             width: 100%;
             padding: 14px;
@@ -229,16 +242,21 @@
     </style>
 </head>
 <body>
+    <!-- Verificación de autenticación -->
+    <div id="authCheck">
+        <i class="fas fa-spinner fa-spin"></i> Verificando acceso...
+    </div>
+    
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     
-    <div class="admin-wrapper">
+    <div class="admin-wrapper" id="adminWrapper" style="display: none;">
         <aside class="admin-sidebar" id="adminSidebar">
             <h3>🐾 Panel Admin</h3>
             <ul>
-                <li><a href="#" class="active" data-page="dashboard"><i class="fas fa-dashboard"></i> Dashboard</a></li>
-                <li><a href="#" data-page="dogs"><i class="fas fa-dog"></i> Perros</a></li>
-                <li><a href="#" data-page="blog"><i class="fas fa-newspaper"></i> Blog</a></li>
-                <li><a href="#" data-page="settings"><i class="fas fa-cog"></i> Configuración</a></li>
+                <li><a class="active" data-page="dashboard"><i class="fas fa-dashboard"></i> Dashboard</a></li>
+                <li><a data-page="dogs"><i class="fas fa-dog"></i> Perros</a></li>
+                <li><a data-page="blog"><i class="fas fa-newspaper"></i> Blog</a></li>
+                <li><a data-page="settings"><i class="fas fa-cog"></i> Configuración</a></li>
             </ul>
             <button class="btn-logout" onclick="logout()" style="margin-top: 30px; width: 100%;">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -263,31 +281,92 @@
     </div>
     
     <script>
+        // ========================================
+        // VERIFICACIÓN DE AUTENTICACIÓN
+        // ========================================
+        (function checkAuth() {
+            const token = localStorage.getItem('adminToken');
+            
+            if (token !== 'authenticated') {
+                // No autenticado - redirigir al login
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Autenticado - mostrar panel
+            document.getElementById('authCheck').style.display = 'none';
+            document.getElementById('adminWrapper').style.display = 'flex';
+            
+            // Inicializar el panel
+            init();
+        })();
+        
+        // ========================================
         // CONFIGURACIÓN DE SUPABASE
+        // ========================================
         const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
+        let supabase;
         let dogs = [];
         let blogPosts = [];
         let settings = {};
         let currentPage = 'dashboard';
         let selectedImageFile = null;
         
-        // Verificar autenticación
-        if (!localStorage.getItem('adminToken')) {
-            window.location.href = 'login.html';
+        // Inicializar Supabase
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error('Error inicializando Supabase:', e);
         }
         
-        // Inicializar
         async function init() {
             await loadSettings();
             await loadDogs();
             await loadBlogPosts();
             renderPage();
+            setupNavigation();
+            setupMobileMenu();
+        }
+        
+        function setupNavigation() {
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('[data-page]').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    currentPage = this.dataset.page;
+                    renderPage();
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('adminSidebar').classList.remove('active');
+                        document.getElementById('sidebarOverlay').classList.remove('active');
+                    }
+                });
+            });
+        }
+        
+        function setupMobileMenu() {
+            const toggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (toggle) {
+                toggle.addEventListener('click', function() {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                });
+            }
+            
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
         }
         
         async function loadSettings() {
+            if (!supabase) return;
+            
             try {
                 const { data, error } = await supabase.from('settings').select('*');
                 if (error) throw error;
@@ -298,6 +377,8 @@
         }
         
         async function loadDogs() {
+            if (!supabase) return;
+            
             try {
                 const { data, error } = await supabase.from('dogs').select('*').order('id', { ascending: false });
                 if (error) throw error;
@@ -308,6 +389,8 @@
         }
         
         async function loadBlogPosts() {
+            if (!supabase) return;
+            
             try {
                 const { data, error } = await supabase.from('blog_posts').select('*').order('id', { ascending: false });
                 if (error) throw error;
@@ -321,27 +404,28 @@
             const content = document.getElementById('adminContent');
             const toggleBtn = '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>';
             
+            let html = '';
             if (currentPage === 'dashboard') {
-                content.innerHTML = toggleBtn + renderDashboard();
+                html = renderDashboard();
             } else if (currentPage === 'dogs') {
-                content.innerHTML = toggleBtn + renderDogsPage();
+                html = renderDogsPage();
             } else if (currentPage === 'blog') {
-                content.innerHTML = toggleBtn + renderBlogPage();
+                html = renderBlogPage();
             } else if (currentPage === 'settings') {
-                content.innerHTML = toggleBtn + renderSettingsPage();
+                html = renderSettingsPage();
             }
             
-            document.getElementById('mobileMenuToggle')?.addEventListener('click', toggleSidebar);
+            content.innerHTML = toggleBtn + html;
+            
+            // Re-setup del menú móvil
+            const newToggle = document.getElementById('mobileMenuToggle');
+            if (newToggle) {
+                newToggle.addEventListener('click', function() {
+                    document.getElementById('adminSidebar').classList.add('active');
+                    document.getElementById('sidebarOverlay').classList.add('active');
+                });
+            }
         }
-        
-        function toggleSidebar() {
-            const sidebar = document.getElementById('adminSidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-        
-        document.getElementById('sidebarOverlay').addEventListener('click', toggleSidebar);
         
         function renderDashboard() {
             const available = dogs.filter(d => d.status !== 'Adoptado').length;
@@ -364,7 +448,7 @@
                                 <tr>
                                     <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
                                     <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
-                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-')}">${d.status}</span></td>
+                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -385,7 +469,7 @@
                                 <tr>
                                     <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
                                     <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
-                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-')}">${d.status}</span></td>
+                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
                                     <td>
                                         <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
                                         <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
@@ -485,28 +569,28 @@
         }
         
         async function saveContactSettings() {
-            await supabase.from('settings').update({ value: document.getElementById('phone1').value }).eq('key', 'contact_phone1');
-            await supabase.from('settings').update({ value: document.getElementById('phone2').value }).eq('key', 'contact_phone2');
-            await supabase.from('settings').update({ value: document.getElementById('email').value }).eq('key', 'contact_email');
+            const phone1 = document.getElementById('phone1')?.value;
+            const phone2 = document.getElementById('phone2')?.value;
+            const email = document.getElementById('email')?.value;
+            
+            if (phone1) await supabase.from('settings').update({ value: phone1 }).eq('key', 'contact_phone1');
+            if (phone2) await supabase.from('settings').update({ value: phone2 }).eq('key', 'contact_phone2');
+            if (email) await supabase.from('settings').update({ value: email }).eq('key', 'contact_email');
             
             showToast('Contacto actualizado');
             init();
         }
         
-        // ========================================
-        // SUBIR IMAGEN A SUPABASE STORAGE
-        // ========================================
         async function uploadImage(file) {
             if (!file) return null;
             
             const fileExt = file.name.split('.').pop();
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-            const filePath = `dogs/${fileName}`;
             
             try {
                 const { data, error } = await supabase.storage
                     .from('dogs')
-                    .upload(filePath, file, {
+                    .upload(fileName, file, {
                         cacheControl: '3600',
                         upsert: false
                     });
@@ -515,12 +599,11 @@
                 
                 const { data: urlData } = supabase.storage
                     .from('dogs')
-                    .getPublicUrl(filePath);
+                    .getPublicUrl(fileName);
                 
                 return urlData.publicUrl;
             } catch (error) {
                 console.error('Error subiendo imagen:', error);
-                showToast('Error al subir la imagen', 'error');
                 return null;
             }
         }
@@ -540,9 +623,6 @@
                         <div class="image-preview" id="imagePreview">
                             ${dog.image_url ? `<img src="${dog.image_url}" alt="Preview">` : ''}
                         </div>
-                        <div class="upload-progress" id="uploadProgress">
-                            <div class="upload-progress-bar" id="uploadProgressBar"></div>
-                        </div>
                     </div>
                     <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
                     <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
@@ -559,7 +639,7 @@
                 const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado' };
                 title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
                 body.innerHTML = `
-                    <div class="form-group"><label>Título</label><input type="text" id="postTitle" value="${post.title || ''}"></div>
+                    <div class="form-group"><label>Título *</label><input type="text" id="postTitle" value="${post.title || ''}" required></div>
                     <div class="form-group"><label>Extracto</label><input type="text" id="postExcerpt" value="${post.excerpt || ''}"></div>
                     <div class="form-group"><label>Contenido (HTML permitido)</label><textarea id="postContent" rows="6">${post.content || ''}</textarea></div>
                     <div class="form-group"><label>Estado</label><select id="postStatus"><option ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option><option ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option></select></div>
@@ -583,47 +663,34 @@
         }
         
         async function saveDog(id) {
-            const name = document.getElementById('dogName').value;
+            const name = document.getElementById('dogName')?.value;
             if (!name) {
                 showToast('El nombre es obligatorio', 'error');
                 return;
             }
             
             let imageUrl = '';
+            const existingDog = id && id !== 'null' ? dogs.find(d => d.id === id) : null;
             
-            // Si hay una nueva imagen seleccionada, subirla
             if (selectedImageFile) {
-                const progressBar = document.getElementById('uploadProgressBar');
-                const progressDiv = document.getElementById('uploadProgress');
-                progressDiv.style.display = 'block';
-                progressBar.style.width = '50%';
-                
                 imageUrl = await uploadImage(selectedImageFile);
-                
-                progressBar.style.width = '100%';
-                setTimeout(() => progressDiv.style.display = 'none', 500);
-                
                 if (!imageUrl) {
                     showToast('Error al subir la imagen', 'error');
                     return;
                 }
-            }
-            
-            // Si no hay nueva imagen, mantener la existente
-            if (!imageUrl && id && id !== 'null') {
-                const existingDog = dogs.find(d => d.id === id);
-                imageUrl = existingDog?.image_url || '';
+            } else if (existingDog) {
+                imageUrl = existingDog.image_url || '';
             }
             
             const dogData = {
                 name: name,
-                breed: document.getElementById('dogBreed').value,
-                age: document.getElementById('dogAge').value,
-                gender: document.getElementById('dogGender').value,
-                size: document.getElementById('dogSize').value,
-                status: document.getElementById('dogStatus').value,
-                badge: document.getElementById('dogBadge').value,
-                description: document.getElementById('dogDescription').value,
+                breed: document.getElementById('dogBreed')?.value || '',
+                age: document.getElementById('dogAge')?.value || '',
+                gender: document.getElementById('dogGender')?.value || 'Macho',
+                size: document.getElementById('dogSize')?.value || 'Mediano',
+                status: document.getElementById('dogStatus')?.value || 'Disponible',
+                badge: document.getElementById('dogBadge')?.value || '',
+                description: document.getElementById('dogDescription')?.value || '',
                 image_url: imageUrl
             };
             
@@ -640,21 +707,7 @@
         }
         
         async function deleteDog(id) {
-            if (confirm('¿Eliminar este perro? También se eliminará su foto si existe.')) {
-                // Obtener el perro para saber si tiene imagen
-                const dog = dogs.find(d => d.id === id);
-                
-                // Si tiene imagen en storage, intentar eliminarla
-                if (dog?.image_url && dog.image_url.includes('supabase.co/storage')) {
-                    try {
-                        const urlParts = dog.image_url.split('/');
-                        const fileName = urlParts[urlParts.length - 1];
-                        await supabase.storage.from('dogs').remove([`dogs/${fileName}`]);
-                    } catch (e) {
-                        console.error('Error eliminando imagen:', e);
-                    }
-                }
-                
+            if (confirm('¿Eliminar este perro?')) {
                 await supabase.from('dogs').delete().eq('id', id);
                 await loadDogs();
                 renderPage();
@@ -663,11 +716,17 @@
         }
         
         async function saveBlogPost(id) {
+            const title = document.getElementById('postTitle')?.value;
+            if (!title) {
+                showToast('El título es obligatorio', 'error');
+                return;
+            }
+            
             const postData = {
-                title: document.getElementById('postTitle').value,
-                excerpt: document.getElementById('postExcerpt').value,
-                content: document.getElementById('postContent').value,
-                status: document.getElementById('postStatus').value,
+                title: title,
+                excerpt: document.getElementById('postExcerpt')?.value || '',
+                content: document.getElementById('postContent')?.value || '',
+                status: document.getElementById('postStatus')?.value || 'Publicado',
                 image: '📰'
             };
             
@@ -710,25 +769,7 @@
             window.location.href = 'login.html';
         }
         
-        // Navegación
-        document.querySelectorAll('[data-page]').forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                document.querySelectorAll('[data-page]').forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                currentPage = link.dataset.page;
-                renderPage();
-                if (window.innerWidth <= 768) {
-                    document.getElementById('adminSidebar').classList.remove('active');
-                    document.getElementById('sidebarOverlay').classList.remove('active');
-                }
-            });
-        });
-        
-        // Iniciar
-        init();
-        
-        // Globales
+        // Funciones globales
         window.openModal = openModal;
         window.closeModal = closeModal;
         window.saveDog = saveDog;
