@@ -1145,3 +1145,19 @@ img {
         flex-direction: column;
         text-align: center;
        }w
+/* Estilos para el logo dinámico */
+.logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon img {
+    max-height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-emoji {
+    font-size: 2rem;
+}
