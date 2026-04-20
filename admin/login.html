@@ -12,40 +12,78 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: 'Open Sans', sans-serif;
         }
         .login-box {
             background: white;
             padding: 40px;
-            border-radius: 10px;
+            border-radius: 12px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
         }
         .login-box h2 {
             color: #2c5f2d;
             text-align: center;
+            margin-bottom: 10px;
+        }
+        .login-box p {
+            text-align: center;
+            color: #666;
             margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: #e04f2e;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .btn-login:hover {
+            background: #c43d1e;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 3rem;
         }
     </style>
 </head>
 <body>
     <div class="login-box">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <span style="font-size: 3rem;">🐾</span>
-            <h2>Panel de Administración</h2>
-            <p style="color: #666;">Peludos Los Pedroches</p>
-        </div>
+        <div class="logo">🐾</div>
+        <h2>Panel de Administración</h2>
+        <p>Peludos Los Pedroches</p>
         
         <form id="loginForm">
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Usuario</label>
-                <input type="text" id="username" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" id="username" required>
             </div>
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Contraseña</label>
-                <input type="password" id="password" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="password" required>
             </div>
-            <button type="submit" style="width: 100%; padding: 15px; background: #e04f2e; color: white; border: none; border-radius: 50px; font-weight: 600; cursor: pointer;">INICIAR SESIÓN</button>
+            <button type="submit" class="btn-login">INICIAR SESIÓN</button>
         </form>
     </div>
     
@@ -55,9 +93,9 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             
-            // Credenciales demo - Cambiar en producción
+            // Credenciales
             if (username === 'admin' && password === 'Peludos2024!') {
-                localStorage.setItem('adminToken', 'demo-token');
+                localStorage.setItem('adminToken', 'authenticated');
                 window.location.href = 'index.html';
             } else {
                 alert('Usuario o contraseña incorrectos');
