@@ -1,69 +1,298 @@
 // ========================================
-// PELUDOS LOS PEDROCHES - JAVASCRIPT CORREGIDO
+// PELUDOS LOS PEDROCHES - CON SUPABASE
+// CREDENCIALES REALES
 // ========================================
 
-// Datos iniciales
-let blogPosts = JSON.parse(localStorage.getItem('blogPosts')) || [
-    {
-        id: 1,
-        title: 'Bendición de animales por San Antón',
-        excerpt: 'Un año más celebramos la tradicional bendición de animales en Pozoblanco. ¡Gracias a todos los que participasteis!',
-        content: '<p>El pasado 17 de enero celebramos la tradicional bendición de animales por San Antón en Pozoblanco. Fue un día maravilloso donde decenas de familias trajeron a sus mascotas para recibir la bendición.</p><p>Desde Peludos Los Pedroches queremos agradecer a todos los asistentes y recordar la importancia de cuidar y respetar a nuestros animales. ¡Nos vemos el año que viene!</p>',
-        date: '20 Enero, 2024',
-        image: '🐕'
-    },
-    {
-        id: 2,
-        title: 'Nuestro refugio al límite de capacidad',
-        excerpt: 'Superamos los 70 perros y necesitamos más casas de acogida urgentemente. La situación es crítica.',
-        content: '<p>Actualmente tenemos más de 70 perros en nuestro refugio, una cifra que supera nuestra capacidad. Necesitamos urgentemente casas de acogida que puedan dar un hogar temporal a estos peludos mientras encuentran una familia definitiva.</p><p>Si puedes ayudar, por favor contacta con nosotros. Todos los gastos corren a cargo de la protectora: alimentación, veterinario, medicación... Tú solo pones el cariño y el espacio.</p><p><strong>¡Cada casa de acogida salva vidas!</strong></p>',
-        date: '15 Diciembre, 2023',
-        image: '🏠'
-    },
-    {
-        id: 3,
-        title: 'Colaboración con Fundación Gypaetus',
-        excerpt: 'Seguimos trabajando en el proyecto Life contra el uso de cebos envenenados en la comarca.',
-        content: '<p>Continuamos nuestra colaboración con la Fundación Gypaetus en el proyecto Life contra el uso de cebos envenenados. Estamos trabajando en la educación y adiestramiento de perros pastores para ganaderos de la zona.</p><p>Esta iniciativa ayuda a proteger tanto al ganado como a la fauna silvestre de la comarca de Los Pedroches. Los perros pastores adiestrados son una alternativa eficaz y ecológica para proteger al ganado de los ataques de depredadores.</p>',
-        date: '5 Noviembre, 2023',
-        image: '🦅'
-    }
-];
+// CONFIGURACIÓN DE SUPABASE
+const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
 
-let dogs = JSON.parse(localStorage.getItem('dogs')) || [
-    { id: 1, name: 'Luna', breed: 'Mastina atigrada', age: '2 años', size: 'Grande', gender: 'Hembra', badge: 'Urgente', description: 'Cariñosa a rabiar y juguetona. Ideal para campo. Sus saltos a modo de saludo son mi señal de identidad.', image: '🐕' },
-    { id: 2, name: 'Arena', breed: 'Cruce de labrador', age: '2 años', size: 'Mediano', gender: 'Hembra', badge: 'En acogida', description: 'Perrita activa, buena, noble y cariñosa. No deja a nadie indiferente, si me conoces lo comprobarás.', image: '🐕' },
-    { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', size: 'Mediano', gender: 'Macho', badge: 'Nuevo', description: 'Joven y juguetón, busca familia activa que le dé mucho cariño.', image: '🐕' },
-    { id: 4, name: 'Rocky', breed: 'Mastín español', age: '4 años', size: 'Grande', gender: 'Macho', badge: '', description: 'Tranquilo y protector. Ideal para finca o casa con terreno. Muy bueno con niños.', image: '🐕' },
-    { id: 5, name: 'Nala', breed: 'Podenco', age: '3 años', size: 'Mediano', gender: 'Hembra', badge: 'Urgente', description: 'Muy cariñosa, se lleva bien con todos los perros. Busca familia que le dé mucho amor.', image: '🐕' },
-    { id: 6, name: 'Bruno', breed: 'Cruce', age: '5 años', size: 'Grande', gender: 'Macho', badge: '', description: 'Perro mayor muy tranquilo y agradecido. Perfecto para compañía.', image: '🐕' }
-];
+// Inicializar Supabase
+let supabase;
+if (typeof window.supabase !== 'undefined') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+// Variables globales
+let dogs = [];
+let blogPosts = [];
+let settings = {};
 
 // ========================================
-// INICIALIZACIÓN
+// CARGAR CONFIGURACIÓN DESDE SUPABASE
 // ========================================
-document.addEventListener('DOMContentLoaded', function() {
-    initMobileMenu();
-    initDropdownMobile();
-    initNewsletter();
-    loadFeaturedDogs();
-    loadBlogPreview();
-    initSmoothScroll();
-    
-    // Cargar perros en página de adopción
-    if (document.getElementById('dogsList')) {
-        loadDogsList();
-        initFilters();
+async function loadSettings() {
+    if (!supabase) {
+        loadSettingsFromLocal();
+        return;
     }
     
-    // Cargar perros en página de apadrinar
-    if (document.getElementById('sponsorDogs')) {
-        loadSponsorDogs();
+    try {
+        const { data, error } = await supabase
+            .from('settings')
+            .select('*');
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            data.forEach(item => {
+                settings[item.key] = item.value;
+            });
+        } else {
+            loadSettingsFromLocal();
+            return;
+        }
+        
+        applySettings();
+    } catch (error) {
+        console.error('Error cargando configuración:', error);
+        loadSettingsFromLocal();
+    }
+}
+
+function loadSettingsFromLocal() {
+    settings = {
+        logo_text: '🐾 PELUDOS LOS PEDROCHES',
+        logo_subtitle: 'Protectora de Animales',
+        primary_color: '#e04f2e',
+        secondary_color: '#2c5f2d',
+        contact_phone1: '661 44 79 42',
+        contact_phone2: '666 86 16 20',
+        contact_email: 'peludoslospedroches@gmail.com',
+        contact_address: 'Comarca de Los Pedroches, Córdoba'
+    };
+    applySettings();
+}
+
+function applySettings() {
+    const logoText = document.querySelector('.logo-text h1');
+    const logoSubtitle = document.querySelector('.logo-text span');
+    if (logoText) logoText.textContent = settings.logo_text || '🐾 PELUDOS LOS PEDROCHES';
+    if (logoSubtitle) logoSubtitle.textContent = settings.logo_subtitle || 'Protectora de Animales';
+    
+    if (settings.primary_color) {
+        document.documentElement.style.setProperty('--primary', settings.primary_color);
+    }
+    if (settings.secondary_color) {
+        document.documentElement.style.setProperty('--secondary', settings.secondary_color);
+    }
+}
+
+// ========================================
+// CARGAR PERROS DESDE SUPABASE
+// ========================================
+async function loadDogs() {
+    if (!supabase) {
+        loadDogsFromLocal();
+        return;
     }
     
-    // Inicializar formularios
-    initForms();
-});
+    try {
+        const { data, error } = await supabase
+            .from('dogs')
+            .select('*')
+            .order('id', { ascending: false });
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            dogs = data;
+        } else {
+            dogs = getDefaultDogs();
+        }
+        
+        localStorage.setItem('dogs', JSON.stringify(dogs));
+        
+        if (document.getElementById('featuredDogs')) {
+            loadFeaturedDogs();
+        }
+        if (document.getElementById('dogsList')) {
+            loadDogsList();
+        }
+        if (document.getElementById('sponsorDogs')) {
+            loadSponsorDogs();
+        }
+    } catch (error) {
+        console.error('Error cargando perros:', error);
+        loadDogsFromLocal();
+    }
+}
+
+function loadDogsFromLocal() {
+    dogs = JSON.parse(localStorage.getItem('dogs')) || getDefaultDogs();
+    if (document.getElementById('featuredDogs')) loadFeaturedDogs();
+    if (document.getElementById('dogsList')) loadDogsList();
+}
+
+function getDefaultDogs() {
+    return [
+        { id: 1, name: 'Luna', breed: 'Mastina atigrada', age: '2 años', size: 'Grande', gender: 'Hembra', badge: 'Urgente', description: 'Cariñosa a rabiar y juguetona. Ideal para campo.', image: '🐕', status: 'Disponible' },
+        { id: 2, name: 'Arena', breed: 'Cruce de labrador', age: '2 años', size: 'Mediano', gender: 'Hembra', badge: 'En acogida', description: 'Perrita activa, buena, noble y cariñosa.', image: '🐕', status: 'En acogida' },
+        { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', size: 'Mediano', gender: 'Macho', badge: 'Nuevo', description: 'Joven y juguetón, busca familia activa.', image: '🐕', status: 'Disponible' }
+    ];
+}
+
+// ========================================
+// CARGAR BLOG DESDE SUPABASE
+// ========================================
+async function loadBlogPosts() {
+    if (!supabase) {
+        loadBlogFromLocal();
+        return;
+    }
+    
+    try {
+        const { data, error } = await supabase
+            .from('blog_posts')
+            .select('*')
+            .eq('status', 'Publicado')
+            .order('id', { ascending: false });
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            blogPosts = data;
+        } else {
+            blogPosts = getDefaultBlogPosts();
+        }
+        
+        localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
+        
+        if (document.getElementById('blogPreview')) {
+            loadBlogPreview();
+        }
+    } catch (error) {
+        console.error('Error cargando blog:', error);
+        loadBlogFromLocal();
+    }
+}
+
+function loadBlogFromLocal() {
+    blogPosts = JSON.parse(localStorage.getItem('blogPosts')) || getDefaultBlogPosts();
+    if (document.getElementById('blogPreview')) loadBlogPreview();
+}
+
+function getDefaultBlogPosts() {
+    return [
+        { id: 1, title: 'Bendición de animales por San Antón', excerpt: 'Un año más celebramos la tradicional bendición en Pozoblanco.', content: '<p>El pasado 17 de enero celebramos la tradicional bendición de animales por San Antón en Pozoblanco.</p>', image: '🐕', status: 'Publicado', created_at: '2024-01-20' },
+        { id: 2, title: 'Nuestro refugio al límite de capacidad', excerpt: 'Superamos los 70 perros y necesitamos casas de acogida urgentes.', content: '<p>Actualmente tenemos más de 70 perros en nuestro refugio.</p>', image: '🏠', status: 'Publicado', created_at: '2023-12-15' },
+        { id: 3, title: 'Colaboración con Fundación Gypaetus', excerpt: 'Seguimos trabajando en el proyecto Life.', content: '<p>Continuamos nuestra colaboración con la Fundación Gypaetus.</p>', image: '🦅', status: 'Publicado', created_at: '2023-11-05' }
+    ];
+}
+
+// ========================================
+// GUARDAR PERRO (PARA ADMIN)
+// ========================================
+async function saveDogToSupabase(dogData) {
+    if (!supabase) return false;
+    
+    try {
+        let result;
+        if (dogData.id) {
+            result = await supabase
+                .from('dogs')
+                .update(dogData)
+                .eq('id', dogData.id);
+        } else {
+            result = await supabase
+                .from('dogs')
+                .insert([dogData]);
+        }
+        
+        if (result.error) throw result.error;
+        return true;
+    } catch (error) {
+        console.error('Error guardando perro:', error);
+        return false;
+    }
+}
+
+// ========================================
+// GUARDAR ENTRADA DE BLOG (PARA ADMIN)
+// ========================================
+async function saveBlogPostToSupabase(postData) {
+    if (!supabase) return false;
+    
+    try {
+        let result;
+        if (postData.id) {
+            result = await supabase
+                .from('blog_posts')
+                .update(postData)
+                .eq('id', postData.id);
+        } else {
+            result = await supabase
+                .from('blog_posts')
+                .insert([postData]);
+        }
+        
+        if (result.error) throw result.error;
+        return true;
+    } catch (error) {
+        console.error('Error guardando entrada:', error);
+        return false;
+    }
+}
+
+// ========================================
+// ELIMINAR PERRO (PARA ADMIN)
+// ========================================
+async function deleteDogFromSupabase(id) {
+    if (!supabase) return false;
+    
+    try {
+        const { error } = await supabase
+            .from('dogs')
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+        return true;
+    } catch (error) {
+        console.error('Error eliminando perro:', error);
+        return false;
+    }
+}
+
+// ========================================
+// ELIMINAR ENTRADA DE BLOG (PARA ADMIN)
+// ========================================
+async function deleteBlogPostFromSupabase(id) {
+    if (!supabase) return false;
+    
+    try {
+        const { error } = await supabase
+            .from('blog_posts')
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+        return true;
+    } catch (error) {
+        console.error('Error eliminando entrada:', error);
+        return false;
+    }
+}
+
+// ========================================
+// GUARDAR CONFIGURACIÓN
+// ========================================
+async function saveSettingToSupabase(key, value) {
+    if (!supabase) return false;
+    
+    try {
+        const { error } = await supabase
+            .from('settings')
+            .update({ value })
+            .eq('key', key);
+        
+        if (error) throw error;
+        return true;
+    } catch (error) {
+        console.error('Error guardando configuración:', error);
+        return false;
+    }
+}
 
 // ========================================
 // MENÚ MÓVIL
@@ -85,7 +314,6 @@ function initMobileMenu() {
             }
         });
         
-        // Cerrar al hacer clic en un enlace
         mainNav.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function() {
                 if (window.innerWidth <= 768) {
@@ -124,40 +352,25 @@ function initNewsletter() {
     forms.forEach(form => {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = this.querySelector('input[type="email"]').value;
-            showToast('¡Gracias por suscribirte! Te mantendremos informado.', 'success');
+            showToast('¡Gracias por suscribirte!', 'success');
             this.reset();
         });
     });
 }
 
 // ========================================
-// SCROLL SUAVE
-// ========================================
-function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href !== '#' && href !== '') {
-                const target = document.querySelector(href);
-                if (target) {
-                    e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        });
-    });
-}
-
-// ========================================
-// CARGAR PERROS DESTACADOS (HOME)
+// CARGAR PERROS DESTACADOS
 // ========================================
 function loadFeaturedDogs() {
     const container = document.getElementById('featuredDogs');
     if (!container) return;
     
     const featured = dogs.filter(dog => dog.badge).slice(0, 3);
-    container.innerHTML = featured.map(dog => createDogCard(dog)).join('');
+    if (featured.length === 0) {
+        container.innerHTML = dogs.slice(0, 3).map(dog => createDogCard(dog)).join('');
+    } else {
+        container.innerHTML = featured.map(dog => createDogCard(dog)).join('');
+    }
 }
 
 // ========================================
@@ -167,10 +380,10 @@ function loadDogsList(filter = {}) {
     const container = document.getElementById('dogsList');
     if (!container) return;
     
-    let filteredDogs = [...dogs];
+    let filteredDogs = dogs.filter(d => d.status !== 'Adoptado');
     
     if (filter.size) {
-        filteredDogs = filteredDogs.filter(d => d.size.toLowerCase().includes(filter.size));
+        filteredDogs = filteredDogs.filter(d => d.size?.toLowerCase().includes(filter.size));
     }
     if (filter.age) {
         filteredDogs = filteredDogs.filter(d => {
@@ -182,11 +395,11 @@ function loadDogsList(filter = {}) {
         });
     }
     if (filter.gender) {
-        filteredDogs = filteredDogs.filter(d => d.gender.toLowerCase() === filter.gender);
+        filteredDogs = filteredDogs.filter(d => d.gender?.toLowerCase() === filter.gender);
     }
     if (filter.search) {
         filteredDogs = filteredDogs.filter(d => 
-            d.name.toLowerCase().includes(filter.search.toLowerCase())
+            d.name?.toLowerCase().includes(filter.search.toLowerCase())
         );
     }
     
@@ -197,6 +410,8 @@ function loadDogsList(filter = {}) {
 // CREAR TARJETA DE PERRO
 // ========================================
 function createDogCard(dog) {
+    const date = dog.created_at ? new Date(dog.created_at).toLocaleDateString('es-ES') : dog.age;
+    
     return `
         <div class="dog-card fade-in">
             <div class="dog-image">
@@ -218,44 +433,14 @@ function createDogCard(dog) {
 }
 
 // ========================================
-// FILTROS
-// ========================================
-function initFilters() {
-    const sizeFilter = document.querySelector('select[aria-label="Tamaño"]') || 
-                       document.querySelector('select:first-of-type');
-    const ageFilter = document.querySelectorAll('select')[1];
-    const genderFilter = document.querySelectorAll('select')[2];
-    const searchInput = document.querySelector('input[placeholder*="Buscar"]');
-    const searchBtn = document.querySelector('button .fa-search')?.parentElement;
-    
-    function applyFilters() {
-        const filters = {};
-        if (sizeFilter?.value) filters.size = sizeFilter.value;
-        if (ageFilter?.value) filters.age = ageFilter.value;
-        if (genderFilter?.value) filters.gender = genderFilter.value;
-        if (searchInput?.value) filters.search = searchInput.value;
-        loadDogsList(filters);
-    }
-    
-    if (sizeFilter) sizeFilter.addEventListener('change', applyFilters);
-    if (ageFilter) ageFilter.addEventListener('change', applyFilters);
-    if (genderFilter) genderFilter.addEventListener('change', applyFilters);
-    if (searchBtn) searchBtn.addEventListener('click', applyFilters);
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') applyFilters();
-        });
-    }
-}
-
-// ========================================
 // CARGAR PERROS PARA APADRINAR
 // ========================================
 function loadSponsorDogs() {
     const container = document.getElementById('sponsorDogs');
     if (!container) return;
     
-    container.innerHTML = dogs.filter(d => d.status !== 'Adoptado').slice(0, 3).map(dog => `
+    const available = dogs.filter(d => d.status !== 'Adoptado').slice(0, 3);
+    container.innerHTML = available.map(dog => `
         <div class="dog-card fade-in">
             <div class="dog-image">
                 <div class="placeholder-image">${dog.image || '🐕'}</div>
@@ -280,20 +465,24 @@ function loadBlogPreview() {
     const container = document.getElementById('blogPreview');
     if (!container) return;
     
-    const previewPosts = blogPosts.filter(p => p.status === 'Publicado' || !p.status).slice(0, 3);
-    container.innerHTML = previewPosts.map(post => `
-        <article class="blog-card fade-in" onclick="openBlogModal(${post.id})">
-            <div class="blog-image">
-                <div class="placeholder-image">${post.image || '📰'}</div>
-            </div>
-            <div class="blog-content">
-                <div class="blog-date"><i class="far fa-calendar"></i> ${post.date}</div>
-                <h3 class="blog-title">${post.title}</h3>
-                <p class="blog-excerpt">${post.excerpt}</p>
-                <span class="card-link">Leer más <i class="fas fa-arrow-right"></i></span>
-            </div>
-        </article>
-    `).join('');
+    const previewPosts = blogPosts.filter(p => p.status === 'Publicado').slice(0, 3);
+    container.innerHTML = previewPosts.map(post => {
+        const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : post.date || '';
+        
+        return `
+            <article class="blog-card fade-in" onclick="openBlogModal(${post.id})">
+                <div class="blog-image">
+                    <div class="placeholder-image">${post.image || '📰'}</div>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-date"><i class="far fa-calendar"></i> ${date}</div>
+                    <h3 class="blog-title">${post.title}</h3>
+                    <p class="blog-excerpt">${post.excerpt}</p>
+                    <span class="card-link">Leer más <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </article>
+        `;
+    }).join('');
 }
 
 // ========================================
@@ -303,93 +492,108 @@ function openBlogModal(postId) {
     const post = blogPosts.find(p => p.id === postId);
     if (!post) return;
     
-    const modal = document.getElementById('blogModal');
+    let modal = document.getElementById('blogModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'blogModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle"></h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+    }
+    
+    const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : post.date || '';
+    
     document.getElementById('modalTitle').textContent = post.title;
     document.getElementById('modalBody').innerHTML = `
         <div class="placeholder-image" style="height: 200px; margin-bottom: 20px; border-radius: 10px;">${post.image || '📰'}</div>
-        <div class="blog-date" style="margin-bottom: 15px; color: #e04f2e;"><i class="far fa-calendar"></i> ${post.date}</div>
+        <div class="blog-date" style="margin-bottom: 15px; color: #e04f2e;"><i class="far fa-calendar"></i> ${date}</div>
         <div style="line-height: 1.8; color: #333;">${post.content || post.excerpt}</div>
     `;
     modal.classList.add('active');
     
-    // Cerrar con Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeModal();
     });
 }
 
 function closeModal() {
-    document.getElementById('blogModal')?.classList.remove('active');
+    const modal = document.getElementById('blogModal');
+    if (modal) modal.classList.remove('active');
+}
+
+// ========================================
+// FILTROS
+// ========================================
+function initFilters() {
+    const sizeFilter = document.querySelector('#sizeFilter') || document.querySelector('select:first-of-type');
+    const ageFilter = document.querySelector('#ageFilter') || document.querySelectorAll('select')[1];
+    const genderFilter = document.querySelector('#genderFilter') || document.querySelectorAll('select')[2];
+    const searchInput = document.querySelector('#searchDog') || document.querySelector('input[placeholder*="Buscar"]');
+    
+    function applyFilters() {
+        const filters = {};
+        if (sizeFilter?.value) filters.size = sizeFilter.value;
+        if (ageFilter?.value) filters.age = ageFilter.value;
+        if (genderFilter?.value) filters.gender = genderFilter.value;
+        if (searchInput?.value) filters.search = searchInput.value;
+        loadDogsList(filters);
+    }
+    
+    if (sizeFilter) sizeFilter.addEventListener('change', applyFilters);
+    if (ageFilter) ageFilter.addEventListener('change', applyFilters);
+    if (genderFilter) genderFilter.addEventListener('change', applyFilters);
+    if (searchInput) {
+        const searchBtn = searchInput.nextElementSibling;
+        if (searchBtn) searchBtn.addEventListener('click', applyFilters);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') applyFilters();
+        });
+    }
 }
 
 // ========================================
 // FORMULARIOS
 // ========================================
 function initForms() {
-    // Formulario de contacto
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            showToast('¡Mensaje enviado! Te responderemos lo antes posible.', 'success');
+            showToast('¡Mensaje enviado! Te responderemos pronto.', 'success');
             this.reset();
         });
     }
     
-    // Formulario de adopción
     const adoptionForm = document.getElementById('adoptionForm');
     if (adoptionForm) {
         adoptionForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            showToast('¡Solicitud recibida! Nos pondremos en contacto contigo.', 'success');
+            showToast('¡Solicitud recibida! Te contactaremos.', 'success');
             this.reset();
         });
     }
     
-    // Formulario de donación
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         initDonationForm(donationForm);
     }
-    
-    // Formulario de apadrinamiento
-    const sponsorForm = document.getElementById('sponsorForm');
-    if (sponsorForm) {
-        sponsorForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            showToast('¡Gracias por apadrinar! Te contactaremos pronto.', 'success');
-            this.reset();
-        });
-    }
-    
-    // Formulario de acogida
-    const acogeForm = document.getElementById('acogeForm');
-    if (acogeForm) {
-        acogeForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            showToast('¡Gracias por ofrecerte! Te contactaremos pronto.', 'success');
-            this.reset();
-        });
-    }
-    
-    // Formulario de voluntario
-    const volunteerForm = document.getElementById('volunteerForm');
-    if (volunteerForm) {
-        volunteerForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            showToast('¡Gracias por querer ser voluntario! Te contactaremos.', 'success');
-            this.reset();
-        });
-    }
 }
 
-// ========================================
-// FORMULARIO DE DONACIÓN
-// ========================================
 function initDonationForm(form) {
     const amountBtns = form.querySelectorAll('.amount-btn');
     const customAmount = form.querySelector('#customAmount');
-    const totalSpan = form.querySelector('#donationTotal');
     
     amountBtns.forEach(btn => {
         btn.addEventListener('click', function() {
@@ -402,7 +606,6 @@ function initDonationForm(form) {
             this.style.color = 'white';
             this.style.borderColor = '#e04f2e';
             if (customAmount) customAmount.value = '';
-            updateTotal();
         });
     });
     
@@ -413,31 +616,17 @@ function initDonationForm(form) {
                 b.style.color = '#333';
                 b.style.borderColor = '#ddd';
             });
-            updateTotal();
         });
-    }
-    
-    function updateTotal() {
-        if (!totalSpan) return;
-        let amount = 0;
-        const activeBtn = form.querySelector('.amount-btn[style*="e04f2e"]');
-        if (activeBtn) {
-            amount = parseFloat(activeBtn.dataset.amount);
-        } else if (customAmount?.value) {
-            amount = parseFloat(customAmount.value);
-        }
-        const isMonthly = form.querySelector('input[name="type"]:checked')?.value === 'monthly';
-        totalSpan.textContent = isMonthly ? `${amount}€/mes` : `${amount}€`;
     }
     
     form.addEventListener('submit', function(e) {
         e.preventDefault();
-        showToast('Redirigiendo a la pasarela de pago seguro...', 'success');
+        showToast('Redirigiendo a pasarela de pago...', 'success');
     });
 }
 
 // ========================================
-// TOAST (NOTIFICACIONES)
+// TOAST
 // ========================================
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
@@ -461,8 +650,19 @@ function setSelectedDog(dogName) {
     localStorage.setItem('selectedDog', dogName);
 }
 
-// Obtener perro seleccionado en formularios
-document.addEventListener('DOMContentLoaded', function() {
+// ========================================
+// INICIALIZACIÓN
+// ========================================
+document.addEventListener('DOMContentLoaded', async function() {
+    await loadSettings();
+    await loadDogs();
+    await loadBlogPosts();
+    
+    initMobileMenu();
+    initDropdownMobile();
+    initNewsletter();
+    initForms();
+    
     const selectedDog = localStorage.getItem('selectedDog');
     if (selectedDog) {
         const select = document.querySelector('select[name="perro"]');
@@ -481,4 +681,4 @@ window.openBlogModal = openBlogModal;
 window.closeModal = closeModal;
 window.setSelectedDog = setSelectedDog;
 
-console.log('🐾 Peludos Los Pedroches - Web cargada correctamente');
+console.log('🐾 Peludos Los Pedroches - Conectado a Supabase');
