@@ -10,8 +10,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Open Sans', sans-serif; background: #f5f5f5; overflow-x: hidden; }
-        
-        /* Verificación de autenticación - Pantalla de carga */
         #authCheck {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -23,7 +21,6 @@
             font-size: 1.5rem;
             color: #2c5f2d;
         }
-        
         .admin-wrapper { display: flex; min-height: 100vh; }
         .admin-sidebar {
             width: 260px;
@@ -189,7 +186,6 @@
             border-radius: 8px;
             font-size: 0.95rem;
         }
-        .form-group input[type="file"] { padding: 8px; }
         .btn-save {
             width: 100%;
             padding: 14px;
@@ -208,28 +204,6 @@
             z-index: 99;
         }
         .sidebar-overlay.active { display: block; }
-        .image-preview {
-            margin-top: 10px;
-            max-width: 200px;
-        }
-        .image-preview img {
-            width: 100%;
-            border-radius: 8px;
-        }
-        .upload-progress {
-            margin-top: 10px;
-            height: 5px;
-            background: #ddd;
-            border-radius: 5px;
-            overflow: hidden;
-            display: none;
-        }
-        .upload-progress-bar {
-            height: 100%;
-            background: #2c5f2d;
-            width: 0%;
-            transition: width 0.3s;
-        }
         
         @media (max-width: 768px) {
             .admin-sidebar { transform: translateX(-100%); }
@@ -242,7 +216,6 @@
     </style>
 </head>
 <body>
-    <!-- Verificación de autenticación -->
     <div id="authCheck">
         <i class="fas fa-spinner fa-spin"></i> Verificando acceso...
     </div>
@@ -284,30 +257,32 @@
         // ========================================
         // VERIFICACIÓN DE AUTENTICACIÓN
         // ========================================
-        (function checkAuth() {
+        (function() {
             const token = localStorage.getItem('adminToken');
             
             if (token !== 'authenticated') {
-                // No autenticado - redirigir al login
                 window.location.href = 'login.html';
                 return;
             }
             
-            // Autenticado - mostrar panel
             document.getElementById('authCheck').style.display = 'none';
             document.getElementById('adminWrapper').style.display = 'flex';
             
-            // Inicializar el panel
-            init();
+            // Inicializar cuando el DOM esté listo
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
         })();
         
         // ========================================
-        // CONFIGURACIÓN DE SUPABASE
+        // VARIABLES GLOBALES (ÚNICA DECLARACIÓN)
         // ========================================
         const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
         
-        let supabase;
+        let supabaseClient = null;
         let dogs = [];
         let blogPosts = [];
         let settings = {};
@@ -315,10 +290,8 @@
         let selectedImageFile = null;
         
         // Inicializar Supabase
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (e) {
-            console.error('Error inicializando Supabase:', e);
+        if (typeof window.supabase !== 'undefined') {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         }
         
         async function init() {
@@ -365,10 +338,10 @@
         }
         
         async function loadSettings() {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             try {
-                const { data, error } = await supabase.from('settings').select('*');
+                const { data, error } = await supabaseClient.from('settings').select('*');
                 if (error) throw error;
                 if (data) data.forEach(item => { settings[item.key] = item.value; });
             } catch (error) {
@@ -377,10 +350,10 @@
         }
         
         async function loadDogs() {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             try {
-                const { data, error } = await supabase.from('dogs').select('*').order('id', { ascending: false });
+                const { data, error } = await supabaseClient.from('dogs').select('*').order('id', { ascending: false });
                 if (error) throw error;
                 dogs = data || [];
             } catch (error) {
@@ -389,10 +362,10 @@
         }
         
         async function loadBlogPosts() {
-            if (!supabase) return;
+            if (!supabaseClient) return;
             
             try {
-                const { data, error } = await supabase.from('blog_posts').select('*').order('id', { ascending: false });
+                const { data, error } = await supabaseClient.from('blog_posts').select('*').order('id', { ascending: false });
                 if (error) throw error;
                 blogPosts = data || [];
             } catch (error) {
@@ -417,7 +390,6 @@
             
             content.innerHTML = toggleBtn + html;
             
-            // Re-setup del menú móvil
             const newToggle = document.getElementById('mobileMenuToggle');
             if (newToggle) {
                 newToggle.addEventListener('click', function() {
@@ -442,14 +414,10 @@
                 <div class="admin-section">
                     <h2>Perros disponibles</h2>
                     <table class="admin-table">
-                        <thead><tr><th>Imagen</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr></thead>
+                        <thead><tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr></thead>
                         <tbody>
                             ${dogs.filter(d => d.status !== 'Adoptado').slice(0, 5).map(d => `
-                                <tr>
-                                    <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
-                                    <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
-                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
-                                </tr>
+                                <tr><td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td><td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td></tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -463,11 +431,10 @@
                 <div class="admin-section">
                     <h2>Listado de perros <button class="btn-add" onclick="openModal('dog')"><i class="fas fa-plus"></i> Añadir perro</button></h2>
                     <table class="admin-table">
-                        <thead><tr><th>Imagen</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${dogs.map(d => `
                                 <tr>
-                                    <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
                                     <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
                                     <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
                                     <td>
@@ -511,101 +478,36 @@
             return `
                 <div class="admin-header"><h1>Configuración</h1></div>
                 <div class="admin-section">
-                    <h2>Logo y Marca</h2>
+                    <h2>Logo</h2>
                     <div class="form-group">
                         <label>Texto del logo</label>
                         <input type="text" id="logoText" value="${settings.logo_text || '🐾 PELUDOS LOS PEDROCHES'}">
                     </div>
-                    <div class="form-group">
-                        <label>Subtítulo del logo</label>
-                        <input type="text" id="logoSubtitle" value="${settings.logo_subtitle || 'Protectora de Animales'}">
-                    </div>
-                    <button class="btn-save" onclick="saveLogoSettings()">Guardar logo</button>
+                    <button class="btn-save" onclick="saveLogoSettings()">Guardar</button>
                 </div>
-                
-                <div class="admin-section">
-                    <h2>Colores</h2>
-                    <div class="form-group">
-                        <label>Color principal</label>
-                        <input type="color" id="primaryColor" value="${settings.primary_color || '#e04f2e'}">
-                    </div>
-                    <div class="form-group">
-                        <label>Color secundario</label>
-                        <input type="color" id="secondaryColor" value="${settings.secondary_color || '#2c5f2d'}">
-                    </div>
-                    <button class="btn-save" onclick="saveColorSettings()">Guardar colores</button>
-                </div>
-                
                 <div class="admin-section">
                     <h2>Contacto</h2>
-                    <div class="form-group"><label>Teléfono principal</label><input type="text" id="phone1" value="${settings.contact_phone1 || '661 44 79 42'}"></div>
-                    <div class="form-group"><label>Teléfono secundario</label><input type="text" id="phone2" value="${settings.contact_phone2 || '666 86 16 20'}"></div>
+                    <div class="form-group"><label>Teléfono</label><input type="text" id="phone1" value="${settings.contact_phone1 || '661 44 79 42'}"></div>
                     <div class="form-group"><label>Email</label><input type="email" id="email" value="${settings.contact_email || 'peludoslospedroches@gmail.com'}"></div>
-                    <button class="btn-save" onclick="saveContactSettings()">Guardar contacto</button>
+                    <button class="btn-save" onclick="saveContactSettings()">Guardar</button>
                 </div>
             `;
         }
         
         async function saveLogoSettings() {
             const logoText = document.getElementById('logoText').value;
-            const logoSubtitle = document.getElementById('logoSubtitle').value;
-            
-            await supabase.from('settings').update({ value: logoText }).eq('key', 'logo_text');
-            await supabase.from('settings').update({ value: logoSubtitle }).eq('key', 'logo_subtitle');
-            
+            await supabaseClient.from('settings').update({ value: logoText }).eq('key', 'logo_text');
             showToast('Logo actualizado');
-            init();
-        }
-        
-        async function saveColorSettings() {
-            const primary = document.getElementById('primaryColor').value;
-            const secondary = document.getElementById('secondaryColor').value;
-            
-            await supabase.from('settings').update({ value: primary }).eq('key', 'primary_color');
-            await supabase.from('settings').update({ value: secondary }).eq('key', 'secondary_color');
-            
-            showToast('Colores actualizados');
             init();
         }
         
         async function saveContactSettings() {
             const phone1 = document.getElementById('phone1')?.value;
-            const phone2 = document.getElementById('phone2')?.value;
             const email = document.getElementById('email')?.value;
-            
-            if (phone1) await supabase.from('settings').update({ value: phone1 }).eq('key', 'contact_phone1');
-            if (phone2) await supabase.from('settings').update({ value: phone2 }).eq('key', 'contact_phone2');
-            if (email) await supabase.from('settings').update({ value: email }).eq('key', 'contact_email');
-            
+            if (phone1) await supabaseClient.from('settings').update({ value: phone1 }).eq('key', 'contact_phone1');
+            if (email) await supabaseClient.from('settings').update({ value: email }).eq('key', 'contact_email');
             showToast('Contacto actualizado');
             init();
-        }
-        
-        async function uploadImage(file) {
-            if (!file) return null;
-            
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-            
-            try {
-                const { data, error } = await supabase.storage
-                    .from('dogs')
-                    .upload(fileName, file, {
-                        cacheControl: '3600',
-                        upsert: false
-                    });
-                
-                if (error) throw error;
-                
-                const { data: urlData } = supabase.storage
-                    .from('dogs')
-                    .getPublicUrl(fileName);
-                
-                return urlData.publicUrl;
-            } catch (error) {
-                console.error('Error subiendo imagen:', error);
-                return null;
-            }
         }
         
         function openModal(type, id = null) {
@@ -614,34 +516,26 @@
             const body = document.getElementById('modalBody');
             
             if (type === 'dog') {
-                const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', gender: 'Macho', size: 'Mediano', status: 'Disponible', description: '', badge: '', image_url: '' };
+                const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', gender: 'Macho', size: 'Mediano', status: 'Disponible', description: '', badge: '' };
                 title.textContent = id ? 'Editar perro' : 'Añadir perro';
                 body.innerHTML = `
-                    <div class="form-group">
-                        <label>Foto del perro</label>
-                        <input type="file" id="dogImage" accept="image/*" onchange="previewImage(this)">
-                        <div class="image-preview" id="imagePreview">
-                            ${dog.image_url ? `<img src="${dog.image_url}" alt="Preview">` : ''}
-                        </div>
-                    </div>
                     <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
                     <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
-                    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}" placeholder="Ej: 2 años"></div>
+                    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}"></div>
                     <div class="form-group"><label>Sexo</label><select id="dogGender"><option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option><option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option></select></div>
                     <div class="form-group"><label>Tamaño</label><select id="dogSize"><option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option><option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option><option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option></select></div>
                     <div class="form-group"><label>Estado</label><select id="dogStatus"><option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option><option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option><option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option></select></div>
-                    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}" placeholder="Urgente, Nuevo, etc."></div>
+                    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}"></div>
                     <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
                     <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar perro</button>
                 `;
-                selectedImageFile = null;
             } else if (type === 'blog') {
                 const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado' };
                 title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
                 body.innerHTML = `
                     <div class="form-group"><label>Título *</label><input type="text" id="postTitle" value="${post.title || ''}" required></div>
                     <div class="form-group"><label>Extracto</label><input type="text" id="postExcerpt" value="${post.excerpt || ''}"></div>
-                    <div class="form-group"><label>Contenido (HTML permitido)</label><textarea id="postContent" rows="6">${post.content || ''}</textarea></div>
+                    <div class="form-group"><label>Contenido</label><textarea id="postContent" rows="6">${post.content || ''}</textarea></div>
                     <div class="form-group"><label>Estado</label><select id="postStatus"><option ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option><option ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option></select></div>
                     <button class="btn-save" onclick="saveBlogPost(${id || 'null'})">Guardar entrada</button>
                 `;
@@ -650,37 +544,9 @@
             modal.classList.add('active');
         }
         
-        function previewImage(input) {
-            const file = input.files[0];
-            if (file) {
-                selectedImageFile = file;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('imagePreview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-        
         async function saveDog(id) {
             const name = document.getElementById('dogName')?.value;
-            if (!name) {
-                showToast('El nombre es obligatorio', 'error');
-                return;
-            }
-            
-            let imageUrl = '';
-            const existingDog = id && id !== 'null' ? dogs.find(d => d.id === id) : null;
-            
-            if (selectedImageFile) {
-                imageUrl = await uploadImage(selectedImageFile);
-                if (!imageUrl) {
-                    showToast('Error al subir la imagen', 'error');
-                    return;
-                }
-            } else if (existingDog) {
-                imageUrl = existingDog.image_url || '';
-            }
+            if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
             
             const dogData = {
                 name: name,
@@ -690,25 +556,24 @@
                 size: document.getElementById('dogSize')?.value || 'Mediano',
                 status: document.getElementById('dogStatus')?.value || 'Disponible',
                 badge: document.getElementById('dogBadge')?.value || '',
-                description: document.getElementById('dogDescription')?.value || '',
-                image_url: imageUrl
+                description: document.getElementById('dogDescription')?.value || ''
             };
             
             if (id && id !== 'null') {
-                await supabase.from('dogs').update(dogData).eq('id', id);
+                await supabaseClient.from('dogs').update(dogData).eq('id', id);
             } else {
-                await supabase.from('dogs').insert([dogData]);
+                await supabaseClient.from('dogs').insert([dogData]);
             }
             
             closeModal();
             await loadDogs();
             renderPage();
-            showToast('Perro guardado correctamente');
+            showToast('Perro guardado');
         }
         
         async function deleteDog(id) {
             if (confirm('¿Eliminar este perro?')) {
-                await supabase.from('dogs').delete().eq('id', id);
+                await supabaseClient.from('dogs').delete().eq('id', id);
                 await loadDogs();
                 renderPage();
                 showToast('Perro eliminado');
@@ -717,23 +582,19 @@
         
         async function saveBlogPost(id) {
             const title = document.getElementById('postTitle')?.value;
-            if (!title) {
-                showToast('El título es obligatorio', 'error');
-                return;
-            }
+            if (!title) { showToast('El título es obligatorio', 'error'); return; }
             
             const postData = {
                 title: title,
                 excerpt: document.getElementById('postExcerpt')?.value || '',
                 content: document.getElementById('postContent')?.value || '',
-                status: document.getElementById('postStatus')?.value || 'Publicado',
-                image: '📰'
+                status: document.getElementById('postStatus')?.value || 'Publicado'
             };
             
             if (id && id !== 'null') {
-                await supabase.from('blog_posts').update(postData).eq('id', id);
+                await supabaseClient.from('blog_posts').update(postData).eq('id', id);
             } else {
-                await supabase.from('blog_posts').insert([postData]);
+                await supabaseClient.from('blog_posts').insert([postData]);
             }
             
             closeModal();
@@ -744,7 +605,7 @@
         
         async function deleteBlogPost(id) {
             if (confirm('¿Eliminar esta entrada?')) {
-                await supabase.from('blog_posts').delete().eq('id', id);
+                await supabaseClient.from('blog_posts').delete().eq('id', id);
                 await loadBlogPosts();
                 renderPage();
                 showToast('Entrada eliminada');
@@ -753,7 +614,6 @@
         
         function closeModal() {
             document.getElementById('editModal').classList.remove('active');
-            selectedImageFile = null;
         }
         
         function showToast(message, type = 'success') {
@@ -774,11 +634,9 @@
         window.closeModal = closeModal;
         window.saveDog = saveDog;
         window.deleteDog = deleteDog;
-        window.previewImage = previewImage;
         window.saveBlogPost = saveBlogPost;
         window.deleteBlogPost = deleteBlogPost;
         window.saveLogoSettings = saveLogoSettings;
-        window.saveColorSettings = saveColorSettings;
         window.saveContactSettings = saveContactSettings;
         window.logout = logout;
     </script>
