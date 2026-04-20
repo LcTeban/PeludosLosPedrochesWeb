@@ -1,6 +1,6 @@
 // ========================================
 // PELUDOS LOS PEDROCHES - CON SUPABASE
-// CREDENCIALES REALES
+// CREDENCIALES REALES - VERSIÓN COMPLETA
 // ========================================
 
 // CONFIGURACIÓN DE SUPABASE
@@ -126,9 +126,9 @@ function loadDogsFromLocal() {
 
 function getDefaultDogs() {
     return [
-        { id: 1, name: 'Luna', breed: 'Mastina atigrada', age: '2 años', size: 'Grande', gender: 'Hembra', badge: 'Urgente', description: 'Cariñosa a rabiar y juguetona. Ideal para campo.', image: '🐕', status: 'Disponible' },
-        { id: 2, name: 'Arena', breed: 'Cruce de labrador', age: '2 años', size: 'Mediano', gender: 'Hembra', badge: 'En acogida', description: 'Perrita activa, buena, noble y cariñosa.', image: '🐕', status: 'En acogida' },
-        { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', size: 'Mediano', gender: 'Macho', badge: 'Nuevo', description: 'Joven y juguetón, busca familia activa.', image: '🐕', status: 'Disponible' }
+        { id: 1, name: 'Luna', breed: 'Mastina atigrada', age: '2 años', size: 'Grande', gender: 'Hembra', badge: 'Urgente', description: 'Cariñosa a rabiar y juguetona. Ideal para campo.', image_url: null, status: 'Disponible' },
+        { id: 2, name: 'Arena', breed: 'Cruce de labrador', age: '2 años', size: 'Mediano', gender: 'Hembra', badge: 'En acogida', description: 'Perrita activa, buena, noble y cariñosa.', image_url: null, status: 'En acogida' },
+        { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', size: 'Mediano', gender: 'Macho', badge: 'Nuevo', description: 'Joven y juguetón, busca familia activa.', image_url: null, status: 'Disponible' }
     ];
 }
 
@@ -178,120 +178,6 @@ function getDefaultBlogPosts() {
         { id: 2, title: 'Nuestro refugio al límite de capacidad', excerpt: 'Superamos los 70 perros y necesitamos casas de acogida urgentes.', content: '<p>Actualmente tenemos más de 70 perros en nuestro refugio.</p>', image: '🏠', status: 'Publicado', created_at: '2023-12-15' },
         { id: 3, title: 'Colaboración con Fundación Gypaetus', excerpt: 'Seguimos trabajando en el proyecto Life.', content: '<p>Continuamos nuestra colaboración con la Fundación Gypaetus.</p>', image: '🦅', status: 'Publicado', created_at: '2023-11-05' }
     ];
-}
-
-// ========================================
-// GUARDAR PERRO (PARA ADMIN)
-// ========================================
-async function saveDogToSupabase(dogData) {
-    if (!supabase) return false;
-    
-    try {
-        let result;
-        if (dogData.id) {
-            result = await supabase
-                .from('dogs')
-                .update(dogData)
-                .eq('id', dogData.id);
-        } else {
-            result = await supabase
-                .from('dogs')
-                .insert([dogData]);
-        }
-        
-        if (result.error) throw result.error;
-        return true;
-    } catch (error) {
-        console.error('Error guardando perro:', error);
-        return false;
-    }
-}
-
-// ========================================
-// GUARDAR ENTRADA DE BLOG (PARA ADMIN)
-// ========================================
-async function saveBlogPostToSupabase(postData) {
-    if (!supabase) return false;
-    
-    try {
-        let result;
-        if (postData.id) {
-            result = await supabase
-                .from('blog_posts')
-                .update(postData)
-                .eq('id', postData.id);
-        } else {
-            result = await supabase
-                .from('blog_posts')
-                .insert([postData]);
-        }
-        
-        if (result.error) throw result.error;
-        return true;
-    } catch (error) {
-        console.error('Error guardando entrada:', error);
-        return false;
-    }
-}
-
-// ========================================
-// ELIMINAR PERRO (PARA ADMIN)
-// ========================================
-async function deleteDogFromSupabase(id) {
-    if (!supabase) return false;
-    
-    try {
-        const { error } = await supabase
-            .from('dogs')
-            .delete()
-            .eq('id', id);
-        
-        if (error) throw error;
-        return true;
-    } catch (error) {
-        console.error('Error eliminando perro:', error);
-        return false;
-    }
-}
-
-// ========================================
-// ELIMINAR ENTRADA DE BLOG (PARA ADMIN)
-// ========================================
-async function deleteBlogPostFromSupabase(id) {
-    if (!supabase) return false;
-    
-    try {
-        const { error } = await supabase
-            .from('blog_posts')
-            .delete()
-            .eq('id', id);
-        
-        if (error) throw error;
-        return true;
-    } catch (error) {
-        console.error('Error eliminando entrada:', error);
-        return false;
-    }
-}
-
-// ========================================
-// GUARDAR CONFIGURACIÓN
-// ========================================
-async function saveSettingToSupabase(key, value) {
-    if (!supabase) return false;
-    
-    try {
-        const { error } = await supabase
-            .from('settings')
-            .update({ value })
-            .eq('key', key);
-        
-        if (error) throw error;
-        return true;
-    } catch (error) {
-        console.error('Error guardando configuración:', error);
-        return false;
-    }
 }
 
 // ========================================
@@ -407,15 +293,17 @@ function loadDogsList(filter = {}) {
 }
 
 // ========================================
-// CREAR TARJETA DE PERRO
+// CREAR TARJETA DE PERRO (CON IMAGEN REAL)
 // ========================================
 function createDogCard(dog) {
-    const date = dog.created_at ? new Date(dog.created_at).toLocaleDateString('es-ES') : dog.age;
+    const imageHtml = dog.image_url 
+        ? `<img src="${dog.image_url}" alt="${dog.name}" style="width: 100%; height: 100%; object-fit: cover;">` 
+        : `<div class="placeholder-image">${dog.image || '🐕'}</div>`;
     
     return `
         <div class="dog-card fade-in">
             <div class="dog-image">
-                <div class="placeholder-image">${dog.image || '🐕'}</div>
+                ${imageHtml}
                 ${dog.badge ? `<span class="dog-badge">${dog.badge}</span>` : ''}
             </div>
             <div class="dog-info">
@@ -440,22 +328,28 @@ function loadSponsorDogs() {
     if (!container) return;
     
     const available = dogs.filter(d => d.status !== 'Adoptado').slice(0, 3);
-    container.innerHTML = available.map(dog => `
-        <div class="dog-card fade-in">
-            <div class="dog-image">
-                <div class="placeholder-image">${dog.image || '🐕'}</div>
-            </div>
-            <div class="dog-info">
-                <h3 class="dog-name">${dog.name}</h3>
-                <div class="dog-details">
-                    <span><i class="fas fa-paw"></i> ${dog.breed}</span>
-                    <span><i class="fas fa-calendar"></i> ${dog.age}</span>
+    container.innerHTML = available.map(dog => {
+        const imageHtml = dog.image_url 
+            ? `<img src="${dog.image_url}" alt="${dog.name}" style="width: 100%; height: 100%; object-fit: cover;">` 
+            : `<div class="placeholder-image">${dog.image || '🐕'}</div>`;
+        
+        return `
+            <div class="dog-card fade-in">
+                <div class="dog-image">
+                    ${imageHtml}
                 </div>
-                <p class="dog-description">${dog.description}</p>
-                <a href="apadrina.html#formulario" class="btn-adopt" onclick="setSelectedDog('${dog.name}')">Apadrinar</a>
+                <div class="dog-info">
+                    <h3 class="dog-name">${dog.name}</h3>
+                    <div class="dog-details">
+                        <span><i class="fas fa-paw"></i> ${dog.breed}</span>
+                        <span><i class="fas fa-calendar"></i> ${dog.age}</span>
+                    </div>
+                    <p class="dog-description">${dog.description}</p>
+                    <a href="apadrina.html#formulario" class="btn-adopt" onclick="setSelectedDog('${dog.name}')">Apadrinar</a>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // ========================================
@@ -630,7 +524,19 @@ function initDonationForm(form) {
 // ========================================
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: ${type === 'success' ? '#2c5f2d' : '#e04f2e'};
+        color: white;
+        padding: 12px 18px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        animation: slideIn 0.3s ease;
+        max-width: 300px;
+    `;
     toast.innerHTML = `
         <i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}" style="margin-right: 10px;"></i>
         ${message}
