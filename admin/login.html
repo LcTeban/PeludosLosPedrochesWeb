@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin · Peludos Los Pedroches</title>
-    <link rel="stylesheet" href="../css/style.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
             background: linear-gradient(135deg, #2c5f2d, #1a3a1b);
             min-height: 100vh;
@@ -13,6 +17,7 @@
             align-items: center;
             justify-content: center;
             font-family: 'Open Sans', sans-serif;
+            padding: 20px;
         }
         .login-box {
             background: white;
@@ -22,12 +27,17 @@
             width: 100%;
             max-width: 380px;
         }
-        .login-box h2 {
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 3rem;
+        }
+        h2 {
             color: #2c5f2d;
             text-align: center;
             margin-bottom: 10px;
         }
-        .login-box p {
+        p {
             text-align: center;
             color: #666;
             margin-bottom: 30px;
@@ -35,19 +45,24 @@
         .form-group {
             margin-bottom: 20px;
         }
-        .form-group label {
+        label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
+            color: #333;
         }
-        .form-group input {
+        input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 14px 15px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 1rem;
         }
-        .btn-login {
+        input:focus {
+            outline: none;
+            border-color: #e04f2e;
+        }
+        button {
             width: 100%;
             padding: 14px;
             background: #e04f2e;
@@ -57,14 +72,25 @@
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
+            transition: background 0.3s;
         }
-        .btn-login:hover {
+        button:hover {
             background: #c43d1e;
         }
-        .logo {
+        .error-message {
+            color: #e04f2e;
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 3rem;
+            margin-top: 15px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .hint {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #999;
         }
     </style>
 </head>
@@ -77,28 +103,48 @@
         <form id="loginForm">
             <div class="form-group">
                 <label>Usuario</label>
-                <input type="text" id="username" required>
+                <input type="text" id="username" placeholder="admin" required>
             </div>
             <div class="form-group">
                 <label>Contraseña</label>
-                <input type="password" id="password" required>
+                <input type="password" id="password" placeholder="········" required>
             </div>
-            <button type="submit" class="btn-login">INICIAR SESIÓN</button>
+            <button type="submit">INICIAR SESIÓN</button>
         </form>
+        
+        <div class="error-message" id="errorMessage">
+            Usuario o contraseña incorrectos
+        </div>
+        
+        <div class="hint">
+            Usuario: admin / Contraseña: Peludos2024!
+        </div>
     </div>
     
     <script>
+        // Verificar si ya está autenticado
+        if (localStorage.getItem('adminToken') === 'authenticated') {
+            window.location.href = 'index.html';
+        }
+        
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMessage');
             
             // Credenciales
             if (username === 'admin' && password === 'Peludos2024!') {
                 localStorage.setItem('adminToken', 'authenticated');
                 window.location.href = 'index.html';
             } else {
-                alert('Usuario o contraseña incorrectos');
+                errorMsg.classList.add('show');
+                
+                // Ocultar mensaje después de 3 segundos
+                setTimeout(() => {
+                    errorMsg.classList.remove('show');
+                }, 3000);
             }
         });
     </script>
