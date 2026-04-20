@@ -186,6 +186,7 @@
             border-radius: 8px;
             font-size: 0.95rem;
         }
+        .form-group input[type="file"] { padding: 8px; }
         .btn-save {
             width: 100%;
             padding: 14px;
@@ -204,6 +205,14 @@
             z-index: 99;
         }
         .sidebar-overlay.active { display: block; }
+        .image-preview {
+            margin-top: 10px;
+            max-width: 200px;
+        }
+        .image-preview img {
+            width: 100%;
+            border-radius: 8px;
+        }
         
         @media (max-width: 768px) {
             .admin-sidebar { transform: translateX(-100%); }
@@ -254,21 +263,15 @@
     </div>
     
     <script>
-        // ========================================
-        // VERIFICACIÓN DE AUTENTICACIÓN
-        // ========================================
+        // Verificación de autenticación
         (function() {
             const token = localStorage.getItem('adminToken');
-            
             if (token !== 'authenticated') {
                 window.location.href = 'login.html';
                 return;
             }
-            
             document.getElementById('authCheck').style.display = 'none';
             document.getElementById('adminWrapper').style.display = 'flex';
-            
-            // Inicializar cuando el DOM esté listo
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', init);
             } else {
@@ -276,23 +279,16 @@
             }
         })();
         
-        // ========================================
-        // VARIABLES GLOBALES (ÚNICA DECLARACIÓN)
-        // ========================================
+        // Configuración de Supabase
         const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
         
-        let supabaseClient = null;
+        let supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         let dogs = [];
         let blogPosts = [];
         let settings = {};
         let currentPage = 'dashboard';
         let selectedImageFile = null;
-        
-        // Inicializar Supabase
-        if (typeof window.supabase !== 'undefined') {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        }
         
         async function init() {
             await loadSettings();
@@ -338,8 +334,6 @@
         }
         
         async function loadSettings() {
-            if (!supabaseClient) return;
-            
             try {
                 const { data, error } = await supabaseClient.from('settings').select('*');
                 if (error) throw error;
@@ -350,20 +344,17 @@
         }
         
         async function loadDogs() {
-            if (!supabaseClient) return;
-            
             try {
                 const { data, error } = await supabaseClient.from('dogs').select('*').order('id', { ascending: false });
                 if (error) throw error;
                 dogs = data || [];
+                console.log('Perros cargados:', dogs.length);
             } catch (error) {
                 console.error('Error cargando perros:', error);
             }
         }
         
         async function loadBlogPosts() {
-            if (!supabaseClient) return;
-            
             try {
                 const { data, error } = await supabaseClient.from('blog_posts').select('*').order('id', { ascending: false });
                 if (error) throw error;
@@ -378,15 +369,10 @@
             const toggleBtn = '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>';
             
             let html = '';
-            if (currentPage === 'dashboard') {
-                html = renderDashboard();
-            } else if (currentPage === 'dogs') {
-                html = renderDogsPage();
-            } else if (currentPage === 'blog') {
-                html = renderBlogPage();
-            } else if (currentPage === 'settings') {
-                html = renderSettingsPage();
-            }
+            if (currentPage === 'dashboard') html = renderDashboard();
+            else if (currentPage === 'dogs') html = renderDogsPage();
+            else if (currentPage === 'blog') html = renderBlogPage();
+            else if (currentPage === 'settings') html = renderSettingsPage();
             
             content.innerHTML = toggleBtn + html;
             
@@ -414,10 +400,14 @@
                 <div class="admin-section">
                     <h2>Perros disponibles</h2>
                     <table class="admin-table">
-                        <thead><tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr></thead>
+                        <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr></thead>
                         <tbody>
                             ${dogs.filter(d => d.status !== 'Adoptado').slice(0, 5).map(d => `
-                                <tr><td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td><td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td></tr>
+                                <tr>
+                                    <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
+                                    <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
+                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -431,10 +421,11 @@
                 <div class="admin-section">
                     <h2>Listado de perros <button class="btn-add" onclick="openModal('dog')"><i class="fas fa-plus"></i> Añadir perro</button></h2>
                     <table class="admin-table">
-                        <thead><tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${dogs.map(d => `
                                 <tr>
+                                    <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
                                     <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
                                     <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
                                     <td>
@@ -510,25 +501,63 @@
             init();
         }
         
+        async function uploadImage(file) {
+            if (!file) return null;
+            
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+            
+            try {
+                const { data, error } = await supabaseClient.storage
+                    .from('dogs')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+                
+                if (error) {
+                    console.error('Error al subir:', error);
+                    return null;
+                }
+                
+                const { data: urlData } = supabaseClient.storage
+                    .from('dogs')
+                    .getPublicUrl(fileName);
+                
+                return urlData.publicUrl;
+            } catch (error) {
+                console.error('Error subiendo imagen:', error);
+                return null;
+            }
+        }
+        
         function openModal(type, id = null) {
             const modal = document.getElementById('editModal');
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
             
             if (type === 'dog') {
-                const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', gender: 'Macho', size: 'Mediano', status: 'Disponible', description: '', badge: '' };
+                const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', gender: 'Macho', size: 'Mediano', status: 'Disponible', description: '', badge: '', image_url: '' };
                 title.textContent = id ? 'Editar perro' : 'Añadir perro';
                 body.innerHTML = `
+                    <div class="form-group">
+                        <label>Foto del perro</label>
+                        <input type="file" id="dogImage" accept="image/*" onchange="previewImage(this)">
+                        <div class="image-preview" id="imagePreview">
+                            ${dog.image_url ? `<img src="${dog.image_url}" alt="Preview">` : ''}
+                        </div>
+                    </div>
                     <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
                     <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
-                    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}"></div>
+                    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}" placeholder="Ej: 2 años"></div>
                     <div class="form-group"><label>Sexo</label><select id="dogGender"><option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option><option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option></select></div>
                     <div class="form-group"><label>Tamaño</label><select id="dogSize"><option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option><option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option><option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option></select></div>
                     <div class="form-group"><label>Estado</label><select id="dogStatus"><option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option><option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option><option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option></select></div>
-                    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}"></div>
+                    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}" placeholder="Urgente, Nuevo, etc."></div>
                     <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
                     <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar perro</button>
                 `;
+                selectedImageFile = null;
             } else if (type === 'blog') {
                 const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado' };
                 title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
@@ -544,9 +573,36 @@
             modal.classList.add('active');
         }
         
+        function previewImage(input) {
+            const file = input.files[0];
+            if (file) {
+                selectedImageFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
         async function saveDog(id) {
             const name = document.getElementById('dogName')?.value;
             if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
+            
+            let imageUrl = '';
+            const existingDog = id && id !== 'null' ? dogs.find(d => d.id === id) : null;
+            
+            // Subir imagen si se seleccionó una nueva
+            if (selectedImageFile) {
+                showToast('Subiendo imagen...', 'info');
+                imageUrl = await uploadImage(selectedImageFile);
+                if (!imageUrl) {
+                    showToast('Error al subir la imagen', 'error');
+                    return;
+                }
+            } else if (existingDog) {
+                imageUrl = existingDog.image_url || '';
+            }
             
             const dogData = {
                 name: name,
@@ -556,27 +612,41 @@
                 size: document.getElementById('dogSize')?.value || 'Mediano',
                 status: document.getElementById('dogStatus')?.value || 'Disponible',
                 badge: document.getElementById('dogBadge')?.value || '',
-                description: document.getElementById('dogDescription')?.value || ''
+                description: document.getElementById('dogDescription')?.value || '',
+                image_url: imageUrl
             };
             
+            console.log('Guardando perro:', dogData);
+            
+            let result;
             if (id && id !== 'null') {
-                await supabaseClient.from('dogs').update(dogData).eq('id', id);
+                result = await supabaseClient.from('dogs').update(dogData).eq('id', id);
             } else {
-                await supabaseClient.from('dogs').insert([dogData]);
+                result = await supabaseClient.from('dogs').insert([dogData]);
+            }
+            
+            if (result.error) {
+                console.error('Error:', result.error);
+                showToast('Error al guardar: ' + result.error.message, 'error');
+                return;
             }
             
             closeModal();
             await loadDogs();
             renderPage();
-            showToast('Perro guardado');
+            showToast('Perro guardado correctamente');
         }
         
         async function deleteDog(id) {
             if (confirm('¿Eliminar este perro?')) {
-                await supabaseClient.from('dogs').delete().eq('id', id);
-                await loadDogs();
-                renderPage();
-                showToast('Perro eliminado');
+                const { error } = await supabaseClient.from('dogs').delete().eq('id', id);
+                if (error) {
+                    showToast('Error al eliminar', 'error');
+                } else {
+                    await loadDogs();
+                    renderPage();
+                    showToast('Perro eliminado');
+                }
             }
         }
         
@@ -591,10 +661,16 @@
                 status: document.getElementById('postStatus')?.value || 'Publicado'
             };
             
+            let result;
             if (id && id !== 'null') {
-                await supabaseClient.from('blog_posts').update(postData).eq('id', id);
+                result = await supabaseClient.from('blog_posts').update(postData).eq('id', id);
             } else {
-                await supabaseClient.from('blog_posts').insert([postData]);
+                result = await supabaseClient.from('blog_posts').insert([postData]);
+            }
+            
+            if (result.error) {
+                showToast('Error al guardar', 'error');
+                return;
             }
             
             closeModal();
@@ -614,11 +690,12 @@
         
         function closeModal() {
             document.getElementById('editModal').classList.remove('active');
+            selectedImageFile = null;
         }
         
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
-            toast.style.cssText = `position:fixed;bottom:20px;right:20px;background:${type === 'success' ? '#2c5f2d' : '#e04f2e'};color:white;padding:12px 18px;border-radius:8px;z-index:9999;`;
+            toast.style.cssText = `position:fixed;bottom:20px;right:20px;background:${type === 'success' ? '#2c5f2d' : type === 'error' ? '#e04f2e' : '#666'};color:white;padding:12px 18px;border-radius:8px;z-index:9999;`;
             toast.textContent = message;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
@@ -634,6 +711,7 @@
         window.closeModal = closeModal;
         window.saveDog = saveDog;
         window.deleteDog = deleteDog;
+        window.previewImage = previewImage;
         window.saveBlogPost = saveBlogPost;
         window.deleteBlogPost = deleteBlogPost;
         window.saveLogoSettings = saveLogoSettings;
