@@ -1,8 +1,9 @@
 /* ========================================
-   PELUDOS LOS PEDROCHES - ESTILOS CORREGIDOS
-   VERSIÓN RESPONSIVE OPTIMIZADA
+   PELUDOS LOS PEDROCHES - ESTILOS COMPLETOS
+   RESPONSIVE MEJORADO - HEADER FIJO
    ======================================== */
-*{
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -32,6 +33,7 @@ body {
     background: var(--white);
     overflow-x: hidden;
     width: 100%;
+    padding-top: 0 !important;
 }
 
 .container {
@@ -91,13 +93,14 @@ img {
     transition: opacity 0.3s;
 }
 
-/* ===== HEADER PRINCIPAL ===== */
+/* ===== HEADER PRINCIPAL (FIJO) ===== */
 .header {
     background: var(--white);
     box-shadow: var(--shadow);
     position: sticky;
     top: 0;
     z-index: 1000;
+    width: 100%;
 }
 
 .header-container {
@@ -113,23 +116,32 @@ img {
     display: flex;
     align-items: center;
     text-decoration: none;
-    gap: 8px;
+    gap: 10px;
 }
 
 .logo-icon {
-    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.logo-icon img {
+    max-height: 45px;
+    width: auto;
+    object-fit: contain;
 }
 
 .logo-text h1 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: var(--secondary);
     line-height: 1.2;
 }
 
 .logo-text span {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--gray);
 }
 
@@ -150,7 +162,7 @@ img {
     text-decoration: none;
     color: var(--dark);
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     border-radius: var(--radius-sm);
     transition: all 0.3s;
     white-space: nowrap;
@@ -727,12 +739,6 @@ img {
     padding: 18px;
 }
 
-.modal-body img {
-    width: 100%;
-    border-radius: var(--radius-sm);
-    margin-bottom: 18px;
-}
-
 @keyframes modalIn {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -1053,6 +1059,13 @@ img {
     
     .header-container {
         min-height: 65px;
+        flex-wrap: wrap;
+        padding: 10px 15px;
+    }
+    
+    .logo {
+        order: 1;
+        width: auto;
     }
     
     .logo-text h1 {
@@ -1061,32 +1074,34 @@ img {
     
     .mobile-menu-btn {
         display: block;
-        order: 3;
-    }
-    
-    .logo {
-        order: 1;
-    }
-    
-    .btn-donate {
-        display: none;
+        order: 2;
+        margin-left: auto;
     }
     
     .main-nav {
+        order: 3;
+        width: 100%;
+        margin-top: 10px;
         position: fixed;
         top: 115px;
         left: -100%;
-        width: 100%;
-        height: calc(100vh - 115px);
         background: var(--white);
         transition: left 0.3s;
         padding: 15px;
         overflow-y: auto;
         z-index: 999;
+        height: calc(100vh - 115px);
     }
     
     .main-nav.active {
         left: 0;
+    }
+    
+    .btn-donate {
+        order: 4;
+        margin: 10px 0;
+        width: 100%;
+        text-align: center;
     }
     
     .nav-list {
@@ -1114,7 +1129,7 @@ img {
     }
     
     .dropdown.active .dropdown-menu {
-        display: block;
+       display: block;
     }
     
     .dropdown-menu li a {
@@ -1144,20 +1159,80 @@ img {
     .urgencies-content {
         flex-direction: column;
         text-align: center;
-       }w
-/* Estilos para el logo dinámico */
-.logo-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    }
+    
+    .urgencies-buttons {
+        justify-content: center;
+    }
+    
+    .urgencies .btn {
+        width: 100%;
+        max-width: 250px;
+    }
+    
+    .contact-info-bar {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .about-content h2 {
+        font-size: 1.6rem;
+    }
+    
+    .placeholder-image {
+        min-height: 220px;
+        font-size: 3rem;
+    }
+    
+    .modal-content {
+        margin: 10px;
+        max-height: 80vh;
+    }
 }
 
-.logo-icon img {
-    max-height: 50px;
-    width: auto;
-    object-fit: contain;
-}
-
-.logo-emoji {
-    font-size: 2rem;
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    .header-contact a {
+        font-size: 0.75rem;
+    }
+    
+    .logo-icon {
+        font-size: 1.5rem;
+    }
+    
+    .logo-text h1 {
+        font-size: 0.8rem;
+    }
+    
+    .hero-content h2 {
+        font-size: 1.6rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .help-card {
+        padding: 20px 12px;
+    }
+    
+    .dog-image {
+        height: 200px;
+    }
+    
+    .blog-image {
+        height: 160px;
+    }
+    
+    .footer-bottom {
+        font-size: 0.8rem;
+    }
 }
