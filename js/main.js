@@ -1,7 +1,5 @@
-// ========================================
-// PELUDOS LOS PEDROCHES - CON SUPABASE
-// VERSIÓN CORREGIDA - CARGA ASEGURADA
-// ========================================
+// PELUDOS LOS PEDROCHES - MAIN.JS CORREGIDO
+// Incluye logs de depuración y mejora en carga
 
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
@@ -9,35 +7,31 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let supabase;
 if (typeof window.supabase !== 'undefined') {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('✅ Supabase inicializado');
+} else {
+    console.error('❌ Supabase no está definido');
 }
 
 let dogs = [];
 let blogPosts = [];
 let settings = {};
 
-// ========================================
-// CARGAR CONFIGURACIÓN (FORZADO)
-// ========================================
+// CARGAR CONFIGURACIÓN (con logs)
 async function loadSettings() {
-    if (!supabase) {
-        console.warn('Supabase no inicializado');
-        loadSettingsFromLocal();
-        return;
-    }
-    
+    if (!supabase) { console.warn('Supabase no disponible'); loadSettingsFromLocal(); return; }
     try {
+        console.log('🔄 Cargando configuración...');
         const { data, error } = await supabase.from('settings').select('*');
         if (error) throw error;
-        
         if (data && data.length > 0) {
             settings = {};
             data.forEach(item => { settings[item.key] = item.value; });
             console.log('✅ Configuración cargada:', settings);
         } else {
+            console.warn('⚠️ Tabla settings vacía, usando locales');
             loadSettingsFromLocal();
             return;
         }
-        
         applySettings();
     } catch (error) {
         console.error('❌ Error cargando configuración:', error);
@@ -62,8 +56,6 @@ function loadSettingsFromLocal() {
 
 function applySettings() {
     console.log('🎨 Aplicando configuración...');
-    
-    // Logo imagen
     const logoIcon = document.getElementById('logoIcon');
     const logoEmoji = document.querySelector('.logo-emoji');
     const logoTextEl = document.getElementById('logoText');
@@ -80,24 +72,23 @@ function applySettings() {
         imgEl.src = settings.logo_url;
         imgEl.style.display = 'block';
         imgEl.style.maxHeight = '50px';
+        console.log('🖼️ Logo establecido a', settings.logo_url);
     } else if (logoEmoji) {
         logoEmoji.style.display = 'block';
         const imgEl = logoIcon?.querySelector('img');
         if (imgEl) imgEl.style.display = 'none';
     }
     
-    // Textos
     if (logoTextEl) logoTextEl.textContent = settings.logo_text || 'PELUDOS LOS PEDROCHES';
     if (logoSubtitleEl) logoSubtitleEl.textContent = settings.logo_subtitle || 'Protectora de Animales';
     
-    // Colores
     if (settings.primary_color) {
         document.documentElement.style.setProperty('--primary', settings.primary_color);
+        console.log('🎨 Color primario:', settings.primary_color);
     }
     if (settings.secondary_color) {
         document.documentElement.style.setProperty('--secondary', settings.secondary_color);
     }
-    
     updateContactInfo();
 }
 
@@ -125,25 +116,31 @@ function updateContactInfo() {
     });
 }
 
-// ========================================
-// CARGAR PERROS Y BLOG
-// ========================================
+// CARGAR PERROS (con logs)
 async function loadDogs() {
-    if (!supabase) { loadDogsFromLocal(); return; }
+    if (!supabase) { console.warn('Supabase no disponible para perros'); loadDogsFromLocal(); return; }
     try {
+        console.log('🐕 Cargando perros...');
         const { data, error } = await supabase.from('dogs').select('*').order('id', { ascending: false });
         if (error) throw error;
         dogs = data || [];
-        console.log('🐕 Perros cargados:', dogs.length);
+        console.log('✅ Perros cargados:', dogs.length);
+        localStorage.setItem('dogs', JSON.stringify(dogs));
         if (document.getElementById('featuredDogs')) loadFeaturedDogs();
         if (document.getElementById('dogsList')) loadDogsList();
         if (document.getElementById('sponsorDogs')) loadSponsorDogs();
-    } catch (e) { console.error('Error perros:', e); loadDogsFromLocal(); }
+    } catch (e) {
+        console.error('❌ Error cargando perros:', e);
+        loadDogsFromLocal();
+    }
 }
 
 function loadDogsFromLocal() {
     dogs = JSON.parse(localStorage.getItem('dogs')) || getDefaultDogs();
+    console.log('📦 Perros desde localStorage:', dogs.length);
     if (document.getElementById('featuredDogs')) loadFeaturedDogs();
+    if (document.getElementById('dogsList')) loadDogsList();
+    if (document.getElementById('sponsorDogs')) loadSponsorDogs();
 }
 
 function getDefaultDogs() {
@@ -154,14 +151,24 @@ function getDefaultDogs() {
     ];
 }
 
+// CARGAR BLOG
 async function loadBlogPosts() {
     if (!supabase) { loadBlogFromLocal(); return; }
     try {
+        console.log('📰 Cargando blog...');
         const { data } = await supabase.from('blog_posts').select('*').eq('status', 'Publicado').order('id', { ascending: false });
         blogPosts = data || [];
-        console.log('📰 Blog cargado:', blogPosts.length);
+        console.log('✅ Blog cargado:', blogPosts.length);
+        localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
         if (document.getElementById('blogPreview')) loadBlogPreview();
-    } catch (e) { loadBlogFromLocal(); }
+        if (document.getElementById('allBlogPosts')) {
+            // Para la página de blog
+            document.getElementById('allBlogPosts').innerHTML = blogPosts.map(post => createBlogCard(post)).join('');
+        }
+    } catch (e) {
+        console.error('❌ Error blog:', e);
+        loadBlogFromLocal();
+    }
 }
 
 function loadBlogFromLocal() {
@@ -171,9 +178,27 @@ function loadBlogFromLocal() {
 
 function getDefaultBlogPosts() {
     return [
-        { id: 1, title: 'Bendición de animales', excerpt: 'Celebramos San Antón en Pozoblanco.', content: '<p>El pasado 17 de enero celebramos la tradicional bendición de animales por San Antón en Pozoblanco.</p>', status: 'Publicado', created_at: '2024-01-20' },
-        { id: 2, title: 'Refugio al límite', excerpt: 'Necesitamos casas de acogida.', content: '<p>Actualmente tenemos más de 70 perros en nuestro refugio.</p>', status: 'Publicado', created_at: '2023-12-15' }
+        { id: 1, title: 'Bendición de animales', excerpt: 'Celebramos San Antón en Pozoblanco.', content: '<p>Contenido...</p>', status: 'Publicado', created_at: '2024-01-20', image_url: null },
+        { id: 2, title: 'Refugio al límite', excerpt: 'Necesitamos casas de acogida.', content: '<p>Contenido...</p>', status: 'Publicado', created_at: '2023-12-15', image_url: null }
     ];
+}
+
+function createBlogCard(post) {
+    let imageHtml = '<div class="placeholder-image">📰</div>';
+    if (post.image_url) {
+        imageHtml = `<img src="${post.image_url}" alt="${post.title}" style="width:100%;height:100%;object-fit:cover;">`;
+    }
+    return `
+        <article class="blog-card fade-in" onclick="openBlogModal(${post.id})">
+            <div class="blog-image">${imageHtml}</div>
+            <div class="blog-content">
+                <div class="blog-date">${post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES') : ''}</div>
+                <h3 class="blog-title">${post.title}</h3>
+                <p class="blog-excerpt">${post.excerpt}</p>
+                <span class="card-link">Leer más <i class="fas fa-arrow-right"></i></span>
+            </div>
+        </article>
+    `;
 }
 
 // ========================================
@@ -461,6 +486,7 @@ function setSelectedDog(dogName) {
 // INICIALIZACIÓN
 // ========================================
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🚀 DOM cargado, inicializando...');
     await loadSettings();
     await loadDogs();
     await loadBlogPosts();
@@ -470,17 +496,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     initNewsletter();
     initForms();
     
+    // Cargar filtros si existe la página de adopción
+    if (document.getElementById('dogsList')) initFilters();
+    
     const selectedDog = localStorage.getItem('selectedDog');
     if (selectedDog) {
         const select = document.querySelector('select[name="perro"]');
         if (select) {
-            const option = Array.from(select.options).find(opt => opt.value === selectedDog);
-            if (option) option.selected = true;
+            const opt = Array.from(select.options).find(o => o.value === selectedDog);
+            if (opt) opt.selected = true;
         }
         localStorage.removeItem('selectedDog');
     }
 });
 
+// Asegurar que las funciones globales estén accesibles
 window.openBlogModal = openBlogModal;
 window.closeModal = closeModal;
 window.setSelectedDog = setSelectedDog;
