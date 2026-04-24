@@ -255,7 +255,49 @@ function previewBlogImage(input) {
         reader.readAsDataURL(file);
     }
 }
-
+async function saveBlogPost(id) {
+    const title = document.getElementById('postTitle')?.value;
+    if (!title) { showToast('El título es obligatorio', 'error'); return; }
+    
+    let imageUrl = '';
+    const existingPost = id && id !== 'null' ? blogPosts.find(p => p.id === id) : null;
+    
+    if (window.selectedBlogImageFile) {
+        imageUrl = await uploadBlogImage(window.selectedBlogImageFile);
+        if (!imageUrl) {
+            showToast('Error al subir la imagen', 'error');
+            return;
+        }
+    } else if (existingPost) {
+        imageUrl = existingPost.image_url || '';
+    }
+    
+    const postData = {
+        title: title,
+        excerpt: document.getElementById('postExcerpt')?.value || '',
+        content: document.getElementById('postContent')?.value || '',
+        status: document.getElementById('postStatus')?.value || 'Publicado',
+        image_url: imageUrl
+    };
+    
+    let result;
+    if (id && id !== 'null') {
+        result = await supabaseClient.from('blog_posts').update(postData).eq('id', id);
+    } else {
+        result = await supabaseClient.from('blog_posts').insert([postData]);
+    }
+    
+    if (result.error) {
+        showToast('Error al guardar: ' + result.error.message, 'error');
+        return;
+    }
+    
+    closeModal();
+    await loadBlogPosts();
+    renderPage();
+    showToast('Entrada guardada');
+    window.selectedBlogImageFile = null;
+}
 async function uploadBlogImage(file) {
     if (!file) return null;
     const fileExt = file.name.split('.').pop();
