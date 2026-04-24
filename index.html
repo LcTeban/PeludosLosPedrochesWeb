@@ -9,15 +9,16 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- Barra superior -->
     <div class="header-top">
         <div class="container">
             <div class="header-contact">
-                <a href="tel:661447942"><i class="fas fa-phone"></i> 661 44 79 42</a>
-                <a href="tel:666861620"><i class="fas fa-phone"></i> 666 86 16 20</a>
-                <a href="mailto:peludoslospedroches@gmail.com"><i class="fas fa-envelope"></i> peludoslospedroches@gmail.com</a>
+                <a href="tel:661447942" data-contact="phone1"><i class="fas fa-phone"></i> 661 44 79 42</a>
+                <a href="tel:666861620" data-contact="phone2"><i class="fas fa-phone"></i> 666 86 16 20</a>
+                <a href="mailto:peludoslospedroches@gmail.com" data-contact="email"><i class="fas fa-envelope"></i> peludoslospedroches@gmail.com</a>
             </div>
             <div class="header-social">
                 <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -30,18 +31,18 @@
     <!-- Header principal -->
     <header class="header">
         <div class="container header-container">
-         <div class="logo">
-    <a href="index.html">
-        <div class="logo-icon" id="logoIcon">
-            <!-- Aquí se cargará el logo dinámicamente -->
-            <span class="logo-emoji">🐾</span>
-        </div>
-        <div class="logo-text">
-            <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
-            <span id="logoSubtitle">Protectora de Animales</span>
-        </div>
-    </a>
-</div>           
+            <div class="logo">
+                <a href="index.html">
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
+                    </div>
+                </a>
+            </div>
+            
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
                 <i class="fas fa-bars"></i>
             </button>
@@ -194,22 +195,22 @@
                     <i class="fas fa-phone"></i>
                     <div>
                         <h4>Teléfonos</h4>
-                        <a href="tel:661447942">661 44 79 42</a>
-                        <a href="tel:666861620">666 86 16 20</a>
+                        <a href="tel:661447942" data-contact="phone1">661 44 79 42</a>
+                        <a href="tel:666861620" data-contact="phone2">666 86 16 20</a>
                     </div>
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-envelope"></i>
                     <div>
                         <h4>Email</h4>
-                        <a href="mailto:peludoslospedroches@gmail.com">peludoslospedroches@gmail.com</a>
+                        <a href="mailto:peludoslospedroches@gmail.com" data-contact="email">peludoslospedroches@gmail.com</a>
                     </div>
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-map-marker-alt"></i>
                     <div>
                         <h4>Ubicación</h4>
-                        <p>Comarca de Los Pedroches, Córdoba</p>
+                        <p data-contact="address">Comarca de Los Pedroches, Córdoba</p>
                     </div>
                 </div>
                 <div class="contact-item">
@@ -287,8 +288,7 @@
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/main.js"></script>
+
     <script src="js/main.js"></script>
 </body>
 </html>
