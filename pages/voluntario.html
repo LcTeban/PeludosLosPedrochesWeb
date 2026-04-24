@@ -1,1 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Nombre de la página · Peludos Los Pedroches</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <!-- Barra superior -->
+    <div class="header-top">
+        <div class="container">
+            <div class="header-contact">
+                <a href="tel:661447942" data-contact="phone1"><i class="fas fa-phone"></i> 661 44 79 42</a>
+                <a href="tel:666861620" data-contact="phone2"><i class="fas fa-phone"></i> 666 86 16 20</a>
+                <a href="mailto:peludoslospedroches@gmail.com" data-contact="email"><i class="fas fa-envelope"></i> peludoslospedroches@gmail.com</a>
+            </div>
+            <div class="header-social">
+                <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
 
+    <!-- Header principal -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
+                    </div>
+                </a>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="adopta.html">Perros en adopción</a></li>
+                            <li><a href="apadrina.html">Apadrina</a></li>
+                            <li><a href="acoge.html">Casa de acogida</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="voluntario.html">Hazte Voluntario</a></li>
+                            <li><a href="socio.html">Hazte Socio</a></li>
+                            <li><a href="donacion.html">Donaciones</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
+        </div>
+    </header>
+
+    <!-- CONTENIDO ESPECÍFICO DE CADA PÁGINA (cambiar aquí) -->
+       <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>HAZTE VOLUNTARIO</h1>
+                <p>Tu tiempo y cariño son el mejor regalo para nuestros peludos</p>
+            </div>
+        </section>
+        
+        <section style="padding: 60px 0;">
+            <div class="container">
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <form id="volunteerForm">
+                        <div class="form-group"><label>Nombre completo *</label><input type="text" required></div>
+                        <div class="form-group"><label>Email *</label><input type="email" required></div>
+                        <div class="form-group"><label>Teléfono *</label><input type="tel" required></div>
+                        <div class="form-group"><label>¿En qué te gustaría ayudar?</label><textarea rows="4"></textarea></div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">ENVIAR SOLICITUD</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h3>Peludos Los Pedroches</h3>
+                    <p>Asociación protectora de animales sin ánimo de lucro que actúa en la comarca de Los Pedroches (Córdoba) rescatando perros abandonados y/o maltratados.</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Enlaces rápidos</h3>
+                    <ul>
+                        <li><a href="adopta.html">Adopta</a></li>
+                        <li><a href="apadrina.html">Apadrina</a></li>
+                        <li><a href="acoge.html">Acoge</a></li>
+                        <li><a href="voluntario.html">Voluntario</a></li>
+                        <li><a href="socio.html">Hazte Socio</a></li>
+                        <li><a href="donacion.html">Donaciones</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Información</h3>
+                    <ul>
+                        <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                        <li><a href="aviso-legal.html">Aviso Legal</a></li>
+                        <li><a href="privacidad.html">Privacidad</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-newsletter">
+                    <h3>Suscríbete</h3>
+                    <p>Recibe noticias de nuestros peludos</p>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" placeholder="Tu email" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Peludos Los Pedroches. Todos los derechos reservados.</p>
+                <p>Desarrollado con <i class="fas fa-heart"></i> para los peludos de Los Pedroches</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal para el blog -->
+    <div class="modal" id="blogModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+</body>
+</html>
