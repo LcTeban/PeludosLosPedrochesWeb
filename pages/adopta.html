@@ -2,38 +2,41 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Perros en adopción en Los Pedroches, Córdoba. Adopta un peludo y dale una segunda oportunidad.">
-    <title>Perros en Adopción · Peludos Los Pedroches</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Nombre de la página · Peludos Los Pedroches</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- Barra superior -->
     <div class="header-top">
         <div class="container">
             <div class="header-contact">
-                <a href="tel:661447942"><i class="fas fa-phone"></i> 661 44 79 42</a>
-                <a href="tel:666861620"><i class="fas fa-phone"></i> 666 86 16 20</a>
-                <a href="mailto:peludoslospedroches@gmail.com"><i class="fas fa-envelope"></i> peludoslospedroches@gmail.com</a>
+                <a href="tel:661447942" data-contact="phone1"><i class="fas fa-phone"></i> 661 44 79 42</a>
+                <a href="tel:666861620" data-contact="phone2"><i class="fas fa-phone"></i> 666 86 16 20</a>
+                <a href="mailto:peludoslospedroches@gmail.com" data-contact="email"><i class="fas fa-envelope"></i> peludoslospedroches@gmail.com</a>
             </div>
             <div class="header-social">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
             </div>
         </div>
     </div>
 
-    <!-- Header -->
+    <!-- Header principal -->
     <header class="header">
         <div class="container header-container">
             <div class="logo">
                 <a href="../index.html">
-                    <div class="logo-icon">🐾</div>
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
                     <div class="logo-text">
-                        <h1>PELUDOS LOS PEDROCHES</h1>
-                        <span>Protectora de Animales</span>
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
                     </div>
                 </a>
             </div>
@@ -46,9 +49,9 @@
                 <ul class="nav-list">
                     <li><a href="../index.html">Inicio</a></li>
                     <li class="dropdown">
-                        <a href="#" class="active">Adopta <i class="fas fa-chevron-down"></i></a>
+                        <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
                         <ul class="dropdown-menu">
-                            <li><a href="adopta.html" class="active">Perros en adopción</a></li>
+                            <li><a href="adopta.html">Perros en adopción</a></li>
                             <li><a href="apadrina.html">Apadrina</a></li>
                             <li><a href="acoge.html">Casa de acogida</a></li>
                         </ul>
@@ -71,173 +74,93 @@
         </div>
     </header>
 
-    <!-- Breadcrumb -->
-    <div style="background: #f5f5f5; padding: 15px 0;">
-        <div class="container">
-            <a href="../index.html" style="color: #e04f2e; text-decoration: none;">Inicio</a>
-            <i class="fas fa-chevron-right" style="margin: 0 10px; font-size: 0.8rem; color: #666;"></i>
-            <span style="color: #666;">Perros en adopción</span>
-        </div>
-    </div>
-
-    <!-- Page Header -->
-    <section style="background: linear-gradient(135deg, #2c5f2d, #1a3a1b); color: white; padding: 60px 0; text-align: center;">
-        <div class="container">
-            <h1 style="font-size: 2.5rem; margin-bottom: 15px;">PERROS EN ADOPCIÓN</h1>
-            <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">Encuentra a tu compañero ideal. Todos nuestros peludos están chipados, vacunados y desparasitados.</p>
-        </div>
-    </section>
-
-    <!-- Filtros -->
-    <section style="padding: 30px 0; background: white; border-bottom: 1px solid #eee;">
-        <div class="container">
-            <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between;">
-                <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                    <select style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px; font-size: 1rem;">
-                        <option value="">Todos los tamaños</option>
-                        <option value="pequeno">Pequeño</option>
-                        <option value="mediano">Mediano</option>
-                        <option value="grande">Grande</option>
-                    </select>
-                    <select style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px; font-size: 1rem;">
-                        <option value="">Todas las edades</option>
-                        <option value="cachorro">Cachorro (< 1 año)</option>
-                        <option value="adulto">Adulto (1-7 años)</option>
-                        <option value="senior">Senior (+7 años)</option>
-                    </select>
-                    <select style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px; font-size: 1rem;">
-                        <option value="">Todos los sexos</option>
-                        <option value="macho">Macho</option>
-                        <option value="hembra">Hembra</option>
-                    </select>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" placeholder="Buscar por nombre..." style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px; font-size: 1rem;">
-                    <button style="padding: 12px 25px; background: #e04f2e; color: white; border: none; border-radius: 50px; cursor: pointer;"><i class="fas fa-search"></i></button>
-                </div>
+    <!-- CONTENIDO ESPECÍFICO DE CADA PÁGINA (cambiar aquí) -->
+        <main>
+        <section class="page-header">
+            <div class="container">
+                <h1>PERROS EN ADOPCIÓN</h1>
+                <p>Encuentra a tu compañero ideal. Todos nuestros peludos están chipados, vacunados y desparasitados.</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Listado de perros -->
-    <section style="padding: 60px 0; background: #f9f9f9;">
-        <div class="container">
-            <div class="dogs-grid" id="dogsList"></div>
-            
-            <!-- Paginación -->
-            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 40px;">
-                <button style="padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;"><i class="fas fa-chevron-left"></i></button>
-                <button style="padding: 10px 15px; border: none; background: #e04f2e; color: white; border-radius: 5px; cursor: pointer;">1</button>
-                <button style="padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;">2</button>
-                <button style="padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;">3</button>
-                <button style="padding: 10px 15px; border: 1px solid #ddd; background: white; border-radius: 5px; cursor: pointer;"><i class="fas fa-chevron-right"></i></button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Proceso de adopción -->
-    <section style="padding: 60px 0; background: white;">
-        <div class="container">
-            <h2 class="section-title">PROCESO DE ADOPCIÓN</h2>
-            <p class="section-subtitle">Así de fácil es adoptar a tu nuevo mejor amigo</p>
-            
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-top: 40px;">
-                <div style="text-align: center;">
-                    <div style="width: 60px; height: 60px; background: #e04f2e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; font-weight: bold;">1</div>
-                    <h3 style="color: #2c5f2d; margin-bottom: 10px;">Formulario</h3>
-                    <p style="color: #666;">Rellena el formulario con tus datos y el perro que te interesa.</p>
-                </div>
-                <div style="text-align: center;">
-                    <div style="width: 60px; height: 60px; background: #e04f2e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; font-weight: bold;">2</div>
-                    <h3 style="color: #2c5f2d; margin-bottom: 10px;">Entrevista</h3>
-                    <p style="color: #666;">Nos pondremos en contacto para conocerte mejor.</p>
-                </div>
-                <div style="text-align: center;">
-                    <div style="width: 60px; height: 60px; background: #e04f2e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; font-weight: bold;">3</div>
-                    <h3 style="color: #2c5f2d; margin-bottom: 10px;">Visita</h3>
-                    <p style="color: #666;">Conoce al peludo en persona en nuestro refugio.</p>
-                </div>
-                <div style="text-align: center;">
-                    <div style="width: 60px; height: 60px; background: #e04f2e; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; font-weight: bold;">4</div>
-                    <h3 style="color: #2c5f2d; margin-bottom: 10px;">Seguimiento</h3>
-                    <p style="color: #666;">Te acompañamos en el proceso de adaptación.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Formulario de adopción -->
-    <section id="formulario" style="padding: 60px 0; background: #f9f9f9;">
-        <div class="container">
-            <h2 class="section-title">FORMULARIO DE ADOPCIÓN</h2>
-            <p class="section-subtitle">Danos tus datos y te contactaremos</p>
-            
-            <div style="max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                <form id="adoptionForm">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Nombre completo *</label>
-                            <input type="text" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Email *</label>
-                            <input type="email" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Teléfono *</label>
-                            <input type="tel" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                        </div>
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 8px; font-weight: 600;">Perro de interés</label>
-                            <select style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                                <option value="">Selecciona un perro</option>
-                                <option value="Luna">Luna</option>
-                                <option value="Arena">Arena</option>
-                                <option value="Toby">Toby</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Tipo de vivienda *</label>
-                        <select required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                            <option value="">Selecciona</option>
-                            <option value="piso">Piso</option>
-                            <option value="casa">Casa con jardín</option>
-                            <option value="casa_sin">Casa sin jardín</option>
-                            <option value="finca">Finca/Campo</option>
+        </section>
+        
+        <section style="padding: 30px 0; background: white;">
+            <div class="container">
+                <div style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                        <select id="sizeFilter" style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px;">
+                            <option value="">Todos los tamaños</option>
+                            <option value="pequeño">Pequeño</option>
+                            <option value="mediano">Mediano</option>
+                            <option value="grande">Grande</option>
+                        </select>
+                        <select id="ageFilter" style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px;">
+                            <option value="">Todas las edades</option>
+                            <option value="cachorro">Cachorro (< 1 año)</option>
+                            <option value="adulto">Adulto (1-7 años)</option>
+                            <option value="senior">Senior (+7 años)</option>
+                        </select>
+                        <select id="genderFilter" style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px;">
+                            <option value="">Todos los sexos</option>
+                            <option value="macho">Macho</option>
+                            <option value="hembra">Hembra</option>
                         </select>
                     </div>
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">¿Tienes otros animales? *</label>
-                        <select required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                            <option value="">Selecciona</option>
-                            <option value="no">No</option>
-                            <option value="si_perro">Sí, perro/s</option>
-                            <option value="si_gato">Sí, gato/s</option>
-                            <option value="si_otros">Sí, otros</option>
-                        </select>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="searchDog" placeholder="Buscar por nombre..." style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 50px;">
+                        <button style="padding: 12px 25px; background: #e04f2e; color: white; border: none; border-radius: 50px;" onclick="document.dispatchEvent(new Event('applyFilters'))"><i class="fas fa-search"></i></button>
                     </div>
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Mensaje (opcional)</label>
-                        <textarea rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;" placeholder="Cuéntanos por qué quieres adoptar..."></textarea>
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" required> He leído y acepto la política de privacidad *
-                        </label>
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <label style="display: flex; align-items: center; gap: 10px;">
-                            <input type="checkbox" required> Acepto recibir una visita de seguimiento *
-                        </label>
-                    </div>
-                    <button type="submit" style="width: 100%; padding: 15px; background: #e04f2e; color: white; border: none; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">ENVIAR SOLICITUD DE ADOPCIÓN 🐾</button>
-                </form>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+        
+        <section style="padding: 60px 0; background: #f9f9f9;">
+            <div class="container">
+                <div class="dogs-grid" id="dogsList"></div>
+            </div>
+        </section>
+        
+        <section id="formulario" style="padding: 60px 0; background: white;">
+            <div class="container">
+                <h2 class="section-title">FORMULARIO DE ADOPCIÓN</h2>
+                <p class="section-subtitle">Danos tus datos y te contactaremos</p>
+                
+                <div style="max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <form id="adoptionForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group"><label>Nombre completo *</label><input type="text" required></div>
+                            <div class="form-group"><label>Email *</label><input type="email" required></div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="form-group"><label>Teléfono *</label><input type="tel" required></div>
+                            <div class="form-group"><label>Perro de interés</label><select name="perro"><option value="">Selecciona</option></select></div>
+                        </div>
+                        <div class="form-group"><label>Tipo de vivienda *</label><select required><option value="">Selecciona</option><option>Piso</option><option>Casa con jardín</option><option>Finca</option></select></div>
+                        <div class="form-group"><label>¿Tienes otros animales? *</label><select required><option value="">Selecciona</option><option>No</option><option>Sí, perro/s</option><option>Sí, gato/s</option></select></div>
+                        <div class="form-group"><label>Mensaje</label><textarea rows="4"></textarea></div>
+                        <div class="form-check"><input type="checkbox" required> He leído y acepto la política de privacidad</div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">ENVIAR SOLICITUD</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof loadDogsList === 'function') {
+                const dogs = JSON.parse(localStorage.getItem('dogs') || '[]');
+                const select = document.querySelector('select[name="perro"]');
+                if (select) {
+                    dogs.filter(d => d.status !== 'Adoptado').forEach(dog => {
+                        const option = document.createElement('option');
+                        option.value = dog.name;
+                        option.textContent = dog.name;
+                        select.appendChild(option);
+                    });
+                }
+            }
+            initFilters();
+        });
+    </script>
 
     <!-- Footer -->
     <footer class="footer">
@@ -245,88 +168,65 @@
             <div class="footer-grid">
                 <div class="footer-about">
                     <h3>Peludos Los Pedroches</h3>
-                    <p>Asociación protectora de animales sin ánimo de lucro en Los Pedroches, Córdoba.</p>
+                    <p>Asociación protectora de animales sin ánimo de lucro que actúa en la comarca de Los Pedroches (Córdoba) rescatando perros abandonados y/o maltratados.</p>
                     <div class="social-links">
-                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                     </div>
                 </div>
+                
                 <div class="footer-links">
-                    <h3>Enlaces</h3>
+                    <h3>Enlaces rápidos</h3>
                     <ul>
                         <li><a href="adopta.html">Adopta</a></li>
                         <li><a href="apadrina.html">Apadrina</a></li>
+                        <li><a href="acoge.html">Acoge</a></li>
                         <li><a href="voluntario.html">Voluntario</a></li>
+                        <li><a href="socio.html">Hazte Socio</a></li>
                         <li><a href="donacion.html">Donaciones</a></li>
                     </ul>
                 </div>
+                
                 <div class="footer-links">
                     <h3>Información</h3>
                     <ul>
                         <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                        <li><a href="blog.html">Blog</a></li>
                         <li><a href="contacto.html">Contacto</a></li>
-                        <li><a href="#">Aviso Legal</a></li>
+                        <li><a href="aviso-legal.html">Aviso Legal</a></li>
+                        <li><a href="privacidad.html">Privacidad</a></li>
                     </ul>
                 </div>
+                
                 <div class="footer-newsletter">
-                    <h3>Newsletter</h3>
+                    <h3>Suscríbete</h3>
                     <p>Recibe noticias de nuestros peludos</p>
-                    <form class="newsletter-form">
+                    <form class="newsletter-form" id="newsletterForm">
                         <input type="email" placeholder="Tu email" required>
                         <button type="submit"><i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
             </div>
+            
             <div class="footer-bottom">
-                <p>&copy; 2024 Peludos Los Pedroches - Hecho con ❤️ para los peludos</p>
+                <p>&copy; 2024 Peludos Los Pedroches. Todos los derechos reservados.</p>
+                <p>Desarrollado con <i class="fas fa-heart"></i> para los peludos de Los Pedroches</p>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Cargar listado de perros
-        const dogs = [
-            { name: 'Luna', breed: 'Mastina', age: '2 años', size: 'Grande', badge: 'Urgente', desc: 'Cariñosa y juguetona. Ideal para campo.' },
-            { name: 'Arena', breed: 'Cruce labrador', age: '2 años', size: 'Mediano', badge: 'En acogida', desc: 'Activa, noble y cariñosa.' },
-            { name: 'Toby', breed: 'Podenco', age: '1 año', size: 'Mediano', badge: 'Nuevo', desc: 'Joven y juguetón, busca familia activa.' },
-            { name: 'Rocky', breed: 'Mastín', age: '4 años', size: 'Grande', badge: '', desc: 'Tranquilo y protector. Ideal para finca.' },
-            { name: 'Nala', breed: 'Podenco', age: '3 años', size: 'Mediano', badge: 'Urgente', desc: 'Muy cariñosa, se lleva bien con todos.' },
-            { name: 'Bruno', breed: 'Cruce', age: '5 años', size: 'Grande', badge: '', desc: 'Perro mayor muy tranquilo y agradecido.' }
-        ];
-        
-        let html = '';
-        dogs.forEach(dog => {
-            html += `
-                <div class="dog-card">
-                    <div class="dog-image">
-                        <div class="placeholder-image">🐕</div>
-                        ${dog.badge ? `<span class="dog-badge">${dog.badge}</span>` : ''}
-                    </div>
-                    <div class="dog-info">
-                        <h3 class="dog-name">${dog.name}</h3>
-                        <div class="dog-details">
-                            <span><i class="fas fa-paw"></i> ${dog.breed}</span>
-                            <span><i class="fas fa-calendar"></i> ${dog.age}</span>
-                        </div>
-                        <p class="dog-description">${dog.desc}</p>
-                        <a href="#formulario" class="btn-adopt">Quiero adoptar</a>
-                    </div>
-                </div>
-            `;
-        });
-        document.getElementById('dogsList').innerHTML = html;
-        
-        // Menú móvil
-        document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
-            document.getElementById('mainNav').classList.toggle('active');
-        });
-        
-        // Formulario adopción
-        document.getElementById('adoptionForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('¡Gracias por tu solicitud! Nos pondremos en contacto contigo en 24-48 horas.');
-            this.reset();
-        });
-    </script>
+    <!-- Modal para el blog -->
+    <div class="modal" id="blogModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
 </body>
 </html>
