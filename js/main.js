@@ -1,16 +1,34 @@
-// PELUDOS LOS PEDROCHES - MAIN.JS CORREGIDO
-// Incluye logs de depuración y mejora en carga
+// ========================================
+// PELUDOS LOS PEDROCHES - MAIN.JS MEJORADO
+// ========================================
 
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
 
-let supabase;
-if (typeof window.supabase !== 'undefined') {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log('✅ Supabase inicializado');
-} else {
-    console.error('❌ Supabase no está definido');
+// Inicializar Supabase de manera segura
+let supabase = null;
+
+function initSupabase() {
+    try {
+        if (typeof window.supabase !== 'undefined') {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            window.supabase = supabase; // exponer para depuración en consola
+            console.log('✅ Supabase inicializado correctamente');
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ Error al inicializar Supabase:', error);
+    }
+    return false;
 }
+
+// Intenta inicializar después de que el script de Supabase esté disponible
+document.addEventListener('DOMContentLoaded', function() {
+    if (!initSupabase()) {
+        console.warn('⚠️ Supabase no se pudo inicializar, usando localStorage');
+    }
+    // El resto de la inicialización sigue en el event listener separado
+});
 
 let dogs = [];
 let blogPosts = [];
