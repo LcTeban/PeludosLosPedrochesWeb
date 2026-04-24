@@ -1129,7 +1129,7 @@ img {
     }
     
     .dropdown.active .dropdown-menu {
-       display: block;
+        display: block;
     }
     
     .dropdown-menu li a {
