@@ -504,7 +504,15 @@ function setSelectedDog(dogName) {
 // INICIALIZACIÓN
 // ========================================
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 DOM cargado, inicializando...');
+    console.log('🚀 DOM cargado, iniciando app...');
+    
+    // Inicializar Supabase (si no se hizo antes)
+    if (!supabase) {
+        if (!initSupabase()) {
+            console.warn('⚠️ Funcionando sin conexión a Supabase');
+        }
+    }
+    
     await loadSettings();
     await loadDogs();
     await loadBlogPosts();
