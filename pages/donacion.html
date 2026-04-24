@@ -2,19 +2,84 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donaciones · Peludos Los Pedroches</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Nombre de la página · Peludos Los Pedroches</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- Header (copiar el mismo header de index.html) -->
-    
-    <main>
-        <section class="page-header" style="background: linear-gradient(135deg, #e04f2e, #c43d1e); padding: 60px 0; color: white; text-align: center;">
+    <!-- Barra superior -->
+    <div class="header-top">
+        <div class="container">
+            <div class="header-contact">
+                <a href="tel:661447942" data-contact="phone1"><i class="fas fa-phone"></i> 661 44 79 42</a>
+                <a href="tel:666861620" data-contact="phone2"><i class="fas fa-phone"></i> 666 86 16 20</a>
+                <a href="mailto:peludoslospedroches@gmail.com" data-contact="email"><i class="fas fa-envelope"></i> peludoslospedroches@gmail.com</a>
+            </div>
+            <div class="header-social">
+                <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header principal -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
+                    </div>
+                </a>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="adopta.html">Perros en adopción</a></li>
+                            <li><a href="apadrina.html">Apadrina</a></li>
+                            <li><a href="acoge.html">Casa de acogida</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="voluntario.html">Hazte Voluntario</a></li>
+                            <li><a href="socio.html">Hazte Socio</a></li>
+                            <li><a href="donacion.html">Donaciones</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
+        </div>
+    </header>
+
+    <!-- CONTENIDO ESPECÍFICO DE CADA PÁGINA (cambiar aquí) -->
+        <main>
+        <section class="page-header">
             <div class="container">
-                <h1 style="font-size: 2.5rem; margin-bottom: 15px;">HAZ TU DONACIÓN</h1>
-                <p style="font-size: 1.2rem;">Tu ayuda es fundamental para seguir rescatando peludos</p>
+                <h1>HAZ TU DONACIÓN</h1>
+                <p>Tu ayuda es fundamental para seguir rescatando peludos</p>
             </div>
         </section>
         
@@ -22,113 +87,99 @@
             <div class="container">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
                     <div>
-                        <h2 style="color: #2c5f2d; margin-bottom: 30px;">Elige tu aportación</h2>
-                        
                         <form id="donationForm">
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Tipo de donación</label>
-                                <div style="display: flex; gap: 20px;">
-                                    <label><input type="radio" name="type" value="single" checked> Única</label>
-                                    <label><input type="radio" name="type" value="monthly"> Mensual</label>
+                            <div class="form-group"><label>Tipo</label><select><option>Donación única</option><option>Donación mensual</option></select></div>
+                            <div class="form-group">
+                                <label>Cantidad</label>
+                                <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;">
+                                    <button type="button" class="amount-btn" data-amount="10">10€</button>
+                                    <button type="button" class="amount-btn active" data-amount="20">20€</button>
+                                    <button type="button" class="amount-btn" data-amount="50">50€</button>
+                                    <button type="button" class="amount-btn" data-amount="100">100€</button>
                                 </div>
                             </div>
-                            
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Cantidad</label>
-                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-                                    <button type="button" class="amount-btn" data-amount="10" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">10€</button>
-                                    <button type="button" class="amount-btn active" data-amount="20" style="padding: 15px; border: 2px solid #e04f2e; background: #e04f2e; color: white; border-radius: 8px; cursor: pointer;">20€</button>
-                                    <button type="button" class="amount-btn" data-amount="50" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">50€</button>
-                                    <button type="button" class="amount-btn" data-amount="100" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">100€</button>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Otra cantidad (€)</label>
-                                <input type="number" id="customAmount" min="1" placeholder="Cantidad personalizada" style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                            </div>
-                            
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Nombre completo *</label>
-                                <input type="text" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                            </div>
-                            
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Email *</label>
-                                <input type="email" required style="width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                            </div>
-                            
-                            <div style="margin-bottom: 30px;">
-                                <label style="display: block; margin-bottom: 10px; font-weight: 600;">Método de pago</label>
-                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
-                                        <input type="radio" name="payment" value="card" checked> 💳 Tarjeta
-                                    </label>
-                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
-                                        <input type="radio" name="payment" value="paypal"> 🅿️ PayPal
-                                    </label>
-                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
-                                        <input type="radio" name="payment" value="bizum"> 📱 Bizum
-                                    </label>
-                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center;">
-                                        <input type="radio" name="payment" value="transfer"> 🏦 Transferencia
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <button type="submit" style="width: 100%; padding: 18px; background: #e04f2e; color: white; border: none; border-radius: 50px; font-size: 1.2rem; font-weight: 600; cursor: pointer;">REALIZAR DONACIÓN ❤️</button>
+                            <div class="form-group"><label>Otra cantidad</label><input type="number" id="customAmount" placeholder="€"></div>
+                            <div class="form-group"><label>Nombre *</label><input type="text" required></div>
+                            <div class="form-group"><label>Email *</label><input type="email" required></div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">DONAR ❤️</button>
                         </form>
                     </div>
-                    
                     <div>
-                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
-                            <h3 style="color: #2c5f2d; margin-bottom: 20px;"><i class="fas fa-heart" style="color: #e04f2e;"></i> ¿Qué consigues con tu donación?</h3>
-                            <ul style="list-style: none;">
-                                <li style="margin-bottom: 15px;">🐾 <strong>10€</strong> - Alimentación de un perro durante una semana</li>
-                                <li style="margin-bottom: 15px;">💉 <strong>20€</strong> - Vacunación completa</li>
-                                <li style="margin-bottom: 15px;">🏥 <strong>50€</strong> - Esterilización de un perro</li>
-                                <li style="margin-bottom: 15px;">🩺 <strong>100€</strong> - Tratamiento veterinario completo</li>
-                            </ul>
-                        </div>
-                        
-                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
-                            <h3 style="color: #2c5f2d; margin-bottom: 20px;"><i class="fas fa-shield-alt"></i> Pago 100% seguro</h3>
-                            <p>Tus datos están protegidos con encriptación SSL.</p>
-                        </div>
-                        
                         <div style="background: #f9f9f9; padding: 30px; border-radius: 10px;">
-                            <h3 style="color: #2c5f2d; margin-bottom: 20px;"><i class="fas fa-file-invoice"></i> Desgravación fiscal</h3>
-                            <p>Somos una asociación sin ánimo de lucro. Tu donación desgrava en la declaración de la renta.</p>
+                            <h3>¿Qué consigues con tu donación?</h3>
+                            <ul><li>10€ - Alimentación una semana</li><li>20€ - Vacunación</li><li>50€ - Esterilización</li><li>100€ - Tratamiento completo</li></ul>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-    
-    <!-- Footer (copiar el mismo footer de index.html) -->
-    
-    <script>
-        // Manejar botones de cantidad
-        document.querySelectorAll('.amount-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.amount-btn').forEach(b => {
-                    b.style.background = 'white';
-                    b.style.color = 'black';
-                    b.style.borderColor = '#ddd';
-                });
-                this.style.background = '#e04f2e';
-                this.style.color = 'white';
-                this.style.borderColor = '#e04f2e';
-                document.getElementById('customAmount').value = '';
-            });
-        });
-        
-        // Enviar formulario
-        document.getElementById('donationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('¡Gracias por tu donación! Serás redirigido a la pasarela de pago seguro.');
-        });
-    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <h3>Peludos Los Pedroches</h3>
+                    <p>Asociación protectora de animales sin ánimo de lucro que actúa en la comarca de Los Pedroches (Córdoba) rescatando perros abandonados y/o maltratados.</p>
+                    <div class="social-links">
+                        <a href="https://facebook.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://instagram.com/peludoslospedroches" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com/peludospedroches" target="_blank" rel="noopener" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Enlaces rápidos</h3>
+                    <ul>
+                        <li><a href="adopta.html">Adopta</a></li>
+                        <li><a href="apadrina.html">Apadrina</a></li>
+                        <li><a href="acoge.html">Acoge</a></li>
+                        <li><a href="voluntario.html">Voluntario</a></li>
+                        <li><a href="socio.html">Hazte Socio</a></li>
+                        <li><a href="donacion.html">Donaciones</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Información</h3>
+                    <ul>
+                        <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                        <li><a href="aviso-legal.html">Aviso Legal</a></li>
+                        <li><a href="privacidad.html">Privacidad</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-newsletter">
+                    <h3>Suscríbete</h3>
+                    <p>Recibe noticias de nuestros peludos</p>
+                    <form class="newsletter-form" id="newsletterForm">
+                        <input type="email" placeholder="Tu email" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 Peludos Los Pedroches. Todos los derechos reservados.</p>
+                <p>Desarrollado con <i class="fas fa-heart"></i> para los peludos de Los Pedroches</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal para el blog -->
+    <div class="modal" id="blogModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
 </body>
 </html>
