@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Nombre de la página · Peludos Los Pedroches</title>
+    <meta name="description" content="Apadrina a uno de nuestros perros y ayúdanos a cubrir sus gastos mientras encuentra un hogar definitivo.">
+    <title>Apadrina un Peludo · Peludos Los Pedroches</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <!-- Barra superior -->
+    <!-- Barra superior (idéntica a las demás) -->
     <div class="header-top">
         <div class="container">
             <div class="header-contact">
@@ -26,83 +27,129 @@
         </div>
     </div>
 
-    <!-- Header principal -->
+    <!-- Header principal (con IDs para logo dinámico) -->
     <header class="header">
-    <div class="container header-container">
-        <div class="logo">
-            <a href="../index.html">
-                <div class="logo-icon" id="logoIcon">
-                    <span class="logo-emoji">🐾</span>
-                </div>
-                <div class="logo-text">
-                    <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
-                    <span id="logoSubtitle">Protectora de Animales</span>
-                </div>
-            </a>
+        <div class="container header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
+                    </div>
+                </a>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="active">Adopta <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="adopta.html">Perros en adopción</a></li>
+                            <li><a href="apadrina.html" class="active">Apadrina</a></li>
+                            <li><a href="acoge.html">Casa de acogida</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="voluntario.html">Hazte Voluntario</a></li>
+                            <li><a href="socio.html">Hazte Socio</a></li>
+                            <li><a href="donacion.html">Donaciones</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
         </div>
-        
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <nav class="main-nav" id="mainNav">
-            <ul class="nav-list">
-                <li><a href="../index.html">Inicio</a></li>
-                <li class="dropdown">
-                    <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="adopta.html">Perros en adopción</a></li>
-                        <li><a href="apadrina.html">Apadrina</a></li>
-                        <li><a href="acoge.html">Casa de acogida</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="voluntario.html">Hazte Voluntario</a></li>
-                        <li><a href="socio.html">Hazte Socio</a></li>
-                        <li><a href="donacion.html">Donaciones</a></li>
-                    </ul>
-                </li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-            </ul>
-        </nav>
-        
-        <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
-    </div>
-</header>
+    </header>
 
-    <!-- CONTENIDO ESPECÍFICO DE CADA PÁGINA (cambiar aquí) -->
-        <main>
+    <!-- Contenido principal -->
+    <main>
+        <!-- Page Header -->
         <section class="page-header">
             <div class="container">
                 <h1>APADRINA UN PELUDO</h1>
                 <p>Ayúdanos a mantener a nuestros perros mientras esperan un hogar definitivo</p>
             </div>
         </section>
-        
-        <section style="padding: 60px 0;">
+
+        <!-- ¿Qué es apadrinar? -->
+        <section class="about-preview" style="background: white;">
             <div class="container">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-bottom: 60px;">
-                    <div>
-                        <h2 style="color: #2c5f2d; font-size: 2rem;">¿Qué es apadrinar?</h2>
-                        <p>Apadrinar es una forma de ayudar a un perro concreto del refugio aportando una cantidad mensual.</p>
-                        <p><strong>Desde solo 15€ al mes</strong> puedes cambiar la vida de un peludo.</p>
+                <div class="about-grid">
+                    <div class="about-content">
+                        <h2>¿Qué es apadrinar?</h2>
+                        <p>Apadrinar es una forma de ayudar a un perro concreto del refugio aportando una cantidad mensual. Con tu aportación cubrimos sus gastos de alimentación, cuidados veterinarios y mantenimiento.</p>
+                        <p><strong>Desde solo 15€ al mes</strong> puedes cambiar la vida de un peludo. Recibirás noticias periódicas de tu apadrinado y podrás visitarlo con cita previa.</p>
                     </div>
-                    <div><div class="placeholder-image" style="min-height: 300px;">🐕❤️</div></div>
+                    <div class="about-image">
+                        <div class="placeholder-image">🐕❤️</div>
+                    </div>
                 </div>
-                
+            </div>
+        </section>
+
+        <!-- Perros para apadrinar -->
+        <section class="featured-dogs" style="background: var(--light);">
+            <div class="container">
                 <h2 class="section-title">PELUDOS QUE PUEDES APADRINAR</h2>
+                <p class="section-subtitle">Elige a tu compañero de apadrinamiento</p>
                 <div class="dogs-grid" id="sponsorDogs"></div>
+            </div>
+        </section>
+
+        <!-- Formulario de apadrinamiento -->
+        <section id="formulario" style="padding: 60px 0; background: white;">
+            <div class="container">
+                <h2 class="section-title">FORMULARIO DE APADRINAMIENTO</h2>
+                <p class="section-subtitle">Completa tus datos y nos pondremos en contacto</p>
                 
-                <div style="max-width: 600px; margin: 60px auto;">
+                <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                     <form id="sponsorForm">
-                        <div class="form-group"><label>Perro a apadrinar *</label><select required><option>Luna</option><option>Arena</option></select></div>
-                        <div class="form-group"><label>Aportación mensual *</label><select required><option>15€/mes</option><option>25€/mes</option><option>50€/mes</option></select></div>
-                        <div class="form-group"><label>Nombre completo *</label><input type="text" required></div>
-                        <div class="form-group"><label>Email *</label><input type="email" required></div>
+                        <div class="form-group">
+                            <label>Perro a apadrinar *</label>
+                            <select required name="perro">
+                                <option value="">Selecciona un perro</option>
+                                <option>Luna</option>
+                                <option>Arena</option>
+                                <option>Toby</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Aportación mensual *</label>
+                            <select required>
+                                <option value="15">15€/mes</option>
+                                <option value="25">25€/mes</option>
+                                <option value="50">50€/mes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nombre completo *</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="tel">
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" required> He leído y acepto la política de privacidad
+                        </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%;">APADRINAR ❤️</button>
                     </form>
                 </div>
@@ -164,17 +211,14 @@
         </div>
     </footer>
 
-    <!-- Modal para el blog -->
+    <!-- Modal blog -->
     <div class="modal" id="blogModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="../js/main.js"></script>
 </body>
 </html>
