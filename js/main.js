@@ -5,40 +5,43 @@
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
 
-// Inicializar Supabase de manera segura
 let supabase = null;
 
 function initSupabase() {
     try {
         if (typeof window.supabase !== 'undefined') {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            window.supabase = supabase; // exponer para depuración en consola
+            window.supabase = supabase; // exponer globalmente
             console.log('✅ Supabase inicializado correctamente');
             return true;
         }
     } catch (error) {
         console.error('❌ Error al inicializar Supabase:', error);
     }
+    console.warn('⚠️ Supabase no disponible, usando localStorage');
     return false;
 }
 
-// Intenta inicializar después de que el script de Supabase esté disponible
+// Intentar inicializar al cargar el DOM
 document.addEventListener('DOMContentLoaded', function() {
-    if (!initSupabase()) {
-        console.warn('⚠️ Supabase no se pudo inicializar, usando localStorage');
-    }
-    // El resto de la inicialización sigue en el event listener separado
+    initSupabase();
+    // El resto de la inicialización se llama en el evento 'load' o al final de este script
 });
 
 let dogs = [];
 let blogPosts = [];
 let settings = {};
 
-// CARGAR CONFIGURACIÓN (con logs)
+// ========================================
+// CARGAR CONFIGURACIÓN
+// ========================================
 async function loadSettings() {
-    if (!supabase) { console.warn('Supabase no disponible'); loadSettingsFromLocal(); return; }
+    if (!supabase) {
+        loadSettingsFromLocal();
+        return;
+    }
     try {
-        console.log('🔄 Cargando configuración...');
+        console.log('🔄 Cargando configuración desde Supabase...');
         const { data, error } = await supabase.from('settings').select('*');
         if (error) throw error;
         if (data && data.length > 0) {
@@ -46,7 +49,7 @@ async function loadSettings() {
             data.forEach(item => { settings[item.key] = item.value; });
             console.log('✅ Configuración cargada:', settings);
         } else {
-            console.warn('⚠️ Tabla settings vacía, usando locales');
+            console.warn('⚠️ Tabla settings vacía en Supabase');
             loadSettingsFromLocal();
             return;
         }
@@ -74,6 +77,7 @@ function loadSettingsFromLocal() {
 
 function applySettings() {
     console.log('🎨 Aplicando configuración...');
+    
     const logoIcon = document.getElementById('logoIcon');
     const logoEmoji = document.querySelector('.logo-emoji');
     const logoTextEl = document.getElementById('logoText');
@@ -90,7 +94,7 @@ function applySettings() {
         imgEl.src = settings.logo_url;
         imgEl.style.display = 'block';
         imgEl.style.maxHeight = '50px';
-        console.log('🖼️ Logo establecido a', settings.logo_url);
+        console.log('🖼️ Logo aplicado:', settings.logo_url);
     } else if (logoEmoji) {
         logoEmoji.style.display = 'block';
         const imgEl = logoIcon?.querySelector('img');
@@ -107,6 +111,7 @@ function applySettings() {
     if (settings.secondary_color) {
         document.documentElement.style.setProperty('--secondary', settings.secondary_color);
     }
+    
     updateContactInfo();
 }
 
@@ -134,19 +139,19 @@ function updateContactInfo() {
     });
 }
 
-// CARGAR PERROS (con logs)
+// ========================================
+// CARGAR PERROS
+// ========================================
 async function loadDogs() {
-    if (!supabase) { console.warn('Supabase no disponible para perros'); loadDogsFromLocal(); return; }
+    if (!supabase) { loadDogsFromLocal(); return; }
     try {
-        console.log('🐕 Cargando perros...');
+        console.log('🐕 Cargando perros desde Supabase...');
         const { data, error } = await supabase.from('dogs').select('*').order('id', { ascending: false });
         if (error) throw error;
         dogs = data || [];
         console.log('✅ Perros cargados:', dogs.length);
         localStorage.setItem('dogs', JSON.stringify(dogs));
-        if (document.getElementById('featuredDogs')) loadFeaturedDogs();
-        if (document.getElementById('dogsList')) loadDogsList();
-        if (document.getElementById('sponsorDogs')) loadSponsorDogs();
+        refreshDogViews();
     } catch (e) {
         console.error('❌ Error cargando perros:', e);
         loadDogsFromLocal();
@@ -156,6 +161,10 @@ async function loadDogs() {
 function loadDogsFromLocal() {
     dogs = JSON.parse(localStorage.getItem('dogs')) || getDefaultDogs();
     console.log('📦 Perros desde localStorage:', dogs.length);
+    refreshDogViews();
+}
+
+function refreshDogViews() {
     if (document.getElementById('featuredDogs')) loadFeaturedDogs();
     if (document.getElementById('dogsList')) loadDogsList();
     if (document.getElementById('sponsorDogs')) loadSponsorDogs();
@@ -169,22 +178,24 @@ function getDefaultDogs() {
     ];
 }
 
+// ========================================
 // CARGAR BLOG
+// ========================================
 async function loadBlogPosts() {
     if (!supabase) { loadBlogFromLocal(); return; }
     try {
-        console.log('📰 Cargando blog...');
-        const { data } = await supabase.from('blog_posts').select('*').eq('status', 'Publicado').order('id', { ascending: false });
+        console.log('📰 Cargando blog desde Supabase...');
+        const { data, error } = await supabase.from('blog_posts').select('*').eq('status', 'Publicado').order('id', { ascending: false });
+        if (error) throw error;
         blogPosts = data || [];
         console.log('✅ Blog cargado:', blogPosts.length);
         localStorage.setItem('blogPosts', JSON.stringify(blogPosts));
         if (document.getElementById('blogPreview')) loadBlogPreview();
         if (document.getElementById('allBlogPosts')) {
-            // Para la página de blog
             document.getElementById('allBlogPosts').innerHTML = blogPosts.map(post => createBlogCard(post)).join('');
         }
     } catch (e) {
-        console.error('❌ Error blog:', e);
+        console.error('❌ Error cargando blog:', e);
         loadBlogFromLocal();
     }
 }
@@ -404,20 +415,7 @@ function loadBlogPreview() {
     const container = document.getElementById('blogPreview');
     if (!container) return;
     const previewPosts = blogPosts.filter(p => p.status === 'Publicado').slice(0, 3);
-    container.innerHTML = previewPosts.map(post => {
-        const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-        return `
-            <article class="blog-card fade-in" onclick="openBlogModal(${post.id})">
-                <div class="blog-image"><div class="placeholder-image">📰</div></div>
-                <div class="blog-content">
-                    <div class="blog-date"><i class="far fa-calendar"></i> ${date}</div>
-                    <h3 class="blog-title">${post.title}</h3>
-                    <p class="blog-excerpt">${post.excerpt}</p>
-                    <span class="card-link">Leer más <i class="fas fa-arrow-right"></i></span>
-                </div>
-            </article>
-        `;
-    }).join('');
+    container.innerHTML = previewPosts.map(post => createBlogCard(post)).join('');
 }
 
 function openBlogModal(postId) {
@@ -456,13 +454,13 @@ function closeModal() {
 }
 
 // ========================================
-// FILTROS (para adopta.html)
+// FILTROS
 // ========================================
 function initFilters() {
-    const sizeFilter = document.querySelector('#sizeFilter') || document.querySelector('select:first-of-type');
-    const ageFilter = document.querySelector('#ageFilter') || document.querySelectorAll('select')[1];
-    const genderFilter = document.querySelector('#genderFilter') || document.querySelectorAll('select')[2];
-    const searchInput = document.querySelector('#searchDog') || document.querySelector('input[placeholder*="Buscar"]');
+    const sizeFilter = document.getElementById('sizeFilter');
+    const ageFilter = document.getElementById('ageFilter');
+    const genderFilter = document.getElementById('genderFilter');
+    const searchInput = document.getElementById('searchDog');
     
     function applyFilters() {
         const filters = {};
@@ -501,15 +499,15 @@ function setSelectedDog(dogName) {
 }
 
 // ========================================
-// INICIALIZACIÓN
+// INICIALIZACIÓN FINAL
 // ========================================
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🚀 DOM cargado, iniciando app...');
+window.addEventListener('load', async function() {
+    console.log('🚀 Página cargada, iniciando aplicacion...');
     
-    // Inicializar Supabase (si no se hizo antes)
+    // Asegurar que Supabase esté inicializado
     if (!supabase) {
         if (!initSupabase()) {
-            console.warn('⚠️ Funcionando sin conexión a Supabase');
+            console.warn('⚠️ Continuando sin Supabase');
         }
     }
     
@@ -522,7 +520,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     initNewsletter();
     initForms();
     
-    // Cargar filtros si existe la página de adopción
     if (document.getElementById('dogsList')) initFilters();
     
     const selectedDog = localStorage.getItem('selectedDog');
@@ -534,9 +531,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
         localStorage.removeItem('selectedDog');
     }
+    
+    console.log('✅ Aplicacion lista');
 });
 
-// Asegurar que las funciones globales estén accesibles
+// Exponer funciones globales
 window.openBlogModal = openBlogModal;
 window.closeModal = closeModal;
 window.setSelectedDog = setSelectedDog;
