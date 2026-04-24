@@ -222,17 +222,56 @@
                     <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
                     <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar</button>`;
                 selectedImageFile = null;
-            } else if (type === 'blog') {
-                const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado' };
-                title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
-                body.innerHTML = `<div class="form-group"><label>Título *</label><input type="text" id="postTitle" value="${post.title || ''}" required></div>
-                    <div class="form-group"><label>Extracto</label><input type="text" id="postExcerpt" value="${post.excerpt || ''}"></div>
-                    <div class="form-group"><label>Contenido</label><textarea id="postContent" rows="6">${post.content || ''}</textarea></div>
-                    <div class="form-group"><label>Estado</label><select id="postStatus"><option ${post.status==='Publicado'?'selected':''}>Publicado</option><option ${post.status==='Borrador'?'selected':''}>Borrador</option></select></div>
-                    <button class="btn-save" onclick="saveBlogPost(${id || 'null'})">Guardar</button>`;
-            }
+          } else if (type === 'blog') {
+    const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado', image_url: '' };
+    title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
+    body.innerHTML = `
+        <div class="form-group">
+            <label>Imagen</label>
+            <input type="file" id="blogImage" accept="image/*" onchange="previewBlogImage(this)">
+            <div class="image-preview" id="blogImagePreview">
+                ${post.image_url ? `<img src="${post.image_url}" style="max-width:200px;">` : ''}
+            </div>
+        </div>
+        <div class="form-group"><label>Título *</label><input type="text" id="postTitle" value="${post.title || ''}" required></div>
+        <div class="form-group"><label>Extracto</label><input type="text" id="postExcerpt" value="${post.excerpt || ''}"></div>
+        <div class="form-group"><label>Contenido (HTML permitido)</label><textarea id="postContent" rows="6">${post.content || ''}</textarea></div>
+        <div class="form-group"><label>Estado</label><select id="postStatus"><option ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option><option ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option></select></div>
+        <button class="btn-save" onclick="saveBlogPost(${id || 'null'})">Guardar entrada</button>
+    `;
+    // Variable para archivo de imagen
+    window.selectedBlogImageFile = null;
+}
             modal.classList.add('active');
         }
+function previewBlogImage(input) {
+    const file = input.files[0];
+    if (file) {
+        window.selectedBlogImageFile = file;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('blogImagePreview').innerHTML = `<img src="${e.target.result}" style="max-width:200px;">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+async function uploadBlogImage(file) {
+    if (!file) return null;
+    const fileExt = file.name.split('.').pop();
+    const fileName = `blog-${Date.now()}.${fileExt}`;
+    try {
+        const { data, error } = await supabaseClient.storage
+            .from('blog') // Asegúrate de crear un bucket llamado 'blog' en Storage
+            .upload(fileName, file, { cacheControl: '3600', upsert: true });
+        if (error) throw error;
+        const { data: urlData } = supabaseClient.storage.from('blog').getPublicUrl(fileName);
+        return urlData.publicUrl;
+    } catch (error) {
+        console.error('Error subiendo imagen de blog:', error);
+        return null;
+    }
+}
         
         async function saveDog(id) {
             const name = document.getElementById('dogName')?.value; if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
