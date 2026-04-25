@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Supabase</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>Test de conexión a Supabase</h1>
+    <p>Abre la consola (F12) para ver el resultado.</p>
+
+    <script>
+        const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
+
+        try {
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log('✅ Cliente Supabase creado');
+            
+            supabase.from('settings').select('*').then(r => {
+                if (r.error) {
+                    console.error('❌ Error al leer settings:', r.error);
+                } else {
+                    console.log('✅ Datos recibidos:', r.data);
+                    if (r.data && r.data.length > 0) {
+                        const logoUrl = r.data.find(s => s.key === 'logo_url')?.value;
+                        console.log('Logo URL:', logoUrl);
+                    }
+                }
+            }).catch(err => console.error('❌ Excepción:', err));
+        } catch (e) {
+            console.error('❌ No se pudo crear el cliente:', e);
+        }
+    </script>
+</body>
+</html>
