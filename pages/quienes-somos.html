@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Nombre de la página · Peludos Los Pedroches</title>
+    <meta name="description" content="Conoce a Peludos Los Pedroches, asociación protectora de animales sin ánimo de lucro en Los Pedroches, Córdoba.">
+    <title>Quiénes Somos · Peludos Los Pedroches</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -27,68 +28,122 @@
     </div>
 
     <!-- Header principal -->
-<header class="header">
-    <div class="container header-container">
-        <div class="logo">
-            <a href="../index.html">
-                <div class="logo-icon" id="logoIcon">
-                    <span class="logo-emoji">🐾</span>
-                </div>
-                <div class="logo-text">
-                    <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
-                    <span id="logoSubtitle">Protectora de Animales</span>
-                </div>
-            </a>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
+                    </div>
+                </a>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="adopta.html">Perros en adopción</a></li>
+                            <li><a href="apadrina.html">Apadrina</a></li>
+                            <li><a href="acoge.html">Casa de acogida</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="voluntario.html">Hazte Voluntario</a></li>
+                            <li><a href="socio.html">Hazte Socio</a></li>
+                            <li><a href="donacion.html">Donaciones</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="quienes-somos.html" class="active">Quiénes Somos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
         </div>
-        
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <nav class="main-nav" id="mainNav">
-            <ul class="nav-list">
-                <li><a href="../index.html">Inicio</a></li>
-                <li class="dropdown">
-                    <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="adopta.html">Perros en adopción</a></li>
-                        <li><a href="apadrina.html">Apadrina</a></li>
-                        <li><a href="acoge.html">Casa de acogida</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="voluntario.html">Hazte Voluntario</a></li>
-                        <li><a href="socio.html">Hazte Socio</a></li>
-                        <li><a href="donacion.html">Donaciones</a></li>
-                    </ul>
-                </li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-            </ul>
-        </nav>
-        
-        <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
-    </div>
-</header>
+    </header>
 
-    <!-- CONTENIDO ESPECÍFICO DE CADA PÁGINA (cambiar aquí) -->
-        <main>
+    <!-- Contenido principal -->
+    <main>
+        <!-- Page Header -->
         <section class="page-header">
             <div class="container">
                 <h1>QUIÉNES SOMOS</h1>
                 <p>Asociación protectora de animales sin ánimo de lucro en Los Pedroches, Córdoba</p>
             </div>
         </section>
-        
+
+        <!-- Nuestra historia -->
         <section style="padding: 60px 0;">
             <div class="container">
-                <h2>Nuestra historia</h2>
-                <p>Peludos Los Pedroches nace del amor incondicional hacia los animales...</p>
-                <h2>Colaboraciones</h2>
-                <p>Fundación Gypaetus, ayuntamientos de la comarca...</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-bottom: 60px;">
+                    <div>
+                        <h2 style="color: var(--secondary); font-size: 2rem; margin-bottom: 20px;">Nuestra historia</h2>
+                        <p style="margin-bottom: 15px; color: var(--gray);">Peludos Los Pedroches nace del amor incondicional hacia los animales y la necesidad de proteger a los más vulnerables en la comarca de Los Pedroches.</p>
+                        <p style="margin-bottom: 15px; color: var(--gray);">Somos un grupo de personas voluntarias que dedicamos nuestro tiempo y esfuerzo a rescatar, cuidar y encontrar hogar a perros abandonados y maltratados.</p>
+                        <p style="margin-bottom: 15px; color: var(--gray);">Actualmente contamos con un refugio donde albergamos a más de 70 perros que esperan una segunda oportunidad. Todos están chipados, vacunados, desparasitados y muchos esterilizados.</p>
+                    </div>
+                    <div>
+                        <div class="placeholder-image" style="min-height: 300px;">🐕🐕🐕</div>
+                    </div>
+                </div>
+
+                <!-- Misión, Visión, Valores -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-bottom: 60px;">
+                    <div style="text-align: center; padding: 30px; background: #f9f9f9; border-radius: 10px;">
+                        <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;">🎯</div>
+                        <h3 style="color: var(--secondary); margin-bottom: 15px;">Nuestra Misión</h3>
+                        <p style="color: var(--gray);">Rescatar, rehabilitar y encontrar hogares responsables para perros abandonados en Los Pedroches.</p>
+                    </div>
+                    <div style="text-align: center; padding: 30px; background: #f9f9f9; border-radius: 10px;">
+                        <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;">👁️</div>
+                        <h3 style="color: var(--secondary); margin-bottom: 15px;">Nuestra Visión</h3>
+                        <p style="color: var(--gray);">Un mundo donde ningún perro sufra abandono o maltrato, y todos tengan un hogar lleno de amor.</p>
+                    </div>
+                    <div style="text-align: center; padding: 30px; background: #f9f9f9; border-radius: 10px;">
+                        <div style="font-size: 3rem; color: var(--primary); margin-bottom: 20px;">💚</div>
+                        <h3 style="color: var(--secondary); margin-bottom: 15px;">Nuestros Valores</h3>
+                        <p style="color: var(--gray);">Compromiso, transparencia, amor por los animales y respeto por la vida.</p>
+                    </div>
+                </div>
+
+                <!-- Colaboraciones -->
+                <div style="background: #f9f9f9; padding: 40px; border-radius: 10px; margin-bottom: 60px;">
+                    <h2 style="color: var(--secondary); text-align: center; margin-bottom: 40px;">Colaboraciones</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-handshake"></i> Fundación Gypaetus</h3>
+                            <p style="color: var(--gray);">Colaboramos activamente en el proyecto Life contra el uso de cebos envenenados, trabajando en la educación y adiestramiento de perros pastores para ganaderos de la zona.</p>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-building"></i> Ayuntamientos</h3>
+                            <p style="color: var(--gray);">Trabajamos con los ayuntamientos de la comarca de Los Pedroches para gestionar colonias felinas y recogida de animales abandonados.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Llamada a la acción -->
+                <div style="text-align: center;">
+                    <h2 style="color: var(--secondary); margin-bottom: 20px;">¿Quieres formar parte?</h2>
+                    <p style="color: var(--gray); margin-bottom: 30px;">Hay muchas formas de ayudarnos. ¡Únete a nuestra familia!</p>
+                    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                        <a href="voluntario.html" class="btn btn-primary">Hazte Voluntario</a>
+                        <a href="socio.html" class="btn btn-secondary" style="background: var(--secondary); color: white;">Hazte Socio</a>
+                        <a href="donacion.html" class="btn-donate" style="padding: 12px 30px;">❤️ Donar</a>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -147,17 +202,14 @@
         </div>
     </footer>
 
-    <!-- Modal para el blog -->
+    <!-- Modal blog -->
     <div class="modal" id="blogModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="../js/main.js"></script>
 </body>
 </html>
