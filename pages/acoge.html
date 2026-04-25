@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Nombre de la página · Peludos Los Pedroches</title>
+    <meta name="description" content="Convierte tu hogar en un refugio temporal para un perro necesitado. Todos los gastos los cubre la protectora.">
+    <title>Casa de Acogida · Peludos Los Pedroches</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -27,80 +28,137 @@
     </div>
 
     <!-- Header principal -->
-   <header class="header">
-    <div class="container header-container">
-        <div class="logo">
-            <a href="../index.html">
-                <div class="logo-icon" id="logoIcon">
-                    <span class="logo-emoji">🐾</span>
-                </div>
-                <div class="logo-text">
-                    <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
-                    <span id="logoSubtitle">Protectora de Animales</span>
-                </div>
-            </a>
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
+                    </div>
+                </a>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="active">Adopta <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="adopta.html">Perros en adopción</a></li>
+                            <li><a href="apadrina.html">Apadrina</a></li>
+                            <li><a href="acoge.html" class="active">Casa de acogida</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="voluntario.html">Hazte Voluntario</a></li>
+                            <li><a href="socio.html">Hazte Socio</a></li>
+                            <li><a href="donacion.html">Donaciones</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
         </div>
-        
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <nav class="main-nav" id="mainNav">
-            <ul class="nav-list">
-                <li><a href="../index.html">Inicio</a></li>
-                <li class="dropdown">
-                    <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="adopta.html">Perros en adopción</a></li>
-                        <li><a href="apadrina.html">Apadrina</a></li>
-                        <li><a href="acoge.html">Casa de acogida</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="voluntario.html">Hazte Voluntario</a></li>
-                        <li><a href="socio.html">Hazte Socio</a></li>
-                        <li><a href="donacion.html">Donaciones</a></li>
-                    </ul>
-                </li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-            </ul>
-        </nav>
-        
-        <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
-    </div>
-</header>
+    </header>
 
-    <!-- CONTENIDO ESPECÍFICO DE CADA PÁGINA (cambiar aquí) -->
-        <main>
+    <!-- Contenido principal -->
+    <main>
+        <!-- Page Header -->
         <section class="page-header">
             <div class="container">
                 <h1>CASA DE ACOGIDA</h1>
                 <p>Convierte tu hogar en un refugio temporal para un perro necesitado</p>
             </div>
         </section>
-        
-        <section style="padding: 60px 0;">
+
+        <!-- ¿Qué es una casa de acogida? -->
+        <section class="about-preview" style="background: white;">
             <div class="container">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; margin-bottom: 60px;">
-                    <div>
-                        <h2 style="color: #2c5f2d;">¿Qué es una casa de acogida?</h2>
-                        <p>Una casa de acogida ofrece un hogar temporal a un perro mientras encuentra su familia definitiva.</p>
-                        <p><strong>La protectora se hace cargo de todos los gastos.</strong></p>
+                <div class="about-grid">
+                    <div class="about-content">
+                        <h2>¿Qué es una casa de acogida?</h2>
+                        <p>Una casa de acogida ofrece un hogar temporal a un perro mientras encuentra su familia definitiva. Es un acto de amor que salva vidas y permite que el perro viva en un entorno familiar en lugar de estar en el refugio.</p>
+                        <p><strong>La protectora se hace cargo de todos los gastos:</strong> alimentación, veterinario, medicación… Tú solo pones el cariño y el espacio.</p>
+                        
+                        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                            <h3 style="color: var(--primary);">Beneficios de ser casa de acogida</h3>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 10px;"><i class="fas fa-check" style="color: var(--primary);"></i> Ayudas directamente a un perro necesitado</li>
+                                <li style="margin-bottom: 10px;"><i class="fas fa-check" style="color: var(--primary);"></i> Sin compromiso económico</li>
+                                <li style="margin-bottom: 10px;"><i class="fas fa-check" style="color: var(--primary);"></i> La duración la decides tú</li>
+                                <li style="margin-bottom: 10px;"><i class="fas fa-check" style="color: var(--primary);"></i> Experiencia muy gratificante</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div><div class="placeholder-image" style="min-height: 300px;">🏠🐕</div></div>
+                    <div class="about-image">
+                        <div class="placeholder-image">🏠🐕</div>
+                    </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Formulario de acogida -->
+        <section style="padding: 60px 0; background: white;">
+            <div class="container">
+                <h2 class="section-title">HAZTE CASA DE ACOGIDA</h2>
+                <p class="section-subtitle">Completa tus datos y nos pondremos en contacto</p>
                 
-                <div style="max-width: 600px; margin: 0 auto;">
+                <div style="max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
                     <form id="acogeForm">
-                        <div class="form-group"><label>Nombre completo *</label><input type="text" required></div>
-                        <div class="form-group"><label>Email *</label><input type="email" required></div>
-                        <div class="form-group"><label>Teléfono *</label><input type="tel" required></div>
-                        <div class="form-group"><label>Tipo de vivienda *</label><select required><option>Piso</option><option>Casa</option><option>Finca</option></select></div>
-                        <button type="submit" class="btn btn-primary" style="width: 100%;">QUIERO SER CASA DE ACOGIDA</button>
+                        <div class="form-group">
+                            <label>Nombre completo *</label>
+                            <input type="text" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono *</label>
+                            <input type="tel" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo de vivienda *</label>
+                            <select required>
+                                <option value="">Selecciona</option>
+                                <option>Piso</option>
+                                <option>Casa con jardín</option>
+                                <option>Casa sin jardín</option>
+                                <option>Finca</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>¿Tienes otros animales?</label>
+                            <select>
+                                <option value="">Selecciona</option>
+                                <option>No</option>
+                                <option>Sí, perro/s</option>
+                                <option>Sí, gato/s</option>
+                                <option>Sí, otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Mensaje (opcional)</label>
+                            <textarea rows="3" placeholder="Cuéntanos tu disponibilidad o cualquier información relevante"></textarea>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" required> He leído y acepto la política de privacidad
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">QUIERO SER CASA DE ACOGIDA 🏠</button>
                     </form>
                 </div>
             </div>
@@ -161,17 +219,14 @@
         </div>
     </footer>
 
-    <!-- Modal para el blog -->
+    <!-- Modal blog -->
     <div class="modal" id="blogModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="../js/main.js"></script>
 </body>
 </html>
