@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Nombre de la página · Peludos Los Pedroches</title>
+    <meta name="description" content="Realiza una donación a Peludos Los Pedroches. El 100% de tu aportación se destina al cuidado de los perros rescatados.">
+    <title>Donaciones · Peludos Los Pedroches</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -28,86 +29,185 @@
 
     <!-- Header principal -->
     <header class="header">
-    <div class="container header-container">
-        <div class="logo">
-            <a href="../index.html">
-                <div class="logo-icon" id="logoIcon">
-                    <span class="logo-emoji">🐾</span>
-                </div>
-                <div class="logo-text">
-                    <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
-                    <span id="logoSubtitle">Protectora de Animales</span>
-                </div>
-            </a>
+        <div class="container header-container">
+            <div class="logo">
+                <a href="../index.html">
+                    <div class="logo-icon" id="logoIcon">
+                        <span class="logo-emoji">🐾</span>
+                    </div>
+                    <div class="logo-text">
+                        <h1 id="logoText">PELUDOS LOS PEDROCHES</h1>
+                        <span id="logoSubtitle">Protectora de Animales</span>
+                    </div>
+                </a>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="../index.html">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="adopta.html">Perros en adopción</a></li>
+                            <li><a href="apadrina.html">Apadrina</a></li>
+                            <li><a href="acoge.html">Casa de acogida</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="active">Colabora <i class="fas fa-chevron-down"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="voluntario.html">Hazte Voluntario</a></li>
+                            <li><a href="socio.html">Hazte Socio</a></li>
+                            <li><a href="donacion.html" class="active">Donaciones</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
         </div>
-        
-        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <nav class="main-nav" id="mainNav">
-            <ul class="nav-list">
-                <li><a href="../index.html">Inicio</a></li>
-                <li class="dropdown">
-                    <a href="#">Adopta <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="adopta.html">Perros en adopción</a></li>
-                        <li><a href="apadrina.html">Apadrina</a></li>
-                        <li><a href="acoge.html">Casa de acogida</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown">
-                    <a href="#">Colabora <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="voluntario.html">Hazte Voluntario</a></li>
-                        <li><a href="socio.html">Hazte Socio</a></li>
-                        <li><a href="donacion.html">Donaciones</a></li>
-                    </ul>
-                </li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
-            </ul>
-        </nav>
-        
-        <a href="donacion.html" class="btn-donate">❤️ DONAR</a>
-    </div>
-</header>
+    </header>
 
-    <!-- CONTENIDO ESPECÍFICO DE CADA PÁGINA (cambiar aquí) -->
-        <main>
+    <!-- Contenido principal -->
+    <main>
+        <!-- Page Header -->
         <section class="page-header">
             <div class="container">
                 <h1>HAZ TU DONACIÓN</h1>
-                <p>Tu ayuda es fundamental para seguir rescatando peludos</p>
+                <p>Tu ayuda es fundamental para seguir rescatando peludos. El 100% de las donaciones se destina al cuidado de los animales.</p>
             </div>
         </section>
-        
+
+        <!-- Formulario de donación -->
         <section style="padding: 60px 0;">
             <div class="container">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <!-- Formulario -->
                     <div>
+                        <h2 style="color: var(--secondary); margin-bottom: 30px;">Elige tu aportación</h2>
+                        
                         <form id="donationForm">
-                            <div class="form-group"><label>Tipo</label><select><option>Donación única</option><option>Donación mensual</option></select></div>
+                            <!-- Tipo de donación -->
                             <div class="form-group">
-                                <label>Cantidad</label>
-                                <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 10px;">
-                                    <button type="button" class="amount-btn" data-amount="10">10€</button>
-                                    <button type="button" class="amount-btn active" data-amount="20">20€</button>
-                                    <button type="button" class="amount-btn" data-amount="50">50€</button>
-                                    <button type="button" class="amount-btn" data-amount="100">100€</button>
+                                <label>Tipo de donación</label>
+                                <div style="display: flex; gap: 20px;">
+                                    <label style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="radio" name="type" value="single" checked> Única
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px;">
+                                        <input type="radio" name="type" value="monthly"> Mensual
+                                    </label>
                                 </div>
                             </div>
-                            <div class="form-group"><label>Otra cantidad</label><input type="number" id="customAmount" placeholder="€"></div>
-                            <div class="form-group"><label>Nombre *</label><input type="text" required></div>
-                            <div class="form-group"><label>Email *</label><input type="email" required></div>
-                            <button type="submit" class="btn btn-primary" style="width: 100%;">DONAR ❤️</button>
+                            
+                            <!-- Cantidades predefinidas -->
+                            <div class="form-group">
+                                <label>Cantidad</label>
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                                    <button type="button" class="amount-btn" data-amount="10" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">10€</button>
+                                    <button type="button" class="amount-btn active" data-amount="20" style="padding: 15px; border: 2px solid var(--primary); background: var(--primary); color: white; border-radius: 8px; cursor: pointer;">20€</button>
+                                    <button type="button" class="amount-btn" data-amount="50" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">50€</button>
+                                    <button type="button" class="amount-btn" data-amount="100" style="padding: 15px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer;">100€</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Cantidad personalizada -->
+                            <div class="form-group">
+                                <label>Otra cantidad (€)</label>
+                                <input type="number" id="customAmount" min="1" placeholder="Cantidad personalizada" style="width: 100%;">
+                            </div>
+                            
+                            <!-- Datos personales -->
+                            <div class="form-group">
+                                <label>Nombre completo *</label>
+                                <input type="text" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email *</label>
+                                <input type="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono (opcional)</label>
+                                <input type="tel">
+                            </div>
+                            
+                            <!-- Método de pago -->
+                            <div class="form-group">
+                                <label>Método de pago</label>
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center; cursor: pointer;">
+                                        <input type="radio" name="paymentMethod" value="card" checked> 💳 Tarjeta
+                                    </label>
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center; cursor: pointer;">
+                                        <input type="radio" name="paymentMethod" value="paypal"> 🅿️ PayPal
+                                    </label>
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center; cursor: pointer;">
+                                        <input type="radio" name="paymentMethod" value="bizum"> 📱 Bizum
+                                    </label>
+                                    <label style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; text-align: center; cursor: pointer;">
+                                        <input type="radio" name="paymentMethod" value="transfer"> 🏦 Transferencia
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Datos para transferencia (oculto inicialmente) -->
+                            <div id="transferDetails" style="display: none; background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                                <p><strong>Banco:</strong> [Nombre del banco]</p>
+                                <p><strong>IBAN:</strong> ESXX XXXX XXXX XXXX XXXX XXXX</p>
+                                <p><strong>Beneficiario:</strong> Peludos Los Pedroches</p>
+                                <p><strong>Concepto:</strong> Donación [Tu nombre]</p>
+                            </div>
+                            
+                            <!-- Aceptación -->
+                            <div class="form-check">
+                                <input type="checkbox" required> He leído y acepto la política de privacidad
+                            </div>
+                            
+                            <!-- Total -->
+                            <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                                <p style="font-size: 1.2rem; font-weight: bold;">Total a donar: <span id="donationTotal" style="color: var(--primary);">20€</span></p>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 1.2rem;">REALIZAR DONACIÓN ❤️</button>
                         </form>
                     </div>
+                    
+                    <!-- Información -->
                     <div>
+                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+                            <h3 style="color: var(--secondary); margin-bottom: 20px;"><i class="fas fa-heart" style="color: var(--primary);"></i> ¿Qué consigues con tu donación?</h3>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 15px;"><strong>10€</strong> – Alimentación de un perro durante una semana</li>
+                                <li style="margin-bottom: 15px;"><strong>20€</strong> – Vacunación completa</li>
+                                <li style="margin-bottom: 15px;"><strong>50€</strong> – Esterilización de un perro</li>
+                                <li style="margin-bottom: 15px;"><strong>100€</strong> – Tratamiento veterinario completo</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+                            <h3 style="color: var(--secondary); margin-bottom: 20px;"><i class="fas fa-shield-alt"></i> Pago 100% seguro</h3>
+                            <p>Tus datos están protegidos con encriptación SSL. No almacenamos información de tu tarjeta.</p>
+                        </div>
+                        
+                        <div style="background: #f9f9f9; padding: 30px; border-radius: 10px; margin-bottom: 20px;">
+                            <h3 style="color: var(--secondary); margin-bottom: 20px;"><i class="fas fa-file-invoice"></i> Desgravación fiscal</h3>
+                            <p>Somos una asociación sin ánimo de lucro. Tu donación desgrava en la declaración de la renta.</p>
+                        </div>
+                        
                         <div style="background: #f9f9f9; padding: 30px; border-radius: 10px;">
-                            <h3>¿Qué consigues con tu donación?</h3>
-                            <ul><li>10€ - Alimentación una semana</li><li>20€ - Vacunación</li><li>50€ - Esterilización</li><li>100€ - Tratamiento completo</li></ul>
+                            <h3 style="color: var(--secondary); margin-bottom: 20px;"><i class="fas fa-hand-holding-heart"></i> Otras formas de ayudar</h3>
+                            <ul style="list-style: none; padding-left: 0;">
+                                <li style="margin-bottom: 10px;"><a href="socio.html" style="color: var(--primary);">Hazte socio</a> con una cuota mensual</li>
+                                <li style="margin-bottom: 10px;"><a href="voluntario.html" style="color: var(--primary);">Hazte voluntario</a></li>
+                                <li style="margin-bottom: 10px;">Donación de materiales: pienso, mantas, collares…</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -169,17 +269,72 @@
         </div>
     </footer>
 
-    <!-- Modal para el blog -->
+    <!-- Modal blog -->
     <div class="modal" id="blogModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle"></h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
+            <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeModal()">&times;</button></div>
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script src="../js/main.js"></script>
+    <script>
+        // Mostrar/ocultar datos bancarios
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const transferDetails = document.getElementById('transferDetails');
+                if (this.value === 'transfer') {
+                    transferDetails.style.display = 'block';
+                } else {
+                    transferDetails.style.display = 'none';
+                }
+            });
+        });
+        
+        // Manejar botones de cantidad
+        document.querySelectorAll('.amount-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.amount-btn').forEach(b => {
+                    b.style.background = 'white';
+                    b.style.color = '#333';
+                    b.style.borderColor = '#ddd';
+                });
+                this.style.background = 'var(--primary)';
+                this.style.color = 'white';
+                this.style.borderColor = 'var(--primary)';
+                document.getElementById('customAmount').value = '';
+                updateTotal();
+            });
+        });
+        
+        document.getElementById('customAmount')?.addEventListener('input', function() {
+            document.querySelectorAll('.amount-btn').forEach(b => {
+                b.style.background = 'white';
+                b.style.color = '#333';
+                b.style.borderColor = '#ddd';
+            });
+            updateTotal();
+        });
+        
+        function updateTotal() {
+            let amount = 0;
+            const activeBtn = document.querySelector('.amount-btn[style*="var(--primary)"]');
+            if (activeBtn) {
+                amount = parseFloat(activeBtn.dataset.amount);
+            } else {
+                const custom = document.getElementById('customAmount')?.value;
+                if (custom) amount = parseFloat(custom);
+            }
+            const isMonthly = document.querySelector('input[name="type"]:checked')?.value === 'monthly';
+            const totalEl = document.getElementById('donationTotal');
+            if (totalEl) {
+                totalEl.textContent = isMonthly ? `${amount}€/mes` : `${amount}€`;
+            }
+        }
+        
+        document.querySelectorAll('input[name="type"]').forEach(radio => {
+            radio.addEventListener('change', updateTotal);
+        });
+    </script>
 </body>
 </html>
