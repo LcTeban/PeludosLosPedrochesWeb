@@ -1276,3 +1276,10 @@ img {
         font-size: 1.5rem;
     }
 }
+/* Para que las imágenes de sección se adapten bien */
+.placeholder-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
