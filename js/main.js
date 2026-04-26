@@ -74,6 +74,7 @@ function applySettings() {
     if (settings.primary_color) document.documentElement.style.setProperty('--primary', settings.primary_color);
     if (settings.secondary_color) document.documentElement.style.setProperty('--secondary', settings.secondary_color);
     updateContactInfo();
+    applySettings();
 }
 
 function updateContactInfo() {
@@ -478,6 +479,40 @@ function initForms() {
 // ========================================
 function setSelectedDog(dogName) {
     localStorage.setItem('selectedDog', dogName);
+}
+
+// ========================================
+// IMÁGENES DE SECCIONES (NUEVO)
+// ========================================
+function applySectionImages() {
+    const sections = [
+        { id: 'sectionImage-volunteer', key: 'volunteer_image', defaultEmoji: '🤝🐕' },
+        { id: 'sectionImage-apadrina', key: 'apadrina_image', defaultEmoji: '🐕❤️' },
+        { id: 'sectionImage-acoge', key: 'acoge_image', defaultEmoji: '🏠🐕' },
+        { id: 'sectionImage-about', key: 'about_image', defaultEmoji: '🐕🐕🐕' }
+    ];
+
+    sections.forEach(section => {
+        const container = document.getElementById(section.id);
+        if (!container) return;
+
+        const imageUrl = settings[section.key];
+        if (imageUrl) {
+            container.innerHTML = ''; // Limpiar emoji
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = section.id.replace('sectionImage-', '');
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '10px'; // Para mantener el estilo de la web
+            img.onerror = () => {
+                container.innerHTML = section.defaultEmoji;
+            };
+            container.appendChild(img);
+        }
+        // Si no hay imagen, se mantiene el emoji del HTML
+    });
 }
 
 // ========================================
