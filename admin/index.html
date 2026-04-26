@@ -130,6 +130,7 @@
             .admin-header h1 { font-size: 1.4rem; }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
     <div id="authCheck">
@@ -321,29 +322,35 @@
         }
 
         function renderDogsPage() {
-            return `
-                <div class="admin-header"><h1>Gestión de Perros</h1></div>
-                <div class="admin-section">
-                    <h2>Listado de perros <button class="btn-add" onclick="openModal('dog')"><i class="fas fa-plus"></i> Añadir perro</button></h2>
-                    <table class="admin-table">
-                        <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            ${dogs.map(d => `
-                                <tr>
-                                    <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
-                                    <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
-                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
-                                    <td>
-                                        <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
-                                        <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+    return `
+        <div class="admin-header"><h1>Gestión de Perros</h1></div>
+        <div class="admin-section">
+            <h2>
+                Listado de perros
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-add" onclick="openModal('dog')"><i class="fas fa-plus"></i> Añadir perro</button>
+                    <button class="btn-add" style="background: #2c5f2d;" onclick="openImportModal()"><i class="fas fa-file-csv"></i> Importar perros</button>
                 </div>
-            `;
-        }
+            </h2>
+            <table class="admin-table">
+                <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                    ${dogs.map(d => `
+                        <tr>
+                            <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
+                            <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
+                            <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
+                            <td>
+                                <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
+                                <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
 
         function renderBlogPage() {
             return `
