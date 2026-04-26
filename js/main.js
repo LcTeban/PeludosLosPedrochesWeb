@@ -96,7 +96,6 @@ async function loadDogs() {
         if (error) throw error;
         dogs = data || [];
         console.log('🐕 Perros cargados:', dogs.length);
-        // Renderizar en todas las páginas que tengan contenedores
         renderFeaturedDogs();
         renderDogsList();
         renderSponsorDogs();
@@ -180,7 +179,7 @@ function createDogCard(dog) {
 }
 
 // ========================================
-// MODALES DE PERRO
+// MODAL DE PERRO
 // ========================================
 function openDogModal(dogId) {
     const dog = dogs.find(d => d.id === dogId);
@@ -231,7 +230,7 @@ function closeDogModal() {
 }
 
 // ========================================
-// CARGA DE BLOG
+// BLOG (vista previa + página + modal)
 // ========================================
 async function loadBlogPosts() {
     try {
@@ -254,6 +253,13 @@ function renderBlogPreview() {
     if (!container) return;
     const postsToShow = blogPosts.slice(0, 3);
     container.innerHTML = postsToShow.map(post => createBlogCard(post)).join('');
+    container.onclick = function(e) {
+        const card = e.target.closest('.blog-card');
+        if (card) {
+            const postId = parseInt(card.dataset.id);
+            openBlogModal(postId);
+        }
+    };
 }
 
 function renderAllBlogPosts() {
@@ -264,6 +270,13 @@ function renderAllBlogPosts() {
         return;
     }
     container.innerHTML = blogPosts.map(post => createBlogCard(post)).join('');
+    container.onclick = function(e) {
+        const card = e.target.closest('.blog-card');
+        if (card) {
+            const postId = parseInt(card.dataset.id);
+            openBlogModal(postId);
+        }
+    };
 }
 
 function createBlogCard(post) {
@@ -272,7 +285,7 @@ function createBlogCard(post) {
         : '<div class="placeholder-image">📰</div>';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     return `
-        <article class="blog-card fade-in" onclick="openBlogModal(${post.id})">
+        <article class="blog-card fade-in" data-id="${post.id}">
             <div class="blog-image">${imageHtml}</div>
             <div class="blog-content">
                 <div class="blog-date"><i class="far fa-calendar"></i> ${date}</div>
@@ -284,9 +297,6 @@ function createBlogCard(post) {
     `;
 }
 
-// ========================================
-// MODAL DE BLOG
-// ========================================
 function openBlogModal(postId) {
     const post = blogPosts.find(p => p.id === postId);
     if (!post) return;
@@ -343,7 +353,6 @@ function initMobileMenu() {
         }
     });
 
-    // Cerrar al hacer clic en un enlace
     nav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 768) {
@@ -373,7 +382,7 @@ function initDropdownMobile() {
 }
 
 // ========================================
-// FORMULARIOS Y NEWSLETTER
+// NEWSLETTER Y FORMULARIOS
 // ========================================
 function initNewsletter() {
     document.querySelectorAll('.newsletter-form').forEach(form => {
@@ -386,7 +395,6 @@ function initNewsletter() {
 }
 
 function initForms() {
-    // Formulario de adopción
     const adoptionForm = document.getElementById('adoptionForm');
     if (adoptionForm) {
         adoptionForm.addEventListener('submit', function(e) {
@@ -396,7 +404,6 @@ function initForms() {
         });
     }
 
-    // Formulario de donación
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
@@ -431,10 +438,8 @@ function initForms() {
             alert('Redirigiendo a la pasarela de pago...');
         });
         
-        // Inicializar total
         updateTotal();
         
-        // Mostrar/ocultar transferencia
         donationForm.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const transferDetails = document.getElementById('transferDetails');
@@ -467,7 +472,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     initNewsletter();
     initForms();
 
-    // Si hay un perro seleccionado previamente, marcar en el select
     const selectedDog = localStorage.getItem('selectedDog');
     if (selectedDog) {
         const select = document.querySelector('select[name="perro"]');
@@ -478,7 +482,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.removeItem('selectedDog');
     }
 
-    // Configurar filtros en adopta.html
     const sizeFilter = document.getElementById('sizeFilter');
     const ageFilter = document.getElementById('ageFilter');
     const genderFilter = document.getElementById('genderFilter');
