@@ -76,6 +76,7 @@ function applySettings() {
     if (settings.secondary_color) document.documentElement.style.setProperty('--secondary', settings.secondary_color);
     updateContactInfo();
     applySectionImages();  // Añadido para imágenes de secciones
+    applyAboutContent();
 }
 
 function updateContactInfo() {
