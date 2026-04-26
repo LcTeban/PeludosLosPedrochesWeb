@@ -1,5 +1,5 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – main.js COMPLETO
+// PELUDOS LOS PEDROCHES – main.js CORREGIDO
 // ========================================
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
@@ -50,6 +50,7 @@ function loadDefaultSettings() {
 }
 
 function applySettings() {
+    console.log('🎨 Aplicando configuración...');
     const logoIcon = document.getElementById('logoIcon');
     if (logoIcon) {
         logoIcon.innerHTML = '';
@@ -74,18 +75,60 @@ function applySettings() {
     if (settings.primary_color) document.documentElement.style.setProperty('--primary', settings.primary_color);
     if (settings.secondary_color) document.documentElement.style.setProperty('--secondary', settings.secondary_color);
     updateContactInfo();
-    applySettings();
+    applySectionImages();  // Añadido para imágenes de secciones
 }
 
 function updateContactInfo() {
     const phone1 = document.querySelector('[data-contact="phone1"]');
-    if (phone1) { phone1.href = `tel:${settings.contact_phone1?.replace(/\s/g, '')}`; phone1.textContent = settings.contact_phone1; }
+    if (phone1) {
+        phone1.href = `tel:${settings.contact_phone1?.replace(/\s/g, '') || ''}`;
+        phone1.textContent = settings.contact_phone1 || '';
+    }
     const phone2 = document.querySelector('[data-contact="phone2"]');
-    if (phone2) { phone2.href = `tel:${settings.contact_phone2?.replace(/\s/g, '')}`; phone2.textContent = settings.contact_phone2; }
+    if (phone2) {
+        phone2.href = `tel:${settings.contact_phone2?.replace(/\s/g, '') || ''}`;
+        phone2.textContent = settings.contact_phone2 || '';
+    }
     const email = document.querySelector('[data-contact="email"]');
-    if (email) { email.href = `mailto:${settings.contact_email}`; email.textContent = settings.contact_email; }
+    if (email) {
+        email.href = `mailto:${settings.contact_email || ''}`;
+        email.textContent = settings.contact_email || '';
+    }
     const address = document.querySelector('[data-contact="address"]');
-    if (address) address.textContent = settings.contact_address;
+    if (address) address.textContent = settings.contact_address || '';
+}
+
+// ========================================
+// IMÁGENES DE SECCIONES
+// ========================================
+function applySectionImages() {
+    const sections = [
+        { id: 'sectionImage-volunteer', key: 'volunteer_image', defaultEmoji: '🤝🐕' },
+        { id: 'sectionImage-apadrina', key: 'apadrina_image', defaultEmoji: '🐕❤️' },
+        { id: 'sectionImage-acoge', key: 'acoge_image', defaultEmoji: '🏠🐕' },
+        { id: 'sectionImage-about', key: 'about_image', defaultEmoji: '🐕🐕🐕' }
+    ];
+
+    sections.forEach(section => {
+        const container = document.getElementById(section.id);
+        if (!container) return;
+
+        const imageUrl = settings[section.key];
+        if (imageUrl) {
+            container.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = section.id;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'cover';
+            img.style.borderRadius = '10px';
+            img.onerror = () => {
+                container.innerHTML = section.defaultEmoji;
+            };
+            container.appendChild(img);
+        }
+    });
 }
 
 // ========================================
@@ -231,9 +274,8 @@ function closeDogModal() {
 }
 
 // ========================================
-// BLOG (CON CIERRE CORREGIDO)
+// BLOG
 // ========================================
-
 function initBlogListeners() {
     let modal = document.getElementById('blogModal');
     if (!modal) {
@@ -482,40 +524,6 @@ function setSelectedDog(dogName) {
 }
 
 // ========================================
-// IMÁGENES DE SECCIONES (NUEVO)
-// ========================================
-function applySectionImages() {
-    const sections = [
-        { id: 'sectionImage-volunteer', key: 'volunteer_image', defaultEmoji: '🤝🐕' },
-        { id: 'sectionImage-apadrina', key: 'apadrina_image', defaultEmoji: '🐕❤️' },
-        { id: 'sectionImage-acoge', key: 'acoge_image', defaultEmoji: '🏠🐕' },
-        { id: 'sectionImage-about', key: 'about_image', defaultEmoji: '🐕🐕🐕' }
-    ];
-
-    sections.forEach(section => {
-        const container = document.getElementById(section.id);
-        if (!container) return;
-
-        const imageUrl = settings[section.key];
-        if (imageUrl) {
-            container.innerHTML = ''; // Limpiar emoji
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.alt = section.id.replace('sectionImage-', '');
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            img.style.borderRadius = '10px'; // Para mantener el estilo de la web
-            img.onerror = () => {
-                container.innerHTML = section.defaultEmoji;
-            };
-            container.appendChild(img);
-        }
-        // Si no hay imagen, se mantiene el emoji del HTML
-    });
-}
-
-// ========================================
 // INICIALIZACIÓN
 // ========================================
 document.addEventListener('DOMContentLoaded', async () => {
@@ -568,5 +576,5 @@ window.openDogModal = openDogModal;
 window.closeDogModal = closeDogModal;
 window.openBlogModal = openBlogModal;
 window.closeBlogModal = closeBlogModal;
-window.closeModal = closeBlogModal;  // Para compatibilidad con HTML estático
+window.closeModal = closeBlogModal;
 window.setSelectedDog = setSelectedDog;
