@@ -230,11 +230,11 @@ function closeDogModal() {
 }
 
 // ========================================
-// BLOG (CORREGIDO - MODAL CREADO AL INICIO)
+// BLOG (SOLUCIÓN DEFINITIVA)
 // ========================================
 
 function initBlogListeners() {
-    // Crear el modal del blog una sola vez
+    // Si no existe el modal del blog, crearlo (con los IDs correctos)
     let modal = document.getElementById('blogModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -243,10 +243,10 @@ function initBlogListeners() {
         modal.innerHTML = `
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 id="blogModalTitle"></h2>
+                    <h2 id="modalTitle"></h2>
                     <button class="modal-close" onclick="closeBlogModal()">&times;</button>
                 </div>
-                <div class="modal-body" id="blogModalBody"></div>
+                <div class="modal-body" id="modalBody"></div>
             </div>
         `;
         document.body.appendChild(modal);
@@ -325,12 +325,32 @@ function openBlogModal(postId) {
         return;
     }
 
-    const modal = document.getElementById('blogModal');
-    const titleEl = document.getElementById('blogModalTitle');
-    const bodyEl = document.getElementById('blogModalBody');
+    // Si el modal no existe (por alguna razón), lo creamos aquí mismo
+    let modal = document.getElementById('blogModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'blogModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle"></h2>
+                    <button class="modal-close" onclick="closeBlogModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeBlogModal();
+        });
+    }
 
-    if (!modal || !titleEl || !bodyEl) {
-        console.error('❌ No se encontró el modal o sus elementos internos');
+    const titleEl = document.getElementById('modalTitle');
+    const bodyEl = document.getElementById('modalBody');
+
+    if (!titleEl || !bodyEl) {
+        console.error('❌ No se encontraron modalTitle o modalBody dentro del modal');
         return;
     }
 
@@ -478,7 +498,7 @@ function setSelectedDog(dogName) {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 DOM listo, iniciando...');
     
-    // Crear modal del blog al inicio
+    // Configurar blog
     initBlogListeners();
     
     await loadSettings();
