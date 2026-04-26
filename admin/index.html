@@ -657,6 +657,75 @@
             }
         }
 
+function openImportModal() {
+    document.getElementById('importModal').classList.add('active');
+}
+
+function closeImportModal() {
+    document.getElementById('importModal').classList.remove('active');
+}
+
+async function importCSV() {
+    const fileInput = document.getElementById('csvFileInput');
+    const statusDiv = document.getElementById('importStatus');
+    
+    if (!fileInput.files[0]) {
+        statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Selecciona un archivo CSV primero.</p>';
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    statusDiv.innerHTML = '<p style="color: #666;">⏳ Leyendo archivo...</p>';
+    
+    Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        encoding: 'UTF-8',
+        complete: async function(results) {
+            if (results.errors.length > 0) {
+                statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Error al leer el archivo CSV.</p>';
+                return;
+            }
+            
+            const perros = results.data.map(row => ({
+                name: row['Nombre'] || '',
+                breed: row['Raza'] || '',
+                age: row['Edad'] || '',
+                size: row['Tamaño'] || 'Mediano',
+                gender: row['Sexo'] || 'Macho',
+                description: row['Descripción'] || '',
+                badge: row['Etiqueta'] || '',
+                status: row['Estado'] || 'Disponible',
+                image_url: ''
+            }));
+            
+            const validos = perros.filter(p => p.name.trim() !== '');
+            
+            if (validos.length === 0) {
+                statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ No se encontraron perros válidos en el archivo.</p>';
+                return;
+            }
+            
+            statusDiv.innerHTML = `<p style="color: #666;">⏳ Importando ${validos.length} perros...</p>`;
+            
+            try {
+                const { error } = await supabaseClient.from('dogs').insert(validos);
+                if (error) throw error;
+                
+                statusDiv.innerHTML = `<p style="color: #2c5f2d;">✅ ${validos.length} perros importados correctamente.</p>`;
+                await loadDogs();
+                renderPage();
+                setTimeout(closeImportModal, 1500);
+            } catch (error) {
+                statusDiv.innerHTML = `<p style="color: #e04f2e;">❌ Error al importar: ${error.message}</p>`;
+            }
+        },
+        error: function(error) {
+            statusDiv.innerHTML = `<p style="color: #e04f2e;">❌ Error al procesar el archivo: ${error.message}</p>`;
+        }
+    });
+}
+        
         function closeModal() {
             document.getElementById('editModal').classList.remove('active');
             selectedImageFile = null;
