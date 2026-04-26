@@ -1,5 +1,5 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – main.js COMPLETO (CORREGIDO)
+// PELUDOS LOS PEDROCHES – main.js COMPLETO (MODAL BLOG CORREGIDO)
 // ========================================
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
@@ -230,8 +230,36 @@ function closeDogModal() {
 }
 
 // ========================================
-// BLOG (CORREGIDO)
+// BLOG (MEJORADO CON DELEGACIÓN PERSISTENTE Y LOGS)
 // ========================================
+
+// Configurar listeners al cargar la página
+function initBlogListeners() {
+    const blogPreview = document.getElementById('blogPreview');
+    if (blogPreview) {
+        blogPreview.addEventListener('click', function(e) {
+            const card = e.target.closest('.blog-card');
+            if (card) {
+                const postId = parseInt(card.dataset.id);
+                console.log('Click en preview, postId:', postId);
+                openBlogModal(postId);
+            }
+        });
+    }
+
+    const allBlogPosts = document.getElementById('allBlogPosts');
+    if (allBlogPosts) {
+        allBlogPosts.addEventListener('click', function(e) {
+            const card = e.target.closest('.blog-card');
+            if (card) {
+                const postId = parseInt(card.dataset.id);
+                console.log('Click en allBlogPosts, postId:', postId);
+                openBlogModal(postId);
+            }
+        });
+    }
+}
+
 async function loadBlogPosts() {
     try {
         const { data, error } = await supabaseClient.from('blog_posts').select('*').eq('status', 'Publicado').order('id', { ascending: false });
@@ -253,13 +281,7 @@ function renderBlogPreview() {
     if (!container) return;
     const postsToShow = blogPosts.slice(0, 3);
     container.innerHTML = postsToShow.map(post => createBlogCard(post)).join('');
-    container.onclick = function(e) {
-        const card = e.target.closest('.blog-card');
-        if (card) {
-            const postId = parseInt(card.dataset.id);
-            openBlogModal(postId);
-        }
-    };
+    // El listener ya está configurado en initBlogListeners, no se reasigna
 }
 
 function renderAllBlogPosts() {
@@ -270,13 +292,7 @@ function renderAllBlogPosts() {
         return;
     }
     container.innerHTML = blogPosts.map(post => createBlogCard(post)).join('');
-    container.onclick = function(e) {
-        const card = e.target.closest('.blog-card');
-        if (card) {
-            const postId = parseInt(card.dataset.id);
-            openBlogModal(postId);
-        }
-    };
+    // El listener ya está configurado en initBlogListeners
 }
 
 function createBlogCard(post) {
@@ -298,11 +314,14 @@ function createBlogCard(post) {
 }
 
 function openBlogModal(postId) {
+    console.log('openBlogModal llamado con postId:', postId);
     const post = blogPosts.find(p => p.id === postId);
-    if (!post) return;
+    if (!post) {
+        console.warn('No se encontró el post con id:', postId);
+        return;
+    }
 
     let modal = document.getElementById('blogModal');
-    // Si no existe, lo creamos
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'blogModal';
@@ -322,10 +341,12 @@ function openBlogModal(postId) {
         });
     }
 
-    // Ahora que ya existe, actualizamos
     const titleEl = document.getElementById('blogModalTitle');
     const bodyEl = document.getElementById('blogModalBody');
-    if (!titleEl || !bodyEl) return;
+    if (!titleEl || !bodyEl) {
+        console.error('No se encontraron elementos del modal');
+        return;
+    }
 
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     titleEl.textContent = post.title;
@@ -335,6 +356,7 @@ function openBlogModal(postId) {
         <div style="line-height:1.8; color:#333;">${post.content || post.excerpt}</div>
     `;
     modal.classList.add('active');
+    console.log('Modal activado');
 }
 
 function closeBlogModal() {
@@ -469,6 +491,10 @@ function setSelectedDog(dogName) {
 // ========================================
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 DOM listo, iniciando...');
+    
+    // Configurar listeners de blog antes de cargar datos
+    initBlogListeners();
+    
     await loadSettings();
     await loadDogs();
     await loadBlogPosts();
