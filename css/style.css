@@ -1236,3 +1236,43 @@ img {
         font-size: 0.8rem;
     }
 }
+/* ========================================
+   MEJORAS RESPONSIVE ADICIONALES
+   ======================================== */
+
+/* Formularios en dos columnas pasan a una columna en móvil */
+@media (max-width: 768px) {
+    [style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Ajustar botones de cantidad en donación */
+    .amount-btn {
+        padding: 12px 8px !important;
+        font-size: 0.85rem !important;
+    }
+
+    /* Formularios más compactos */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px 12px !important;
+    }
+
+    /* Modal más ancho en móvil */
+    .modal-content {
+        width: 95% !important;
+        margin: 10px !important;
+    }
+
+    /* Los iconos de contacto en la página de contacto */
+    .contact-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .contact-item i {
+        font-size: 1.5rem;
+    }
+}
