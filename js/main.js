@@ -1,5 +1,5 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – main.js COMPLETO
+// PELUDOS LOS PEDROCHES – main.js COMPLETO (CORREGIDO)
 // ========================================
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
@@ -230,7 +230,7 @@ function closeDogModal() {
 }
 
 // ========================================
-// BLOG (vista previa + página + modal)
+// BLOG (CORREGIDO)
 // ========================================
 async function loadBlogPosts() {
     try {
@@ -302,6 +302,7 @@ function openBlogModal(postId) {
     if (!post) return;
 
     let modal = document.getElementById('blogModal');
+    // Si no existe, lo creamos
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'blogModal';
@@ -321,9 +322,14 @@ function openBlogModal(postId) {
         });
     }
 
+    // Ahora que ya existe, actualizamos
+    const titleEl = document.getElementById('blogModalTitle');
+    const bodyEl = document.getElementById('blogModalBody');
+    if (!titleEl || !bodyEl) return;
+
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
-    document.getElementById('blogModalTitle').textContent = post.title;
-    document.getElementById('blogModalBody').innerHTML = `
+    titleEl.textContent = post.title;
+    bodyEl.innerHTML = `
         ${post.image_url ? `<img src="${post.image_url}" alt="${post.title}" style="width:100%; border-radius:10px; margin-bottom:15px;">` : ''}
         <div class="blog-date" style="margin-bottom:15px; color:#e04f2e;"><i class="far fa-calendar"></i> ${date}</div>
         <div style="line-height:1.8; color:#333;">${post.content || post.excerpt}</div>
