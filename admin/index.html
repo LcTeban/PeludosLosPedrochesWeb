@@ -773,7 +773,25 @@ async function saveSectionImage(section) {
     showToast('Imagen guardada correctamente');
     renderPage(); // Refrescar la vista
 }
-
+async function saveAboutSettings() {
+    const fields = {
+        'about_title': 'aboutTitle',
+        'about_subtitle': 'aboutSubtitle',
+        'about_history': 'aboutHistory',
+        'about_mission': 'aboutMission',
+        'about_vision': 'aboutVision',
+        'about_values': 'aboutValues',
+        'about_collaborations': 'aboutCollaborations'
+    };
+    
+    for (const [key, inputId] of Object.entries(fields)) {
+        const value = document.getElementById(inputId)?.value || '';
+        await supabaseClient.from('settings').update({ value }).eq('key', key);
+        settings[key] = value;
+    }
+    
+    showToast('Página "Quiénes Somos" actualizada correctamente');
+}
         function logout() {
             localStorage.removeItem('adminToken');
             window.location.href = 'login.html';
