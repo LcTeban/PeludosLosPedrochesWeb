@@ -131,6 +131,29 @@ function applySectionImages() {
     });
 }
 
+function applyAboutContent() {
+    const titleEl = document.getElementById('aboutTitle');
+    if (titleEl) titleEl.textContent = settings.about_title || 'QUIÉNES SOMOS';
+
+    const subtitleEl = document.getElementById('aboutSubtitle');
+    if (subtitleEl) subtitleEl.textContent = settings.about_subtitle || '';
+
+    const historyEl = document.getElementById('aboutHistory');
+    if (historyEl) historyEl.innerHTML = settings.about_history || '';
+
+    const missionEl = document.getElementById('aboutMission');
+    if (missionEl) missionEl.textContent = settings.about_mission || '';
+
+    const visionEl = document.getElementById('aboutVision');
+    if (visionEl) visionEl.textContent = settings.about_vision || '';
+
+    const valuesEl = document.getElementById('aboutValues');
+    if (valuesEl) valuesEl.textContent = settings.about_values || '';
+
+    const collaborationsEl = document.getElementById('aboutCollaborations');
+    if (collaborationsEl) collaborationsEl.innerHTML = settings.about_collaborations || '';
+}
+
 // ========================================
 // CARGA DE PERROS
 // ========================================
