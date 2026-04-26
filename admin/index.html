@@ -690,6 +690,59 @@
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
+        // Previsualizar imagen de sección
+function previewSectionImage(input, previewId) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="max-width: 200px; border-radius: 8px;">`;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Guardar imagen de sección
+async function saveSectionImage(section) {
+    let inputId, key;
+    switch(section) {
+        case 'volunteer':
+            inputId = 'volunteerImageInput';
+            key = 'volunteer_image';
+            break;
+        case 'apadrina':
+            inputId = 'apadrinaImageInput';
+            key = 'apadrina_image';
+            break;
+        case 'acoge':
+            inputId = 'acogeImageInput';
+            key = 'acoge_image';
+            break;
+        case 'about':
+            inputId = 'aboutImageInput';
+            key = 'about_image';
+            break;
+        default:
+            return;
+    }
+    
+    const fileInput = document.getElementById(inputId);
+    if (!fileInput || !fileInput.files[0]) {
+        showToast('Selecciona una imagen primero', 'error');
+        return;
+    }
+    
+    const imageUrl = await uploadFile(fileInput.files[0], 'secciones');
+    if (!imageUrl) {
+        showToast('Error al subir la imagen', 'error');
+        return;
+    }
+    
+    await supabaseClient.from('settings').update({ value: imageUrl }).eq('key', key);
+    settings[key] = imageUrl;
+    showToast('Imagen guardada correctamente');
+    renderPage(); // Refrescar la vista
+}
 
         function logout() {
             localStorage.removeItem('adminToken');
