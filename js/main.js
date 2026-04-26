@@ -230,11 +230,10 @@ function closeDogModal() {
 }
 
 // ========================================
-// BLOG (SOLUCIÓN DEFINITIVA)
+// BLOG (CON CIERRE CORREGIDO)
 // ========================================
 
 function initBlogListeners() {
-    // Si no existe el modal del blog, crearlo (con los IDs correctos)
     let modal = document.getElementById('blogModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -255,7 +254,6 @@ function initBlogListeners() {
         });
     }
 
-    // Delegación de eventos para las tarjetas del blog
     document.body.addEventListener('click', function(e) {
         const card = e.target.closest('.blog-card');
         if (card) {
@@ -318,14 +316,9 @@ function createBlogCard(post) {
 }
 
 function openBlogModal(postId) {
-    console.log('openBlogModal llamado con postId:', postId);
     const post = blogPosts.find(p => p.id === postId);
-    if (!post) {
-        console.warn('No se encontró el post con id:', postId);
-        return;
-    }
+    if (!post) return;
 
-    // Si el modal no existe (por alguna razón), lo creamos aquí mismo
     let modal = document.getElementById('blogModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -348,11 +341,7 @@ function openBlogModal(postId) {
 
     const titleEl = document.getElementById('modalTitle');
     const bodyEl = document.getElementById('modalBody');
-
-    if (!titleEl || !bodyEl) {
-        console.error('❌ No se encontraron modalTitle o modalBody dentro del modal');
-        return;
-    }
+    if (!titleEl || !bodyEl) return;
 
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     titleEl.textContent = post.title;
@@ -362,7 +351,6 @@ function openBlogModal(postId) {
         <div style="line-height:1.8; color:#333;">${post.content || post.excerpt}</div>
     `;
     modal.classList.add('active');
-    console.log('✅ Modal activado');
 }
 
 function closeBlogModal() {
@@ -498,7 +486,6 @@ function setSelectedDog(dogName) {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 DOM listo, iniciando...');
     
-    // Configurar blog
     initBlogListeners();
     
     await loadSettings();
@@ -546,4 +533,5 @@ window.openDogModal = openDogModal;
 window.closeDogModal = closeDogModal;
 window.openBlogModal = openBlogModal;
 window.closeBlogModal = closeBlogModal;
+window.closeModal = closeBlogModal;  // Para compatibilidad con HTML estático
 window.setSelectedDog = setSelectedDog;
