@@ -371,42 +371,105 @@
         }
 
         function renderSettingsPage() {
-            return `
-                <div class="admin-header"><h1>Configuración</h1></div>
-                <div class="admin-section">
-                    <h2>Logo</h2>
-                    <div class="form-group">
-                        <label>Logo actual</label>
-                        <div style="margin-bottom: 15px;">
-                            ${settings.logo_url ? 
-                                `<img src="${settings.logo_url}" style="max-width: 200px; max-height: 100px;">` : 
-                                '<div style="font-size: 3rem;">🐾</div>'}
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Subir nuevo logo</label>
-                        <input type="file" id="logoImage" accept="image/*" onchange="previewLogo(this)">
-                        <div class="image-preview" id="logoPreview"></div>
-                    </div>
-                    <div class="form-group"><label>Texto del logo</label><input type="text" id="logoText" value="${settings.logo_text || '🐾 PELUDOS LOS PEDROCHES'}"></div>
-                    <div class="form-group"><label>Subtítulo</label><input type="text" id="logoSubtitle" value="${settings.logo_subtitle || 'Protectora de Animales'}"></div>
-                    <button class="btn-save" onclick="saveLogoSettings()">Guardar logo</button>
+    return `
+        <div class="admin-header"><h1>Configuración</h1></div>
+        
+        <!-- Logo -->
+        <div class="admin-section">
+            <h2>Logo</h2>
+            <div class="form-group">
+                <label>Logo actual</label>
+                <div style="margin-bottom: 15px;">
+                    ${settings.logo_url ? 
+                        `<img src="${settings.logo_url}" style="max-width: 200px; max-height: 100px;">` : 
+                        '<div style="font-size: 3rem;">🐾</div>'}
                 </div>
-                <div class="admin-section">
-                    <h2>Colores</h2>
-                    <div class="form-group"><label>Color principal</label><input type="color" id="primaryColor" value="${settings.primary_color || '#e04f2e'}"></div>
-                    <div class="form-group"><label>Color secundario</label><input type="color" id="secondaryColor" value="${settings.secondary_color || '#2c5f2d'}"></div>
-                    <button class="btn-save" onclick="saveColorSettings()">Guardar colores</button>
+            </div>
+            <div class="form-group">
+                <label>Subir nuevo logo</label>
+                <input type="file" id="logoImage" accept="image/*" onchange="previewLogo(this)">
+                <div class="image-preview" id="logoPreview"></div>
+            </div>
+            <div class="form-group"><label>Texto del logo</label><input type="text" id="logoText" value="${settings.logo_text || '🐾 PELUDOS LOS PEDROCHES'}"></div>
+            <div class="form-group"><label>Subtítulo</label><input type="text" id="logoSubtitle" value="${settings.logo_subtitle || 'Protectora de Animales'}"></div>
+            <button class="btn-save" onclick="saveLogoSettings()">Guardar logo</button>
+        </div>
+        
+        <!-- Imágenes de secciones -->
+        <div class="admin-section">
+            <h2>Imágenes de las secciones</h2>
+            
+            <!-- Voluntariado -->
+            <div class="form-group">
+                <label>Imagen de Voluntariado</label>
+                <div style="margin-bottom: 10px;">
+                    ${settings.volunteer_image ? 
+                        `<img src="${settings.volunteer_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                        '<span style="color: #999;">Sin imagen</span>'}
                 </div>
-                <div class="admin-section">
-                    <h2>Contacto</h2>
-                    <div class="form-group"><label>Teléfono principal</label><input type="text" id="phone1" value="${settings.contact_phone1 || '661 44 79 42'}"></div>
-                    <div class="form-group"><label>Teléfono secundario</label><input type="text" id="phone2" value="${settings.contact_phone2 || '666 86 16 20'}"></div>
-                    <div class="form-group"><label>Email</label><input type="email" id="email" value="${settings.contact_email || 'peludoslospedroches@gmail.com'}"></div>
-                    <button class="btn-save" onclick="saveContactSettings()">Guardar contacto</button>
+                <input type="file" id="volunteerImageInput" accept="image/*" onchange="previewSectionImage(this, 'volunteerPreview')">
+                <div class="image-preview" id="volunteerPreview"></div>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('volunteer')">Guardar imagen de voluntariado</button>
+            </div>
+            
+            <!-- Apadrinamiento -->
+            <div class="form-group">
+                <label>Imagen de Apadrinamiento</label>
+                <div style="margin-bottom: 10px;">
+                    ${settings.apadrina_image ? 
+                        `<img src="${settings.apadrina_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                        '<span style="color: #999;">Sin imagen</span>'}
                 </div>
-            `;
-        }
+                <input type="file" id="apadrinaImageInput" accept="image/*" onchange="previewSectionImage(this, 'apadrinaPreview')">
+                <div class="image-preview" id="apadrinaPreview"></div>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('apadrina')">Guardar imagen de apadrinamiento</button>
+            </div>
+            
+            <!-- Casa de acogida -->
+            <div class="form-group">
+                <label>Imagen de Casa de Acogida</label>
+                <div style="margin-bottom: 10px;">
+                    ${settings.acoge_image ? 
+                        `<img src="${settings.acoge_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                        '<span style="color: #999;">Sin imagen</span>'}
+                </div>
+                <input type="file" id="acogeImageInput" accept="image/*" onchange="previewSectionImage(this, 'acogePreview')">
+                <div class="image-preview" id="acogePreview"></div>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('acoge')">Guardar imagen de acogida</button>
+            </div>
+            
+            <!-- Quiénes Somos -->
+            <div class="form-group">
+                <label>Imagen de Quiénes Somos</label>
+                <div style="margin-bottom: 10px;">
+                    ${settings.about_image ? 
+                        `<img src="${settings.about_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                        '<span style="color: #999;">Sin imagen</span>'}
+                </div>
+                <input type="file" id="aboutImageInput" accept="image/*" onchange="previewSectionImage(this, 'aboutPreview')">
+                <div class="image-preview" id="aboutPreview"></div>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('about')">Guardar imagen de quiénes somos</button>
+            </div>
+        </div>
+        
+        <!-- Colores -->
+        <div class="admin-section">
+            <h2>Colores</h2>
+            <div class="form-group"><label>Color principal</label><input type="color" id="primaryColor" value="${settings.primary_color || '#e04f2e'}"></div>
+            <div class="form-group"><label>Color secundario</label><input type="color" id="secondaryColor" value="${settings.secondary_color || '#2c5f2d'}"></div>
+            <button class="btn-save" onclick="saveColorSettings()">Guardar colores</button>
+        </div>
+        
+        <!-- Contacto -->
+        <div class="admin-section">
+            <h2>Contacto</h2>
+            <div class="form-group"><label>Teléfono principal</label><input type="text" id="phone1" value="${settings.contact_phone1 || '661 44 79 42'}"></div>
+            <div class="form-group"><label>Teléfono secundario</label><input type="text" id="phone2" value="${settings.contact_phone2 || '666 86 16 20'}"></div>
+            <div class="form-group"><label>Email</label><input type="email" id="email" value="${settings.contact_email || 'peludoslospedroches@gmail.com'}"></div>
+            <button class="btn-save" onclick="saveContactSettings()">Guardar contacto</button>
+        </div>
+    `;
+}
 
         // ========================================
         // FUNCIONES DE GUARDADO
