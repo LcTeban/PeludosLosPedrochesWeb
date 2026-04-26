@@ -169,7 +169,29 @@
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-
+    
+<!-- Modal para importar CSV -->
+<div class="modal" id="importModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Importar perros desde CSV</h3>
+            <button class="modal-close" onclick="closeImportModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="margin-bottom: 15px;">
+                Selecciona un archivo CSV con las siguientes columnas:<br>
+                <strong>Nombre, Raza, Edad, Tamaño, Sexo, Descripción, Etiqueta, Estado</strong>
+            </p>
+            <div class="form-group">
+                <label>Archivo CSV</label>
+                <input type="file" id="csvFileInput" accept=".csv">
+            </div>
+            <div id="importStatus" style="margin-bottom: 15px;"></div>
+            <button class="btn-save" onclick="importCSV()">Importar perros</button>
+        </div>
+    </div>
+</div>
+    
     <script>
         // ========================================
         // CONFIGURACIÓN Y AUTENTICACIÓN
