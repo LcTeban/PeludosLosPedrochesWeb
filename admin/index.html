@@ -399,7 +399,6 @@
         <div class="admin-section">
             <h2>Imágenes de las secciones</h2>
             
-            <!-- Voluntariado -->
             <div class="form-group">
                 <label>Imagen de Voluntariado</label>
                 <div style="margin-bottom: 10px;">
@@ -409,10 +408,9 @@
                 </div>
                 <input type="file" id="volunteerImageInput" accept="image/*" onchange="previewSectionImage(this, 'volunteerPreview')">
                 <div class="image-preview" id="volunteerPreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('volunteer')">Guardar imagen de voluntariado</button>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('volunteer')">Guardar imagen</button>
             </div>
             
-            <!-- Apadrinamiento -->
             <div class="form-group">
                 <label>Imagen de Apadrinamiento</label>
                 <div style="margin-bottom: 10px;">
@@ -422,10 +420,9 @@
                 </div>
                 <input type="file" id="apadrinaImageInput" accept="image/*" onchange="previewSectionImage(this, 'apadrinaPreview')">
                 <div class="image-preview" id="apadrinaPreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('apadrina')">Guardar imagen de apadrinamiento</button>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('apadrina')">Guardar imagen</button>
             </div>
             
-            <!-- Casa de acogida -->
             <div class="form-group">
                 <label>Imagen de Casa de Acogida</label>
                 <div style="margin-bottom: 10px;">
@@ -435,10 +432,9 @@
                 </div>
                 <input type="file" id="acogeImageInput" accept="image/*" onchange="previewSectionImage(this, 'acogePreview')">
                 <div class="image-preview" id="acogePreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('acoge')">Guardar imagen de acogida</button>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('acoge')">Guardar imagen</button>
             </div>
             
-            <!-- Quiénes Somos -->
             <div class="form-group">
                 <label>Imagen de Quiénes Somos</label>
                 <div style="margin-bottom: 10px;">
@@ -448,8 +444,42 @@
                 </div>
                 <input type="file" id="aboutImageInput" accept="image/*" onchange="previewSectionImage(this, 'aboutPreview')">
                 <div class="image-preview" id="aboutPreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('about')">Guardar imagen de quiénes somos</button>
+                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('about')">Guardar imagen</button>
             </div>
+        </div>
+        
+        <!-- Página Quiénes Somos -->
+        <div class="admin-section">
+            <h2>Página "Quiénes Somos"</h2>
+            <div class="form-group">
+                <label>Título principal</label>
+                <input type="text" id="aboutTitle" value="${settings.about_title || 'QUIÉNES SOMOS'}">
+            </div>
+            <div class="form-group">
+                <label>Subtítulo</label>
+                <input type="text" id="aboutSubtitle" value="${settings.about_subtitle || ''}">
+            </div>
+            <div class="form-group">
+                <label>Historia (HTML permitido)</label>
+                <textarea id="aboutHistory" rows="6">${settings.about_history || ''}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Misión</label>
+                <textarea id="aboutMission" rows="3">${settings.about_mission || ''}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Visión</label>
+                <textarea id="aboutVision" rows="3">${settings.about_vision || ''}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Valores</label>
+                <textarea id="aboutValues" rows="3">${settings.about_values || ''}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Colaboraciones (HTML permitido)</label>
+                <textarea id="aboutCollaborations" rows="5">${settings.about_collaborations || ''}</textarea>
+            </div>
+            <button class="btn-save" onclick="saveAboutSettings()">Guardar página "Quiénes Somos"</button>
         </div>
         
         <!-- Colores -->
