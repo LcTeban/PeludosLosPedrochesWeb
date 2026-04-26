@@ -1283,3 +1283,18 @@ img {
     object-fit: cover;
     display: block;
 }
+/* Eliminar el fondo y el espacio extra cuando hay una imagen real en .placeholder-image */
+.placeholder-image:has(img) {
+    background: none;
+    min-height: auto;
+    padding: 0;
+}
+
+/* Asegurar que la imagen ocupe todo el contenedor sin bordes */
+.placeholder-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px; /* opcional, para mantener el estilo redondeado */
+    display: block;
+}
