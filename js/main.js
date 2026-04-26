@@ -1,5 +1,5 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – main.js (MODAL BLOG CORREGIDO)
+// PELUDOS LOS PEDROCHES – main.js COMPLETO
 // ========================================
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
@@ -230,11 +230,32 @@ function closeDogModal() {
 }
 
 // ========================================
-// BLOG (DELEGACIÓN DE EVENTOS MEJORADA)
+// BLOG (CORREGIDO - MODAL CREADO AL INICIO)
 // ========================================
 
-// Inicializar listeners una sola vez
 function initBlogListeners() {
+    // Crear el modal del blog una sola vez
+    let modal = document.getElementById('blogModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'blogModal';
+        modal.className = 'modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="blogModalTitle"></h2>
+                    <button class="modal-close" onclick="closeBlogModal()">&times;</button>
+                </div>
+                <div class="modal-body" id="blogModalBody"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeBlogModal();
+        });
+    }
+
+    // Delegación de eventos para las tarjetas del blog
     document.body.addEventListener('click', function(e) {
         const card = e.target.closest('.blog-card');
         if (card) {
@@ -304,30 +325,12 @@ function openBlogModal(postId) {
         return;
     }
 
-    let modal = document.getElementById('blogModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'blogModal';
-        modal.className = 'modal';
-        modal.innerHTML = `
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="blogModalTitle"></h2>
-                    <button class="modal-close" onclick="closeBlogModal()">&times;</button>
-                </div>
-                <div class="modal-body" id="blogModalBody"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) closeBlogModal();
-        });
-    }
-
+    const modal = document.getElementById('blogModal');
     const titleEl = document.getElementById('blogModalTitle');
     const bodyEl = document.getElementById('blogModalBody');
-    if (!titleEl || !bodyEl) {
-        console.error('No se encontraron elementos del modal');
+
+    if (!modal || !titleEl || !bodyEl) {
+        console.error('❌ No se encontró el modal o sus elementos internos');
         return;
     }
 
@@ -339,7 +342,7 @@ function openBlogModal(postId) {
         <div style="line-height:1.8; color:#333;">${post.content || post.excerpt}</div>
     `;
     modal.classList.add('active');
-    console.log('Modal activado');
+    console.log('✅ Modal activado');
 }
 
 function closeBlogModal() {
@@ -475,7 +478,7 @@ function setSelectedDog(dogName) {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 DOM listo, iniciando...');
     
-    // Configurar listener global para blog
+    // Crear modal del blog al inicio
     initBlogListeners();
     
     await loadSettings();
