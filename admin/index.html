@@ -606,7 +606,9 @@ const imagesPreviewHtml = existingImages.map((url, index) =>
         <button type="button" onclick="removeExistingImage(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
     </div>`
 ).join('');
-
+                
+existingImagesToKeep = (dog.images && dog.images.length > 0) ? [...dog.images] : (dog.image_url ? [dog.image_url] : []);
+                
 body.innerHTML = `
     <div class="form-group">
         <label>Fotos del perro (puedes seleccionar varias)</label>
