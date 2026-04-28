@@ -419,11 +419,13 @@ function renderAllBlogPosts() {
 }
 
 function createBlogCard(post) {
-    const imageHtml = post.image_url ? `<img src="${post.image_url}" alt="${post.title}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-image">📰</div>';
+    const imageHtml = post.image_url 
+        ? `<div class="blog-image-wrapper"><img src="${post.image_url}" alt="${post.title}" onclick="event.stopPropagation(); openLightbox('${post.image_url}');"></div>` 
+        : '<div class="blog-image-wrapper"><div class="placeholder-image">📰</div></div>';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     return `
         <article class="blog-card fade-in" data-id="${post.id}">
-            <div class="blog-image">${imageHtml}</div>
+            ${imageHtml}
             <div class="blog-content">
                 <div class="blog-date"><i class="far fa-calendar"></i> ${date}</div>
                 <h3 class="blog-title">${post.title}</h3>
