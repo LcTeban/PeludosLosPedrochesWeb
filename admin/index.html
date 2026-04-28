@@ -597,19 +597,35 @@
 
             if (type === 'dog') {
                 const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', gender: 'Macho', size: 'Mediano', status: 'Disponible', description: '', badge: '', image_url: '' };
-                title.textContent = id ? 'Editar perro' : 'Añadir perro';
-                body.innerHTML = `
-                    <div class="form-group"><label>Foto</label><input type="file" id="dogImage" accept="image/*" onchange="previewImage(this)"><div class="image-preview" id="imagePreview">${dog.image_url ? `<img src="${dog.image_url}">` : ''}</div></div>
-                    <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
-                    <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
-                    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}"></div>
-                    <div class="form-group"><label>Sexo</label><select id="dogGender"><option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option><option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option></select></div>
-                    <div class="form-group"><label>Tamaño</label><select id="dogSize"><option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option><option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option><option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option></select></div>
-                    <div class="form-group"><label>Estado</label><select id="dogStatus"><option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option><option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option><option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option></select></div>
-                    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}"></div>
-                    <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
-                    <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar perro</button>
-                `;
+                // Dentro del case 'dog' en openModal:
+title.textContent = id ? 'Editar perro' : 'Añadir perro';
+const existingImages = (dog.images && dog.images.length > 0) ? dog.images : (dog.image_url ? [dog.image_url] : []);
+const imagesPreviewHtml = existingImages.map((url, index) => 
+    `<div style="position:relative; display:inline-block; margin:5px;">
+        <img src="${url}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+        <button type="button" onclick="removeExistingImage(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+    </div>`
+).join('');
+
+body.innerHTML = `
+    <div class="form-group">
+        <label>Fotos del perro (puedes seleccionar varias)</label>
+        <input type="file" id="dogImages" accept="image/*" multiple onchange="previewMultipleImages(this)">
+        <div class="image-preview" id="imagePreview" style="display:flex; flex-wrap:wrap;">
+            ${imagesPreviewHtml}
+        </div>
+        <div id="newImagesPreview" style="display:flex; flex-wrap:wrap;"></div>
+    </div>
+    <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
+    <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
+    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}"></div>
+    <div class="form-group"><label>Sexo</label><select id="dogGender"><option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option><option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option></select></div>
+    <div class="form-group"><label>Tamaño</label><select id="dogSize"><option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option><option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option><option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option></select></div>
+    <div class="form-group"><label>Estado</label><select id="dogStatus"><option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option><option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option><option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option></select></div>
+    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}"></div>
+    <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
+    <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar perro</button>
+`;
                 selectedImageFile = null;
             } else if (type === 'blog') {
                 const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado', image_url: '' };
