@@ -250,9 +250,18 @@ function createDogCard(dog) {
 // ========================================
 // MODAL DE PERRO
 // ========================================
+
+let currentDogImages = [];
+let currentImageIndex = 0;
+
 function openDogModal(dogId) {
     const dog = dogs.find(d => d.id === dogId);
     if (!dog) return;
+
+    // Obtener todas las imágenes disponibles
+    const images = (dog.images && dog.images.length > 0) ? dog.images : (dog.image_url ? [dog.image_url] : []);
+    currentDogImages = images;
+    currentImageIndex = 0;
 
     let modal = document.getElementById('dogModal');
     if (!modal) {
@@ -260,7 +269,7 @@ function openDogModal(dogId) {
         modal.id = 'dogModal';
         modal.className = 'modal';
         modal.innerHTML = `
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 800px;">
                 <div class="modal-header">
                     <h2 id="dogModalTitle"></h2>
                     <button class="modal-close" onclick="closeDogModal()">&times;</button>
@@ -274,13 +283,37 @@ function openDogModal(dogId) {
         });
     }
 
-    document.getElementById('dogModalTitle').textContent = dog.name;
-    document.getElementById('dogModalBody').innerHTML = `
-        <div style="text-align: center; margin-bottom: 20px;">
-            ${dog.image_url 
-                ? `<img src="${dog.image_url}" alt="${dog.name}" style="max-width:100%; max-height:300px; border-radius:10px;">` 
-                : '<div class="placeholder-image" style="height:200px;">🐕</div>'}
-        </div>
+    renderDogModalBody(dog);
+    modal.classList.add('active');
+}
+
+function renderDogModalBody(dog) {
+    const body = document.getElementById('dogModalBody');
+    const titleEl = document.getElementById('dogModalTitle');
+    titleEl.textContent = dog.name;
+
+    let carouselHtml = '';
+    if (currentDogImages.length > 0) {
+        carouselHtml = `
+            <div style="position: relative; width: 100%; max-height: 400px; overflow: hidden; margin-bottom: 20px; text-align: center;">
+                <img id="dogCarouselImage" src="${currentDogImages[currentImageIndex]}" 
+                     style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; cursor: pointer;" 
+                     onclick="openFullscreen('${currentDogImages[currentImageIndex]}')">
+                ${currentDogImages.length > 1 ? `
+                    <button onclick="prevImage()" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">‹</button>
+                    <button onclick="nextImage()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">›</button>
+                    <div style="margin-top:10px;">
+                        ${currentDogImages.map((_, i) => `<span style="display:inline-block; width:10px; height:10px; background:${i === currentImageIndex ? '#e04f2e' : '#ccc'}; border-radius:50%; margin:0 3px;"></span>`).join('')}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    } else {
+        carouselHtml = '<div class="placeholder-image" style="height:250px;">🐕</div>';
+    }
+
+    body.innerHTML = `
+        ${carouselHtml}
         <div class="dog-details" style="margin-bottom:15px;">
             <span><i class="fas fa-paw"></i> ${dog.breed}</span>
             <span><i class="fas fa-calendar"></i> ${dog.age}</span>
@@ -290,7 +323,32 @@ function openDogModal(dogId) {
         <p style="margin-bottom:20px;">${dog.description}</p>
         <a href="adopta.html#formulario" class="btn btn-primary" style="display:block; text-align:center;" onclick="setSelectedDog('${dog.name}')">¡Quiero adoptar a ${dog.name}!</a>
     `;
-    modal.classList.add('active');
+}
+
+function prevImage() {
+    if (currentDogImages.length === 0) return;
+    currentImageIndex = (currentImageIndex - 1 + currentDogImages.length) % currentDogImages.length;
+    document.getElementById('dogCarouselImage').src = currentDogImages[currentImageIndex];
+    // Actualizar indicadores
+    updateCarouselIndicators();
+}
+
+function nextImage() {
+    if (currentDogImages.length === 0) return;
+    currentImageIndex = (currentImageIndex + 1) % currentDogImages.length;
+    document.getElementById('dogCarouselImage').src = currentDogImages[currentImageIndex];
+    updateCarouselIndicators();
+}
+
+function updateCarouselIndicators() {
+    const dots = document.querySelectorAll('#dogModal .modal-body span[style*="border-radius:50%"]');
+    dots.forEach((dot, i) => {
+        dot.style.background = i === currentImageIndex ? '#e04f2e' : '#ccc';
+    });
+}
+
+function openFullscreen(url) {
+    window.open(url, '_blank', 'width=800,height=600');
 }
 
 function closeDogModal() {
