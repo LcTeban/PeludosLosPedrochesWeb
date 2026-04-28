@@ -435,7 +435,6 @@ function createBlogCard(post) {
         </article>
     `;
 }
-
 function openBlogModal(postId) {
     const post = blogPosts.find(p => p.id === postId);
     if (!post) return;
@@ -462,9 +461,9 @@ function openBlogModal(postId) {
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     titleEl.textContent = post.title;
     bodyEl.innerHTML = `
-        ${post.image_url ? `<img src="${post.image_url}" alt="${post.title}" style="width:100%; border-radius:10px; margin-bottom:15px;">` : ''}
-        <div class="blog-date" style="margin-bottom:15px; color:#e04f2e;"><i class="far fa-calendar"></i> ${date}</div>
-        <div style="line-height:1.8; color:#333;">${post.content || post.excerpt}</div>
+        ${post.image_url ? `<div class="blog-modal-image" onclick="openLightbox('${post.image_url}')"><img src="${post.image_url}" alt="${post.title}"></div>` : ''}
+        <div class="blog-modal-date"><i class="far fa-calendar"></i> ${date}</div>
+        <div class="blog-modal-text">${post.content || post.excerpt}</div>
     `;
     modal.classList.add('active');
 }
