@@ -674,3 +674,6 @@ window.openBlogModal = openBlogModal;
 window.closeBlogModal = closeBlogModal;
 window.closeModal = closeBlogModal;
 window.setSelectedDog = setSelectedDog;
+window.prevImage = prevImage;
+window.nextImage = nextImage;
+window.openFullscreen = openFullscreen;
