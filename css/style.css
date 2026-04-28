@@ -1298,3 +1298,16 @@ img {
     border-radius: 10px; /* opcional, para mantener el estilo redondeado */
     display: block;
 }
+/* Modal de perro más grande */
+#dogModal .modal-content {
+    max-width: 800px;
+}
+
+#dogModal img {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#dogModal img:hover {
+    transform: scale(1.02);
+}
