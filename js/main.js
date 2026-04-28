@@ -288,6 +288,7 @@ function openDogModal(dogId) {
 }
 
 function renderDogModalBody(dog) {
+function renderDogModalBody(dog) {
     const body = document.getElementById('dogModalBody');
     const titleEl = document.getElementById('dogModalTitle');
     titleEl.textContent = dog.name;
@@ -298,7 +299,7 @@ function renderDogModalBody(dog) {
             <div style="position: relative; width: 100%; max-height: 400px; overflow: hidden; margin-bottom: 20px; text-align: center;">
                 <img id="dogCarouselImage" src="${currentDogImages[currentImageIndex]}" 
                      style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; cursor: pointer;" 
-                     onclick="openFullscreen('${currentDogImages[currentImageIndex]}')">
+                     onclick="openLightbox('${currentDogImages[currentImageIndex]}')">
                 ${currentDogImages.length > 1 ? `
                     <button onclick="prevImage()" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">‹</button>
                     <button onclick="nextImage()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">›</button>
