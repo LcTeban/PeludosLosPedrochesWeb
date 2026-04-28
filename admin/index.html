@@ -811,32 +811,46 @@ async function importCSV() {
         // CRUD DE PERROS Y BLOG
         // ========================================
         async function saveDog(id) {
-            const name = document.getElementById('dogName')?.value;
-            if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
-            let imageUrl = id && id !== 'null' ? dogs.find(d => d.id === id)?.image_url || '' : '';
-            if (selectedImageFile) {
-                imageUrl = await uploadFile(selectedImageFile, 'dogs');
-                if (!imageUrl) { showToast('Error al subir la imagen', 'error'); return; }
-            }
-            const dogData = {
-                name, breed: document.getElementById('dogBreed')?.value || '',
-                age: document.getElementById('dogAge')?.value || '',
-                gender: document.getElementById('dogGender')?.value || 'Macho',
-                size: document.getElementById('dogSize')?.value || 'Mediano',
-                status: document.getElementById('dogStatus')?.value || 'Disponible',
-                badge: document.getElementById('dogBadge')?.value || '',
-                description: document.getElementById('dogDescription')?.value || '',
-                image_url: imageUrl
-            };
-            if (id && id !== 'null') {
-                await supabaseClient.from('dogs').update(dogData).eq('id', id);
-            } else {
-                await supabaseClient.from('dogs').insert([dogData]);
-            }
-            closeModal();
-            await loadDogs();
-            renderPage();
-            showToast('Perro guardado');
+    const name = document.getElementById('dogName')?.value;
+    if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
+
+    // Subir nuevos archivos seleccionados
+    let newUrls = [];
+    if (selectedFiles.length > 0) {
+        for (const file of selectedFiles) {
+            const url = await uploadFile(file, 'dogs');
+            if (url) newUrls.push(url);
+        }
+    }
+
+    // Combinar imágenes existentes que se mantienen + nuevas
+    const finalImages = [...existingImagesToKeep, ...newUrls];
+
+    const dogData = {
+        name,
+        breed: document.getElementById('dogBreed')?.value || '',
+        age: document.getElementById('dogAge')?.value || '',
+        gender: document.getElementById('dogGender')?.value || 'Macho',
+        size: document.getElementById('dogSize')?.value || 'Mediano',
+        status: document.getElementById('dogStatus')?.value || 'Disponible',
+        badge: document.getElementById('dogBadge')?.value || '',
+        description: document.getElementById('dogDescription')?.value || '',
+        images: finalImages,
+        image_url: finalImages.length > 0 ? finalImages[0] : '' // mantener compatibilidad
+    };
+
+    if (id && id !== 'null') {
+        await supabaseClient.from('dogs').update(dogData).eq('id', id);
+    } else {
+        await supabaseClient.from('dogs').insert([dogData]);
+    }
+
+    closeModal();
+    await loadDogs();
+    renderPage();
+    showToast('Perro guardado');
+    selectedFiles = [];
+    existingImagesToKeep = [];
         }
 
         async function deleteDog(id) {
