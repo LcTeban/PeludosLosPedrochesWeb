@@ -426,13 +426,14 @@ function closeBlogModal() {
 }
 
 // ========================================
-// MENÚ MÓVIL Y DROPDOWNS
+// MENÚ MÓVIL Y DROPDOWNS (CORREGIDO)
 // ========================================
 function initMobileMenu() {
     const btn = document.getElementById('mobileMenuBtn');
     const nav = document.getElementById('mainNav');
     if (!btn || !nav) return;
 
+    // Abrir/cerrar menú principal
     btn.addEventListener('click', () => {
         nav.classList.toggle('active');
         const icon = btn.querySelector('i');
@@ -442,17 +443,24 @@ function initMobileMenu() {
         }
     });
 
-    nav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            if (window.innerWidth <= 768) {
-                nav.classList.remove('active');
-                const icon = btn.querySelector('i');
-                if (icon) {
-                    icon.classList.add('fa-bars');
-                    icon.classList.remove('fa-times');
-                }
-            }
-        });
+    // Cerrar menú SOLO al hacer clic en enlaces finales (no en dropdown toggles)
+    nav.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (!link || window.innerWidth > 768) return;
+
+        // Si el enlace es un dropdown toggle (tiene un submenú), no cerramos
+        const parentLi = link.closest('li');
+        if (parentLi && parentLi.classList.contains('dropdown') && parentLi.querySelector('ul.dropdown-menu')) {
+            return; // No cerrar menú
+        }
+
+        // Si es un enlace normal, cerrar menú
+        nav.classList.remove('active');
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+        }
     });
 }
 
@@ -463,7 +471,12 @@ function initDropdownMobile() {
         if (!link) return;
         link.addEventListener('click', function(e) {
             if (window.innerWidth <= 768) {
-                e.preventDefault();
+                e.preventDefault(); // Evitar navegación al hacer clic en el toggle
+                // Cerrar otros dropdowns abiertos
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove('active');
+                });
+                // Alternar el actual
                 dropdown.classList.toggle('active');
             }
         });
