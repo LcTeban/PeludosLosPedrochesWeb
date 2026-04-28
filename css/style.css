@@ -1368,3 +1368,138 @@ img {
     /* ... */
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); /* Sombra sutil para resaltar texto */
 }
+/* ===== MEJORA VISUAL DEL BLOG ===== */
+
+/* Tarjeta del blog */
+.blog-card {
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+/* Contenedor de la imagen en la tarjeta */
+.blog-image-wrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #f0f0f0;
+    cursor: pointer;
+}
+
+.blog-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.blog-card:hover .blog-image-wrapper img {
+    transform: scale(1.05);
+}
+
+.blog-image-wrapper .placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+    color: #aaa;
+}
+
+/* Contenido de la tarjeta */
+.blog-content {
+    padding: 18px 20px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.blog-date {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 8px;
+}
+
+.blog-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.blog-excerpt {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    flex: 1;
+}
+
+.card-link {
+    font-weight: 600;
+    color: var(--primary, #e04f2e);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: gap 0.3s;
+    margin-top: auto;
+}
+
+.card-link i {
+    transition: transform 0.3s;
+}
+
+.card-link:hover i {
+    transform: translateX(4px);
+}
+
+/* Modal del blog */
+.blog-modal-image {
+    width: 100%;
+    max-height: 350px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    background: #f0f0f0;
+}
+
+.blog-modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.blog-modal-image:hover img {
+    transform: scale(1.02);
+}
+
+.blog-modal-date {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.blog-modal-text {
+    color: #333;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.blog-modal-text p {
+    margin-bottom: 15px;
+}
