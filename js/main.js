@@ -1,5 +1,5 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – main.js CORREGIDO
+// PELUDOS LOS PEDROCHES – main.js COMPLETO
 // ========================================
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
@@ -10,6 +10,10 @@ console.log('✅ Supabase inicializado');
 let dogs = [];
 let blogPosts = [];
 let settings = {};
+
+// Variables del carrusel (declaradas una sola vez)
+let currentDogImages = [];
+let currentImageIndex = 0;
 
 // ========================================
 // CARGA DE CONFIGURACIÓN
@@ -50,7 +54,6 @@ function loadDefaultSettings() {
 }
 
 function applySettings() {
-    console.log('🎨 Aplicando configuración...');
     const logoIcon = document.getElementById('logoIcon');
     if (logoIcon) {
         logoIcon.innerHTML = '';
@@ -75,28 +78,19 @@ function applySettings() {
     if (settings.primary_color) document.documentElement.style.setProperty('--primary', settings.primary_color);
     if (settings.secondary_color) document.documentElement.style.setProperty('--secondary', settings.secondary_color);
     updateContactInfo();
-    applySectionImages();  // Añadido para imágenes de secciones
+    applySectionImages();
     applyAboutContent();
 }
 
 function updateContactInfo() {
     const phone1 = document.querySelector('[data-contact="phone1"]');
-    if (phone1) {
-        phone1.href = `tel:${settings.contact_phone1?.replace(/\s/g, '') || ''}`;
-        phone1.textContent = settings.contact_phone1 || '';
-    }
+    if (phone1) { phone1.href = `tel:${settings.contact_phone1?.replace(/\s/g, '')}`; phone1.textContent = settings.contact_phone1; }
     const phone2 = document.querySelector('[data-contact="phone2"]');
-    if (phone2) {
-        phone2.href = `tel:${settings.contact_phone2?.replace(/\s/g, '') || ''}`;
-        phone2.textContent = settings.contact_phone2 || '';
-    }
+    if (phone2) { phone2.href = `tel:${settings.contact_phone2?.replace(/\s/g, '')}`; phone2.textContent = settings.contact_phone2; }
     const email = document.querySelector('[data-contact="email"]');
-    if (email) {
-        email.href = `mailto:${settings.contact_email || ''}`;
-        email.textContent = settings.contact_email || '';
-    }
+    if (email) { email.href = `mailto:${settings.contact_email}`; email.textContent = settings.contact_email; }
     const address = document.querySelector('[data-contact="address"]');
-    if (address) address.textContent = settings.contact_address || '';
+    if (address) address.textContent = settings.contact_address;
 }
 
 // ========================================
@@ -109,11 +103,9 @@ function applySectionImages() {
         { id: 'sectionImage-acoge', key: 'acoge_image', defaultEmoji: '🏠🐕' },
         { id: 'sectionImage-about', key: 'about_image', defaultEmoji: '🐕🐕🐕' }
     ];
-
     sections.forEach(section => {
         const container = document.getElementById(section.id);
         if (!container) return;
-
         const imageUrl = settings[section.key];
         if (imageUrl) {
             container.innerHTML = '';
@@ -124,9 +116,7 @@ function applySectionImages() {
             img.style.height = '100%';
             img.style.objectFit = 'cover';
             img.style.borderRadius = '10px';
-            img.onerror = () => {
-                container.innerHTML = section.defaultEmoji;
-            };
+            img.onerror = () => { container.innerHTML = section.defaultEmoji; };
             container.appendChild(img);
         }
     });
@@ -135,22 +125,16 @@ function applySectionImages() {
 function applyAboutContent() {
     const titleEl = document.getElementById('aboutTitle');
     if (titleEl) titleEl.textContent = settings.about_title || 'QUIÉNES SOMOS';
-
     const subtitleEl = document.getElementById('aboutSubtitle');
     if (subtitleEl) subtitleEl.textContent = settings.about_subtitle || '';
-
     const historyEl = document.getElementById('aboutHistory');
     if (historyEl) historyEl.innerHTML = settings.about_history || '';
-
     const missionEl = document.getElementById('aboutMission');
     if (missionEl) missionEl.textContent = settings.about_mission || '';
-
     const visionEl = document.getElementById('aboutVision');
     if (visionEl) visionEl.textContent = settings.about_vision || '';
-
     const valuesEl = document.getElementById('aboutValues');
     if (valuesEl) valuesEl.textContent = settings.about_values || '';
-
     const collaborationsEl = document.getElementById('aboutCollaborations');
     if (collaborationsEl) collaborationsEl.innerHTML = settings.about_collaborations || '';
 }
@@ -176,9 +160,9 @@ async function loadDogs() {
 
 function loadDefaultDogs() {
     dogs = [
-        { id: 1, name: 'Luna', breed: 'Mastina atigrada', age: '2 años', gender: 'Hembra', badge: 'Urgente', description: 'Cariñosa a rabiar y juguetona.', image_url: null, status: 'Disponible' },
-        { id: 2, name: 'Arena', breed: 'Cruce de labrador', age: '2 años', gender: 'Hembra', badge: 'En acogida', description: 'Activa y noble.', image_url: null, status: 'En acogida' },
-        { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', gender: 'Macho', badge: 'Nuevo', description: 'Joven y juguetón.', image_url: null, status: 'Disponible' }
+        { id: 1, name: 'Luna', breed: 'Mastina atigrada', age: '2 años', gender: 'Hembra', badge: 'Urgente', description: 'Cariñosa a rabiar y juguetona.', images: [], status: 'Disponible' },
+        { id: 2, name: 'Arena', breed: 'Cruce de labrador', age: '2 años', gender: 'Hembra', badge: 'En acogida', description: 'Activa y noble.', images: [], status: 'En acogida' },
+        { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', gender: 'Macho', badge: 'Nuevo', description: 'Joven y juguetón.', images: [], status: 'Disponible' }
     ];
     renderFeaturedDogs();
     renderDogsList();
@@ -228,7 +212,7 @@ function createDogCard(dog) {
         ? `<img src="${firstImage}" alt="${dog.name}" style="width:100%;height:100%;object-fit:cover;">` 
         : `<div class="placeholder-image">🐕</div>`;
     return `
-        <div class="dog-card fade-in">
+        <div class="dog-card fade-in" onclick="openDogModal(${dog.id})" style="cursor:pointer;">
             <div class="dog-image">
                 ${imageHtml}
                 ${dog.badge ? `<span class="dog-badge">${dog.badge}</span>` : ''}
@@ -241,24 +225,19 @@ function createDogCard(dog) {
                     <span><i class="fas fa-${dog.gender === 'Macho' ? 'mars' : 'venus'}"></i> ${dog.gender}</span>
                 </div>
                 <p class="dog-description">${dog.description}</p>
-                <button class="btn-adopt" onclick="openDogModal(${dog.id})">Quiero adoptar</button>
+                <a href="adopta.html#formulario" class="btn-adopt" onclick="event.stopPropagation(); setSelectedDog('${dog.name}');">Quiero adoptar</a>
             </div>
         </div>
     `;
 }
 
 // ========================================
-// MODAL DE PERRO
+// MODAL DE PERRO (CON CARRUSEL Y LIGHTBOX)
 // ========================================
-
-let currentDogImages = [];
-let currentImageIndex = 0;
-
 function openDogModal(dogId) {
     const dog = dogs.find(d => d.id === dogId);
     if (!dog) return;
 
-    // Obtener todas las imágenes disponibles
     const images = (dog.images && dog.images.length > 0) ? dog.images : (dog.image_url ? [dog.image_url] : []);
     currentDogImages = images;
     currentImageIndex = 0;
@@ -287,7 +266,6 @@ function openDogModal(dogId) {
     modal.classList.add('active');
 }
 
-function renderDogModalBody(dog) {
 function renderDogModalBody(dog) {
     const body = document.getElementById('dogModalBody');
     const titleEl = document.getElementById('dogModalTitle');
@@ -330,7 +308,6 @@ function prevImage() {
     if (currentDogImages.length === 0) return;
     currentImageIndex = (currentImageIndex - 1 + currentDogImages.length) % currentDogImages.length;
     document.getElementById('dogCarouselImage').src = currentDogImages[currentImageIndex];
-    // Actualizar indicadores
     updateCarouselIndicators();
 }
 
@@ -348,14 +325,6 @@ function updateCarouselIndicators() {
     });
 }
 
-function openFullscreen(url) {
-    window.open(url, '_blank', 'width=800,height=600');
-}
-
-function closeDogModal() {
-    const modal = document.getElementById('dogModal');
-    if (modal) modal.classList.remove('active');
-}
 function openLightbox(url) {
     let lightbox = document.getElementById('lightbox');
     if (!lightbox) {
@@ -367,15 +336,11 @@ function openLightbox(url) {
             <button id="lightboxClose" style="position:absolute; top:20px; right:30px; background:white; color:black; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:24px;">&times;</button>
         `;
         document.body.appendChild(lightbox);
-        
         lightbox.addEventListener('click', function(e) {
-            if (e.target === lightbox || e.target === lightbox.querySelector('img')) {
-                closeLightbox();
-            }
+            if (e.target === lightbox || e.target === lightbox.querySelector('img')) closeLightbox();
         });
         lightbox.querySelector('#lightboxClose').addEventListener('click', closeLightbox);
     }
-    
     document.getElementById('lightboxImg').src = url;
     lightbox.style.display = 'flex';
 }
@@ -384,7 +349,12 @@ function closeLightbox() {
     const lightbox = document.getElementById('lightbox');
     if (lightbox) lightbox.style.display = 'none';
 }
-    
+
+function closeDogModal() {
+    const modal = document.getElementById('dogModal');
+    if (modal) modal.classList.remove('active');
+}
+
 // ========================================
 // BLOG
 // ========================================
@@ -404,16 +374,12 @@ function initBlogListeners() {
             </div>
         `;
         document.body.appendChild(modal);
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) closeBlogModal();
-        });
+        modal.addEventListener('click', function(e) { if (e.target === modal) closeBlogModal(); });
     }
-
     document.body.addEventListener('click', function(e) {
         const card = e.target.closest('.blog-card');
         if (card) {
             const postId = parseInt(card.dataset.id);
-            console.log('Click en blog-card, postId:', postId);
             openBlogModal(postId);
         }
     });
@@ -453,9 +419,7 @@ function renderAllBlogPosts() {
 }
 
 function createBlogCard(post) {
-    const imageHtml = post.image_url 
-        ? `<img src="${post.image_url}" alt="${post.title}" style="width:100%;height:100%;object-fit:cover;">` 
-        : '<div class="placeholder-image">📰</div>';
+    const imageHtml = post.image_url ? `<img src="${post.image_url}" alt="${post.title}" style="width:100%;height:100%;object-fit:cover;">` : '<div class="placeholder-image">📰</div>';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     return `
         <article class="blog-card fade-in" data-id="${post.id}">
@@ -473,7 +437,6 @@ function createBlogCard(post) {
 function openBlogModal(postId) {
     const post = blogPosts.find(p => p.id === postId);
     if (!post) return;
-
     let modal = document.getElementById('blogModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -489,15 +452,11 @@ function openBlogModal(postId) {
             </div>
         `;
         document.body.appendChild(modal);
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) closeBlogModal();
-        });
+        modal.addEventListener('click', function(e) { if (e.target === modal) closeBlogModal(); });
     }
-
     const titleEl = document.getElementById('modalTitle');
     const bodyEl = document.getElementById('modalBody');
     if (!titleEl || !bodyEl) return;
-
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     titleEl.textContent = post.title;
     bodyEl.innerHTML = `
@@ -514,14 +473,13 @@ function closeBlogModal() {
 }
 
 // ========================================
-// MENÚ MÓVIL Y DROPDOWNS (CORREGIDO)
+// MENÚ MÓVIL Y DROPDOWNS
 // ========================================
 function initMobileMenu() {
     const btn = document.getElementById('mobileMenuBtn');
     const nav = document.getElementById('mainNav');
     if (!btn || !nav) return;
 
-    // Abrir/cerrar menú principal
     btn.addEventListener('click', () => {
         nav.classList.toggle('active');
         const icon = btn.querySelector('i');
@@ -531,18 +489,15 @@ function initMobileMenu() {
         }
     });
 
-    // Cerrar menú SOLO al hacer clic en enlaces finales (no en dropdown toggles)
     nav.addEventListener('click', (e) => {
         const link = e.target.closest('a');
         if (!link || window.innerWidth > 768) return;
 
-        // Si el enlace es un dropdown toggle (tiene un submenú), no cerramos
         const parentLi = link.closest('li');
         if (parentLi && parentLi.classList.contains('dropdown') && parentLi.querySelector('ul.dropdown-menu')) {
-            return; // No cerrar menú
+            return;
         }
 
-        // Si es un enlace normal, cerrar menú
         nav.classList.remove('active');
         const icon = btn.querySelector('i');
         if (icon) {
@@ -559,12 +514,10 @@ function initDropdownMobile() {
         if (!link) return;
         link.addEventListener('click', function(e) {
             if (window.innerWidth <= 768) {
-                e.preventDefault(); // Evitar navegación al hacer clic en el toggle
-                // Cerrar otros dropdowns abiertos
+                e.preventDefault();
                 dropdowns.forEach(d => {
                     if (d !== dropdown) d.classList.remove('active');
                 });
-                // Alternar el actual
                 dropdown.classList.toggle('active');
             }
         });
@@ -653,13 +606,10 @@ function setSelectedDog(dogName) {
 // ========================================
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 DOM listo, iniciando...');
-    
     initBlogListeners();
-    
     await loadSettings();
     await loadDogs();
     await loadBlogPosts();
-
     initMobileMenu();
     initDropdownMobile();
     initNewsletter();
@@ -669,8 +619,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (selectedDog) {
         const select = document.querySelector('select[name="perro"]');
         if (select) {
-            const option = Array.from(select.options).find(o => o.value === selectedDog);
-            if (option) option.selected = true;
+            const opt = Array.from(select.options).find(o => o.value === selectedDog);
+            if (opt) opt.selected = true;
         }
         localStorage.removeItem('selectedDog');
     }
@@ -679,7 +629,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const ageFilter = document.getElementById('ageFilter');
     const genderFilter = document.getElementById('genderFilter');
     const searchInput = document.getElementById('searchDog');
-    
     function applyFilters() {
         const filters = {};
         if (sizeFilter?.value) filters.size = sizeFilter.value;
@@ -687,7 +636,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (searchInput?.value) filters.search = searchInput.value;
         renderDogsList(filters);
     }
-    
     sizeFilter?.addEventListener('change', applyFilters);
     ageFilter?.addEventListener('change', applyFilters);
     genderFilter?.addEventListener('change', applyFilters);
@@ -699,12 +647,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Exponer globalmente
 window.openDogModal = openDogModal;
 window.closeDogModal = closeDogModal;
+window.prevImage = prevImage;
+window.nextImage = nextImage;
+window.openLightbox = openLightbox;
+window.closeLightbox = closeLightbox;
 window.openBlogModal = openBlogModal;
 window.closeBlogModal = closeBlogModal;
 window.closeModal = closeBlogModal;
 window.setSelectedDog = setSelectedDog;
-window.prevImage = prevImage;
-window.nextImage = nextImage;
-window.openFullscreen = openFullscreen;
-window.openLightbox = openLightbox;
-window.closeLightbox = closeLightbox;
