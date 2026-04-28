@@ -706,3 +706,5 @@ window.setSelectedDog = setSelectedDog;
 window.prevImage = prevImage;
 window.nextImage = nextImage;
 window.openFullscreen = openFullscreen;
+window.openLightbox = openLightbox;
+window.closeLightbox = closeLightbox;
