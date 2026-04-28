@@ -652,7 +652,63 @@ body.innerHTML = `
                 reader.readAsDataURL(file);
             }
         }
+// Variables para almacenar archivos nuevos seleccionados e imágenes existentes a conservar
+let selectedFiles = [];
+let existingImagesToKeep = []; // URLs que permanecen
 
+function previewMultipleImages(input) {
+    const newPreview = document.getElementById('newImagesPreview');
+    // Limpiar preview de nuevos archivos
+    newPreview.innerHTML = '';
+    selectedFiles = Array.from(input.files);
+    selectedFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
+            div.innerHTML = `
+                <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+                <button type="button" onclick="removeNewFile(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+            `;
+            newPreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeNewFile(index) {
+    selectedFiles.splice(index, 1);
+    // Refrescar la vista previa
+    const newPreview = document.getElementById('newImagesPreview');
+    newPreview.innerHTML = '';
+    selectedFiles.forEach((file, i) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
+            div.innerHTML = `
+                <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+                <button type="button" onclick="removeNewFile(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+            `;
+            newPreview.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function removeExistingImage(index) {
+    // Eliminar de existingImagesToKeep
+    existingImagesToKeep.splice(index, 1);
+    // Refrescar la vista previa de imágenes existentes
+    const preview = document.getElementById('imagePreview');
+    // Reconstruir el HTML de existentes
+    preview.innerHTML = existingImagesToKeep.map((url, i) => 
+        `<div style="position:relative; display:inline-block; margin:5px;">
+            <img src="${url}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+            <button type="button" onclick="removeExistingImage(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+        </div>`
+    ).join('');
+}
         function previewBlogImage(input) {
             const file = input.files[0];
             if (file) {
