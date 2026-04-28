@@ -1328,3 +1328,43 @@ img {
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
+/* Mejorar legibilidad de botones con colores dinámicos */
+.btn-primary,
+.btn-adopt,
+.btn-donate {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Sombra suave en el texto */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil para separar del fondo */
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-adopt:hover,
+.btn-donate:hover {
+    filter: brightness(0.9); /* Oscurece ligeramente al pasar el ratón */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* Para el caso extremo de colores muy claros (amarillo, crema), forzar un contorno oscuro */
+.btn-adopt {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Botón outline siempre visible */
+.btn-outline {
+    background: rgba(255, 255, 255, 0.25); /* Fondo blanco semitransparente */
+    border-color: var(--primary); /* Borde del color primario */
+    color: var(--primary); /* Texto del color primario */
+    text-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+    background: var(--primary);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.btn-outline {
+    /* ... */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); /* Sombra sutil para resaltar texto */
+}
