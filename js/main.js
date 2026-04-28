@@ -223,8 +223,9 @@ function fillAdoptionSelect() {
 }
 
 function createDogCard(dog) {
-    const imageHtml = dog.image_url 
-        ? `<img src="${dog.image_url}" alt="${dog.name}" style="width:100%;height:100%;object-fit:cover;">` 
+    const firstImage = (dog.images && dog.images.length > 0) ? dog.images[0] : dog.image_url;
+    const imageHtml = firstImage 
+        ? `<img src="${firstImage}" alt="${dog.name}" style="width:100%;height:100%;object-fit:cover;">` 
         : `<div class="placeholder-image">🐕</div>`;
     return `
         <div class="dog-card fade-in">
