@@ -1311,3 +1311,20 @@ img {
 #dogModal img:hover {
     transform: scale(1.02);
 }
+/* Lightbox */
+#lightbox {
+    animation: fadeIn 0.3s ease;
+}
+
+#lightbox img {
+    transition: transform 0.2s;
+}
+
+#lightbox img:hover {
+    transform: scale(1.02);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
