@@ -356,7 +356,35 @@ function closeDogModal() {
     const modal = document.getElementById('dogModal');
     if (modal) modal.classList.remove('active');
 }
+function openLightbox(url) {
+    let lightbox = document.getElementById('lightbox');
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'lightbox';
+        lightbox.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:3000; align-items:center; justify-content:center; cursor:zoom-out;';
+        lightbox.innerHTML = `
+            <img id="lightboxImg" style="max-width:90%; max-height:90%; object-fit:contain; border-radius:10px;">
+            <button id="lightboxClose" style="position:absolute; top:20px; right:30px; background:white; color:black; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:24px;">&times;</button>
+        `;
+        document.body.appendChild(lightbox);
+        
+        lightbox.addEventListener('click', function(e) {
+            if (e.target === lightbox || e.target === lightbox.querySelector('img')) {
+                closeLightbox();
+            }
+        });
+        lightbox.querySelector('#lightboxClose').addEventListener('click', closeLightbox);
+    }
+    
+    document.getElementById('lightboxImg').src = url;
+    lightbox.style.display = 'flex';
+}
 
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) lightbox.style.display = 'none';
+}
+    
 // ========================================
 // BLOG
 // ========================================
