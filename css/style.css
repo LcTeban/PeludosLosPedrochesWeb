@@ -1028,9 +1028,10 @@ img {
     }
     
     .dogs-grid,
-    .blog-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.blog-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
     
     .about-grid {
         grid-template-columns: 1fr;
@@ -1150,10 +1151,9 @@ img {
         gap: 15px;
     }
     
-    .dogs-grid,
-    .blog-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+    .dogs-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     }
     
     .urgencies-content {
@@ -1193,6 +1193,51 @@ img {
         margin: 10px;
         max-height: 80vh;
     }
+}
+/* Tarjetas de perro más compactas en móvil */
+.dog-card {
+    font-size: 0.7rem;
+}
+
+.dog-image {
+    height: 100px;
+}
+
+.dog-info {
+    padding: 8px;
+}
+
+.dog-name {
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.dog-details {
+    gap: 4px;
+    font-size: 0.6rem;
+    margin-bottom: 4px;
+}
+
+.dog-description {
+    display: none; /* Ocultar descripción para ahorrar espacio */
+}
+
+.btn-adopt {
+    padding: 6px;
+    font-size: 0.7rem;
+}
+
+.page-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    min-width: 30px;
+}
+
+.dog-badge {
+    font-size: 0.5rem;
+    padding: 2px 6px;
+    top: 5px;
+    right: 5px;
 }
 
 @media (max-width: 480px) {
