@@ -10,6 +10,9 @@ console.log('✅ Supabase inicializado');
 let dogs = [];
 let blogPosts = [];
 let settings = {};
+let currentPage = 1;
+let perPage = 9; // 3 columnas x 3 filas
+let currentFilters = {};
 
 // Variables del carrusel (declaradas una sola vez)
 let currentDogImages = [];
@@ -177,14 +180,46 @@ function renderFeaturedDogs() {
     container.innerHTML = dogsToShow.map(dog => createDogCard(dog)).join('');
 }
 
-function renderDogsList(filter = {}) {
+function renderDogsList(filter = {}, page = 1) {
     const container = document.getElementById('dogsList');
     if (!container) return;
+
+    // Guardar filtros y página actual
+    currentFilters = filter;
+    currentPage = page;
+
     let filtered = dogs.filter(d => d.status !== 'Adoptado');
     if (filter.size) filtered = filtered.filter(d => d.size?.toLowerCase().includes(filter.size));
     if (filter.gender) filtered = filtered.filter(d => d.gender?.toLowerCase() === filter.gender);
     if (filter.search) filtered = filtered.filter(d => d.name?.toLowerCase().includes(filter.search.toLowerCase()));
-    container.innerHTML = filtered.map(dog => createDogCard(dog)).join('');
+
+    const totalPages = Math.ceil(filtered.length / perPage);
+    const start = (page - 1) * perPage;
+    const paginatedDogs = filtered.slice(start, start + perPage);
+
+    container.innerHTML = paginatedDogs.map(dog => createDogCard(dog)).join('');
+    renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+    const pagContainer = document.getElementById('pagination');
+    if (!pagContainer) return;
+    if (totalPages <= 1) {
+        pagContainer.innerHTML = '';
+        return;
+    }
+
+    let html = '';
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+    }
+    pagContainer.innerHTML = html;
+}
+
+function goToPage(page) {
+    renderDogsList(currentFilters, page);
+    // Scroll suave al principio de la lista (opcional)
+    document.getElementById('dogsList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderSponsorDogs() {
