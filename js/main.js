@@ -666,12 +666,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const genderFilter = document.getElementById('genderFilter');
     const searchInput = document.getElementById('searchDog');
     function applyFilters() {
-        const filters = {};
-        if (sizeFilter?.value) filters.size = sizeFilter.value;
-        if (genderFilter?.value) filters.gender = genderFilter.value;
-        if (searchInput?.value) filters.search = searchInput.value;
-        renderDogsList(filters);
+    const filters = {};
+    if (sizeFilter?.value) filters.size = sizeFilter.value;
+    if (genderFilter?.value) filters.gender = genderFilter.value;
+    if (searchInput?.value) filters.search = searchInput.value;
+    renderDogsList(filters, 1); // siempre volver a página 1 al filtrar
     }
+    
     sizeFilter?.addEventListener('change', applyFilters);
     ageFilter?.addEventListener('change', applyFilters);
     genderFilter?.addEventListener('change', applyFilters);
