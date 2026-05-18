@@ -651,6 +651,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     initNewsletter();
     initForms();
 
+    const perPageSelect = document.getElementById('perPageSelect');
+if (perPageSelect) {
+    perPageSelect.addEventListener('change', function() {
+        perPage = parseInt(this.value);
+        renderDogsList(currentFilters, 1);
+    });
+}
+    
     const selectedDog = localStorage.getItem('selectedDog');
     if (selectedDog) {
         const select = document.querySelector('select[name="perro"]');
@@ -692,3 +700,4 @@ window.openBlogModal = openBlogModal;
 window.closeBlogModal = closeBlogModal;
 window.closeModal = closeBlogModal;
 window.setSelectedDog = setSelectedDog;
+window.goToPage = goToPage;
