@@ -289,6 +289,8 @@ img {
     cursor: pointer;
     text-align: center;
     font-size: 0.95rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-primary {
@@ -312,14 +314,14 @@ img {
 }
 
 .btn-outline {
-    background: transparent;
-    color: var(--white);
-    border-color: var(--white);
+    background: rgba(255,255,255,0.25);
+    border-color: var(--primary);
+    color: var(--primary);
 }
 
 .btn-outline:hover {
-    background: var(--white);
-    color: var(--secondary);
+    background: var(--primary);
+    color: var(--white);
 }
 
 /* ===== SECCIONES ===== */
@@ -372,7 +374,7 @@ img {
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     text-align: center;
-    transition: all 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     border-bottom: 3px solid transparent;
     text-decoration: none;
     color: inherit;
@@ -380,7 +382,7 @@ img {
 }
 
 .help-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-6px);
     box-shadow: var(--shadow-hover);
     border-bottom-color: var(--primary);
 }
@@ -446,6 +448,20 @@ img {
     justify-content: center;
     font-size: 4rem;
     color: var(--white);
+}
+
+.placeholder-image:has(img) {
+    background: none;
+    min-height: auto;
+    padding: 0;
+}
+
+.placeholder-image img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
 }
 
 .about-content h2 {
@@ -528,11 +544,11 @@ img {
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
-    transition: all 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
 
 .dog-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-6px);
     box-shadow: var(--shadow-hover);
 }
 
@@ -606,6 +622,8 @@ img {
     transition: all 0.3s;
     border: none;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-adopt:hover {
@@ -630,56 +648,77 @@ img {
 
 .blog-card {
     background: var(--white);
-    border-radius: var(--radius);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: var(--shadow);
-    transition: all 0.3s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
 }
 
 .blog-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-6px);
     box-shadow: var(--shadow-hover);
 }
 
-.blog-image {
-    height: 180px;
+.blog-image-wrapper {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #f0f0f0;
+    cursor: pointer;
 }
 
-.blog-image .placeholder-image {
+.blog-image-wrapper img {
+    width: 100%;
     height: 100%;
-    border-radius: 0;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.blog-card:hover .blog-image-wrapper img {
+    transform: scale(1.05);
+}
+
+.blog-image-wrapper .placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 3rem;
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+    color: #aaa;
 }
 
 .blog-content {
-    padding: 18px;
+    padding: 18px 20px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .blog-date {
-    color: var(--primary);
     font-size: 0.8rem;
+    color: #888;
     margin-bottom: 8px;
-}
-
-.blog-date i {
-    margin-right: 4px;
 }
 
 .blog-title {
     font-size: 1.1rem;
-    color: var(--secondary);
+    font-weight: 700;
+    color: #333;
     margin-bottom: 8px;
+    line-height: 1.4;
 }
 
 .blog-excerpt {
-    color: var(--gray);
-    margin-bottom: 12px;
     font-size: 0.9rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    flex: 1;
 }
 
 /* Modal para blog */
@@ -701,6 +740,10 @@ img {
     display: flex;
 }
 
+.modal.active .modal-content {
+    animation: modalSlideIn 0.35s ease;
+}
+
 .modal-content {
     background: var(--white);
     max-width: 650px;
@@ -709,7 +752,6 @@ img {
     border-radius: var(--radius);
     overflow-y: auto;
     position: relative;
-    animation: modalIn 0.3s ease;
 }
 
 .modal-header {
@@ -739,9 +781,46 @@ img {
     padding: 18px;
 }
 
-@keyframes modalIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+.blog-modal-image {
+    width: 100%;
+    max-height: 350px;
+    overflow: hidden;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    background: #f0f0f0;
+}
+
+.blog-modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.blog-modal-image:hover img {
+    transform: scale(1.02);
+}
+
+.blog-modal-date {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.blog-modal-text {
+    color: #333;
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.blog-modal-text p {
+    margin-bottom: 15px;
+}
+
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* ===== QUICK CONTACT ===== */
@@ -1021,6 +1100,123 @@ img {
     to { opacity: 1; transform: translateX(0); }
 }
 
+/* ===== PAGINACIÓN ===== */
+.page-btn {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+    min-width: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-btn:hover {
+    background: #f0f0f0;
+}
+
+.page-btn.active {
+    background: var(--primary, #e04f2e);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* ===== ANIMACIONES SUTILES ===== */
+.reveal {
+    opacity: 0;
+    transform: translateY(25px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+.delay-400 { transition-delay: 0.4s; }
+.delay-500 { transition-delay: 0.5s; }
+
+/* Ripple en botones */
+.btn::after, .btn-adopt::after, .btn-donate::after, .page-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::after, .btn-adopt:active::after, .btn-donate:active::after, .page-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Lightbox */
+#lightbox {
+    display: flex;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 3000;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-out;
+}
+
+#lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+#lightbox button {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 24px;
+}
+
 /* ===== RESPONSIVE - TABLET ===== */
 @media (max-width: 992px) {
     .help-cards {
@@ -1028,10 +1224,9 @@ img {
     }
     
     .dogs-grid,
-.blog-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-}
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
     
     .about-grid {
         grid-template-columns: 1fr;
@@ -1152,8 +1347,58 @@ img {
     }
     
     .dogs-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+    
+    .blog-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .dog-card {
+        font-size: 0.7rem;
+    }
+    
+    .dog-image {
+        height: 100px;
+    }
+    
+    .dog-info {
+        padding: 8px;
+    }
+    
+    .dog-name {
+        font-size: 0.8rem;
+        margin-bottom: 2px;
+    }
+    
+    .dog-details {
+        gap: 4px;
+        font-size: 0.6rem;
+        margin-bottom: 4px;
+    }
+    
+    .dog-description {
+        display: none;
+    }
+    
+    .btn-adopt {
+        padding: 6px;
+        font-size: 0.7rem;
+    }
+    
+    .dog-badge {
+        font-size: 0.5rem;
+        padding: 2px 6px;
+        top: 5px;
+        right: 5px;
+    }
+    
+    .page-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        min-width: 30px;
     }
     
     .urgencies-content {
@@ -1194,51 +1439,6 @@ img {
         max-height: 80vh;
     }
 }
-/* Tarjetas de perro más compactas en móvil */
-.dog-card {
-    font-size: 0.7rem;
-}
-
-.dog-image {
-    height: 100px;
-}
-
-.dog-info {
-    padding: 8px;
-}
-
-.dog-name {
-    font-size: 0.8rem;
-    margin-bottom: 2px;
-}
-
-.dog-details {
-    gap: 4px;
-    font-size: 0.6rem;
-    margin-bottom: 4px;
-}
-
-.dog-description {
-    display: none; /* Ocultar descripción para ahorrar espacio */
-}
-
-.btn-adopt {
-    padding: 6px;
-    font-size: 0.7rem;
-}
-
-.page-btn {
-    padding: 6px 10px;
-    font-size: 0.8rem;
-    min-width: 30px;
-}
-
-.dog-badge {
-    font-size: 0.5rem;
-    padding: 2px 6px;
-    top: 5px;
-    right: 5px;
-}
 
 @media (max-width: 480px) {
     .container {
@@ -1269,386 +1469,11 @@ img {
         padding: 20px 12px;
     }
     
-    .dog-image {
-        height: 200px;
-    }
-    
-    .blog-image {
+    .blog-image-wrapper {
         height: 160px;
     }
     
     .footer-bottom {
         font-size: 0.8rem;
     }
-}
-/* ========================================
-   MEJORAS RESPONSIVE ADICIONALES
-   ======================================== */
-
-/* Formularios en dos columnas pasan a una columna en móvil */
-@media (max-width: 768px) {
-    [style*="grid-template-columns: 1fr 1fr"] {
-        grid-template-columns: 1fr !important;
-    }
-
-    /* Ajustar botones de cantidad en donación */
-    .amount-btn {
-        padding: 12px 8px !important;
-        font-size: 0.85rem !important;
-    }
-
-    /* Formularios más compactos */
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        padding: 10px 12px !important;
-    }
-
-    /* Modal más ancho en móvil */
-    .modal-content {
-        width: 95% !important;
-        margin: 10px !important;
-    }
-
-    /* Los iconos de contacto en la página de contacto */
-    .contact-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-
-    .contact-item i {
-        font-size: 1.5rem;
-    }
-}
-/* Para que las imágenes de sección se adapten bien */
-.placeholder-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-/* Eliminar el fondo y el espacio extra cuando hay una imagen real en .placeholder-image */
-.placeholder-image:has(img) {
-    background: none;
-    min-height: auto;
-    padding: 0;
-}
-
-/* Asegurar que la imagen ocupe todo el contenedor sin bordes */
-.placeholder-image img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    border-radius: 10px; /* opcional, para mantener el estilo redondeado */
-    display: block;
-}
-/* Modal de perro más grande */
-#dogModal .modal-content {
-    max-width: 800px;
-}
-
-#dogModal img {
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-#dogModal img:hover {
-    transform: scale(1.02);
-}
-/* Lightbox */
-#lightbox {
-    animation: fadeIn 0.3s ease;
-}
-
-#lightbox img {
-    transition: transform 0.2s;
-}
-
-#lightbox img:hover {
-    transform: scale(1.02);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Mejorar legibilidad de botones con colores dinámicos */
-.btn-primary,
-.btn-adopt,
-.btn-donate {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3); /* Sombra suave en el texto */
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Borde sutil para separar del fondo */
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover,
-.btn-adopt:hover,
-.btn-donate:hover {
-    filter: brightness(0.9); /* Oscurece ligeramente al pasar el ratón */
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-}
-
-/* Para el caso extremo de colores muy claros (amarillo, crema), forzar un contorno oscuro */
-.btn-adopt {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-}
-
-/* Botón outline siempre visible */
-.btn-outline {
-    background: rgba(255, 255, 255, 0.25); /* Fondo blanco semitransparente */
-    border-color: var(--primary); /* Borde del color primario */
-    color: var(--primary); /* Texto del color primario */
-    text-shadow: none;
-    transition: all 0.3s ease;
-}
-
-.btn-outline:hover {
-    background: var(--primary);
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-.btn-outline {
-    /* ... */
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); /* Sombra sutil para resaltar texto */
-}
-/* ===== MEJORA VISUAL DEL BLOG ===== */
-
-/* Tarjeta del blog */
-.blog-card {
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-}
-
-.blog-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-}
-
-/* Contenedor de la imagen en la tarjeta */
-.blog-image-wrapper {
-    width: 100%;
-    height: 200px;
-    overflow: hidden;
-    background: #f0f0f0;
-    cursor: pointer;
-}
-
-.blog-image-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s ease;
-}
-
-.blog-card:hover .blog-image-wrapper img {
-    transform: scale(1.05);
-}
-
-.blog-image-wrapper .placeholder-image {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
-    color: #aaa;
-}
-
-/* Contenido de la tarjeta */
-.blog-content {
-    padding: 18px 20px 20px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.blog-date {
-    font-size: 0.8rem;
-    color: #888;
-    margin-bottom: 8px;
-}
-
-.blog-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #333;
-    margin-bottom: 8px;
-    line-height: 1.4;
-}
-
-.blog-excerpt {
-    font-size: 0.9rem;
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 15px;
-    flex: 1;
-}
-
-.card-link {
-    font-weight: 600;
-    color: var(--primary, #e04f2e);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: gap 0.3s;
-    margin-top: auto;
-}
-
-.card-link i {
-    transition: transform 0.3s;
-}
-
-.card-link:hover i {
-    transform: translateX(4px);
-}
-
-/* Modal del blog */
-.blog-modal-image {
-    width: 100%;
-    max-height: 350px;
-    overflow: hidden;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    cursor: pointer;
-    background: #f0f0f0;
-}
-
-.blog-modal-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s;
-}
-
-.blog-modal-image:hover img {
-    transform: scale(1.02);
-}
-
-.blog-modal-date {
-    color: #888;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
-}
-
-.blog-modal-text {
-    color: #333;
-    line-height: 1.8;
-    font-size: 1rem;
-}
-
-.blog-modal-text p {
-    margin-bottom: 15px;
-}
-/* Paginación */
-.page-btn {
-    padding: 8px 14px;
-    border: 1px solid #ddd;
-    background: white;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
-    min-width: 40px;
-    text-align: center;
-}
-
-.page-btn:hover {
-    background: #f0f0f0;
-}
-
-.page-btn.active {
-    background: var(--primary, #e04f2e);
-    color: white;
-    border-color: var(--primary);
-}
-
-/* ===== ANIMACIONES SUTILES ===== */
-
-/* Clase base para elementos que se animarán al aparecer */
-.reveal {
-    opacity: 0;
-    transform: translateY(25px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Variaciones de dirección */
-.reveal-left {
-    opacity: 0;
-    transform: translateX(-30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.reveal-left.visible {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-.reveal-right {
-    opacity: 0;
-    transform: translateX(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-.reveal-right.visible {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-/* Retardo para animaciones escalonadas */
-.delay-100 { transition-delay: 0.1s; }
-.delay-200 { transition-delay: 0.2s; }
-.delay-300 { transition-delay: 0.3s; }
-.delay-400 { transition-delay: 0.4s; }
-.delay-500 { transition-delay: 0.5s; }
-
-/* Mejora de hover en tarjetas y botones */
-.dog-card, .blog-card, .help-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-}
-.dog-card:hover, .blog-card:hover, .help-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-}
-
-/* Efecto de ondulación en botones (ripple) */
-.btn, .btn-adopt, .btn-donate, .page-btn {
-    position: relative;
-    overflow: hidden;
-}
-.btn::after, .btn-adopt::after, .btn-donate::after, .page-btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-.btn:active::after, .btn-adopt:active::after, .btn-donate:active::after, .page-btn:active::after {
-    width: 300px;
-    height: 300px;
-}
-
-/* Animación de entrada para modales */
-.modal.active .modal-content {
-    animation: modalSlideIn 0.35s ease;
-}
-@keyframes modalSlideIn {
-    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
 }
