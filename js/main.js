@@ -668,7 +668,9 @@ function initForms() {
                 phone: this.querySelector('[name="telefono"]')?.value || '',
                 dog_choice: dogChoice,
                 specific_dog: dogChoice === 'especifico' ? (this.querySelector('[name="perro_nombre"]')?.value || '') : '',
-                amount: this.querySelector('[name="cantidad"]')?.value || '',
+                amount: this.querySelector('[name="cantidad"]').value === 'otra' 
+                    ? (this.querySelector('[name="cantidad_personalizada"]')?.value || '')
+                    : (this.querySelector('[name="cantidad"]')?.value || ''),
                 created_at: new Date().toISOString()
             };
             if (!formData.name || !formData.email || !formData.amount) {
@@ -748,87 +750,6 @@ function initForms() {
     }
 
     // --- Formulario de donación (simulado, solo alerta) ---
-    const donationForm = document.getElementById('donationForm');
-    if (donationForm) {
-        const amountBtns = donationForm.querySelectorAll('.amount-btn');
-        const customInput = donationForm.querySelector('#customAmount');
-        const totalSpan = document.getElementById('donationTotal');
-        
-        function updateTotal() {
-            const activeBtn = donationForm.querySelector('.amount-btn.active');
-            let amount = activeBtn ? parseFloat(activeBtn.dataset.amount) : (customInput?.value ? parseFloat(customInput.value) : 20);
-            const isMonthly = donationForm.querySelector('input[name="type"]:checked')?.value === 'monthly';
-            if (totalSpan) totalSpan.textContent = isMonthly ? `${amount}€/mes` : `${amount}€`;
-        }
-
-        amountBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                amountBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                if (customInput) customInput.value = '';
-                updateTotal();
-            });
-        });
-        customInput?.addEventListener('input', () => {
-            amountBtns.forEach(b => b.classList.remove('active'));
-            updateTotal();
-        });
-        donationForm.querySelectorAll('input[name="type"]').forEach(radio => {
-            radio.addEventListener('change', updateTotal);
-        });
-
-        donationForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Redirigiendo a la pasarela de pago...');
-        });
-        
-        updateTotal();
-        
-        donationForm.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const transferDetails = document.getElementById('transferDetails');
-                if (transferDetails) {
-                    transferDetails.style.display = this.value === 'transfer' ? 'block' : 'none';
-                }
-            });
-        });
-    }
-}
-
-
-    // Formulario de adopción
-    const adoptionForm = document.getElementById('adoptionForm');
-    if (adoptionForm) {
-        adoptionForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = {
-                name: this.querySelector('[name="nombre"]')?.value || '',
-                email: this.querySelector('[name="email"]')?.value || '',
-                phone: this.querySelector('[name="telefono"]')?.value || '',
-                dog_name: this.querySelector('[name="perro"]')?.value || '',
-                housing_type: this.querySelector('[name="vivienda"]')?.value || '',
-                has_pets: this.querySelector('[name="otros_animales"]')?.value || '',
-                message: this.querySelector('[name="mensaje"]')?.value || '',
-                status: 'Pendiente',
-                created_at: new Date().toISOString()
-            };
-            if (!formData.name || !formData.email) {
-                showToast('Por favor completa al menos nombre y email.', 'error');
-                return;
-            }
-            try {
-                const { error } = await supabaseClient.from('adoption_requests').insert([formData]);
-                if (error) throw error;
-                showToast('¡Solicitud enviada! Te contactaremos pronto.', 'success');
-                this.reset();
-            } catch (err) {
-                console.error('Error al enviar solicitud:', err);
-                showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
-            }
-        });
-    }
-
-    // Formulario de donación
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
