@@ -1596,3 +1596,149 @@ img {
         font-size: 0.8rem;
     }
 }
+
+/* ===== QUIÉNES SOMOS - NUEVO DISEÑO PROFESIONAL ===== */
+
+/* Grid de Misión/Visión/Valores */
+.mission-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin: 60px 0;
+}
+
+.mission-card {
+    text-align: center;
+    padding: 35px 25px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mission-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.mission-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    background: rgba(224,79,46,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: var(--primary);
+}
+
+.mission-card h3 {
+    font-size: 1.2rem;
+    color: var(--secondary);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.mission-card p {
+    color: var(--gray);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Sección de Colaboraciones */
+.collaborations-section {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.06);
+    margin-bottom: 60px;
+}
+
+.collaborations-section h2 {
+    color: var(--secondary);
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 1.8rem;
+}
+
+.collaborations-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+.collaborations-grid div {
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.collaborations-grid div:hover {
+    transform: translateY(-2px);
+}
+
+.collaborations-grid h3 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.collaborations-grid p {
+    color: var(--gray);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* CTA */
+.about-cta {
+    text-align: center;
+}
+
+.about-cta h2 {
+    color: var(--secondary);
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.about-cta p {
+    color: var(--gray);
+    margin-bottom: 30px;
+    font-size: 1.1rem;
+}
+
+.about-cta-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .mission-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .collaborations-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .collaborations-section {
+        padding: 25px;
+    }
+    
+    .mission-card {
+        padding: 25px 20px;
+    }
+    
+    .mission-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+}
