@@ -630,6 +630,33 @@ function initForms() {
     }
 }
 
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = {
+            name: this.querySelector('[name="nombre"]')?.value || '',
+            email: this.querySelector('[name="email"]')?.value || '',
+            subject: this.querySelector('[name="asunto"]')?.value || '',
+            message: this.querySelector('[name="mensaje"]')?.value || '',
+            created_at: new Date().toISOString()
+        };
+        if (!formData.name || !formData.email || !formData.message) {
+            showToast('Por favor completa los campos obligatorios.', 'error');
+            return;
+        }
+        try {
+            const { error } = await supabaseClient.from('contact_messages').insert([formData]);
+            if (error) throw error;
+            showToast('¡Mensaje enviado correctamente!', 'success');
+            this.reset();
+        } catch (err) {
+            console.error('Error al enviar mensaje:', err);
+            showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
+        }
+    });
+}
+
 // ========================================
 // FUNCIONES AUXILIARES
 // ========================================
