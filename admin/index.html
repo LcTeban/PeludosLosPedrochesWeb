@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Open Sans', sans-serif; background: #f5f5f5; overflow-x: hidden; }
@@ -78,6 +79,9 @@
         .status-disponible { background: #d4edda; color: #155724; }
         .status-en-acogida { background: #fff3cd; color: #856404; }
         .status-adoptado { background: #cce5ff; color: #004085; }
+        .status-pendiente { background: #fff3cd; color: #856404; }
+        .status-aprobada { background: #d4edda; color: #155724; }
+        .status-rechazada { background: #f8d7da; color: #721c24; }
         .btn-icon {
             background: none; border: none; cursor: pointer;
             padding: 5px 10px; color: #666; font-size: 1rem;
@@ -130,7 +134,6 @@
             .admin-header h1 { font-size: 1.4rem; }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
     <div id="authCheck">
@@ -148,7 +151,7 @@
                 <li><a data-page="blog"><i class="fas fa-newspaper"></i> Blog</a></li>
                 <li><a data-page="settings"><i class="fas fa-cog"></i> Configuración</a></li>
                 <li><a data-page="messages"><i class="fas fa-envelope"></i> Mensajes</a></li>
-<li><a data-page="adoptions"><i class="fas fa-home"></i> Adopciones</a></li>
+                <li><a data-page="adoptions"><i class="fas fa-home"></i> Adopciones</a></li>
             </ul>
             <button class="btn-logout" onclick="logout()" style="margin-top: 30px; width: 100%;">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -171,29 +174,29 @@
             <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
-    
-<!-- Modal para importar CSV -->
-<div class="modal" id="importModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Importar perros desde CSV</h3>
-            <button class="modal-close" onclick="closeImportModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p style="margin-bottom: 15px;">
-                Selecciona un archivo CSV con las siguientes columnas:<br>
-                <strong>Nombre, Raza, Edad, Tamaño, Sexo, Descripción, Etiqueta, Estado</strong>
-            </p>
-            <div class="form-group">
-                <label>Archivo CSV</label>
-                <input type="file" id="csvFileInput" accept=".csv">
+
+    <!-- Modal para importar CSV -->
+    <div class="modal" id="importModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Importar perros desde CSV</h3>
+                <button class="modal-close" onclick="closeImportModal()">&times;</button>
             </div>
-            <div id="importStatus" style="margin-bottom: 15px;"></div>
-            <button class="btn-save" onclick="importCSV()">Importar perros</button>
+            <div class="modal-body">
+                <p style="margin-bottom: 15px;">
+                    Selecciona un archivo CSV con las siguientes columnas:<br>
+                    <strong>Nombre, Raza, Edad, Tamaño, Sexo, Descripción, Etiqueta, Estado</strong>
+                </p>
+                <div class="form-group">
+                    <label>Archivo CSV</label>
+                    <input type="file" id="csvFileInput" accept=".csv">
+                </div>
+                <div id="importStatus" style="margin-bottom: 15px;"></div>
+                <button class="btn-save" onclick="importCSV()">Importar perros</button>
+            </div>
         </div>
     </div>
-</div>
-    
+
     <script>
         // ========================================
         // CONFIGURACIÓN Y AUTENTICACIÓN
@@ -224,6 +227,8 @@
         let selectedImageFile = null;
         let selectedBlogImageFile = null;
         let selectedLogoFile = null;
+        let selectedFiles = [];
+        let existingImagesToKeep = [];
 
         // ========================================
         // INICIALIZACIÓN Y NAVEGACIÓN
@@ -239,12 +244,12 @@
 
         function setupNavigation() {
             document.querySelectorAll('[data-page]').forEach(link => {
-                link.addEventListener('click', function(e) {
+                link.addEventListener('click', async function(e) {
                     e.preventDefault();
                     document.querySelectorAll('[data-page]').forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                     currentPage = this.dataset.page;
-                    renderPage();
+                    await renderPage();
                     if (window.innerWidth <= 768) {
                         document.getElementById('adminSidebar').classList.remove('active');
                         document.getElementById('sidebarOverlay').classList.remove('active');
@@ -303,82 +308,25 @@
         }
 
         async function loadMessages() {
-    try {
-        const { data, error } = await supabaseClient.from('contact_messages').select('*').order('created_at', { ascending: false });
-        if (error) throw error;
-        return data || [];
-    } catch (err) { console.error(err); return []; }
-}
+            try {
+                const { data, error } = await supabaseClient.from('contact_messages').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                return data || [];
+            } catch (err) { console.error(err); return []; }
+        }
 
-async function loadAdoptionRequests() {
-    try {
-        const { data, error } = await supabaseClient.from('adoption_requests').select('*').order('created_at', { ascending: false });
-        if (error) throw error;
-        return data || [];
-    } catch (err) { console.error(err); return []; }
-}
+        async function loadAdoptionRequests() {
+            try {
+                const { data, error } = await supabaseClient.from('adoption_requests').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                return data || [];
+            } catch (err) { console.error(err); return []; }
+        }
 
-function renderMessagesPage(messages) {
-    return `
-        <div class="admin-header"><h1>Mensajes de Contacto</h1></div>
-        <div class="admin-section">
-            <table class="admin-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th></tr></thead>
-                <tbody>
-                    ${messages.map(m => `
-                        <tr>
-                            <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
-                            <td>${m.name}</td>
-                            <td>${m.email}</td>
-                            <td>${m.subject || '-'}</td>
-                            <td>${m.message}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
-
-function renderAdoptionsAdminPage(requests) {
-    return `
-        <div class="admin-header"><h1>Solicitudes de Adopción</h1></div>
-        <div class="admin-section">
-            <table class="admin-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr></thead>
-                <tbody>
-                    ${requests.map(r => `
-                        <tr>
-                            <td>${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
-                            <td>${r.name}</td>
-                            <td>${r.email}</td>
-                            <td>${r.phone || '-'}</td>
-                            <td>${r.dog_name || '-'}</td>
-                            <td><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
-                            <td>
-                                <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅</button>
-                                <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌</button>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
-
-async function updateRequestStatus(id, status) {
-    await supabaseClient.from('adoption_requests').update({ status }).eq('id', id);
-    const requests = await loadAdoptionRequests();
-    document.getElementById('adminContent').innerHTML = 
-        '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>' +
-        renderAdoptionsAdminPage(requests);
-}
-        
         // ========================================
         // RENDERIZADO DE PÁGINAS
         // ========================================
-        function renderPage() {
+        async function renderPage() {
             const content = document.getElementById('adminContent');
             const toggleBtn = '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>';
             let html = '';
@@ -386,6 +334,14 @@ async function updateRequestStatus(id, status) {
             else if (currentPage === 'dogs') html = renderDogsPage();
             else if (currentPage === 'blog') html = renderBlogPage();
             else if (currentPage === 'settings') html = renderSettingsPage();
+            else if (currentPage === 'messages') {
+                const messages = await loadMessages();
+                html = renderMessagesPage(messages);
+            }
+            else if (currentPage === 'adoptions') {
+                const requests = await loadAdoptionRequests();
+                html = renderAdoptionsAdminPage(requests);
+            }
             content.innerHTML = toggleBtn + html;
             document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
                 document.getElementById('adminSidebar').classList.add('active');
@@ -419,35 +375,35 @@ async function updateRequestStatus(id, status) {
         }
 
         function renderDogsPage() {
-    return `
-        <div class="admin-header"><h1>Gestión de Perros</h1></div>
-        <div class="admin-section">
-            <h2>
-                Listado de perros
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn-add" onclick="openModal('dog')"><i class="fas fa-plus"></i> Añadir perro</button>
-                    <button class="btn-add" style="background: #2c5f2d;" onclick="openImportModal()"><i class="fas fa-file-csv"></i> Importar perros</button>
+            return `
+                <div class="admin-header"><h1>Gestión de Perros</h1></div>
+                <div class="admin-section">
+                    <h2>
+                        Listado de perros
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-add" onclick="openModal('dog')"><i class="fas fa-plus"></i> Añadir perro</button>
+                            <button class="btn-add" style="background: #2c5f2d;" onclick="openImportModal()"><i class="fas fa-file-csv"></i> Importar perros</button>
+                        </div>
+                    </h2>
+                    <table class="admin-table">
+                        <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            ${dogs.map(d => `
+                                <tr>
+                                    <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
+                                    <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
+                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
+                                    <td>
+                                        <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
+                                        <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 </div>
-            </h2>
-            <table class="admin-table">
-                <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
-                <tbody>
-                    ${dogs.map(d => `
-                        <tr>
-                            <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
-                            <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
-                            <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
-                            <td>
-                                <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
-                                <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        </div>
-    `;
-}
+            `;
+        }
 
         function renderBlogPage() {
             return `
@@ -475,135 +431,175 @@ async function updateRequestStatus(id, status) {
         }
 
         function renderSettingsPage() {
-    return `
-        <div class="admin-header"><h1>Configuración</h1></div>
-        
-        <!-- Logo -->
-        <div class="admin-section">
-            <h2>Logo</h2>
-            <div class="form-group">
-                <label>Logo actual</label>
-                <div style="margin-bottom: 15px;">
-                    ${settings.logo_url ? 
-                        `<img src="${settings.logo_url}" style="max-width: 200px; max-height: 100px;">` : 
-                        '<div style="font-size: 3rem;">🐾</div>'}
+            return `
+                <div class="admin-header"><h1>Configuración</h1></div>
+                
+                <!-- Logo -->
+                <div class="admin-section">
+                    <h2>Logo</h2>
+                    <div class="form-group">
+                        <label>Logo actual</label>
+                        <div style="margin-bottom: 15px;">
+                            ${settings.logo_url ? 
+                                `<img src="${settings.logo_url}" style="max-width: 200px; max-height: 100px;">` : 
+                                '<div style="font-size: 3rem;">🐾</div>'}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Subir nuevo logo</label>
+                        <input type="file" id="logoImage" accept="image/*" onchange="previewLogo(this)">
+                        <div class="image-preview" id="logoPreview"></div>
+                    </div>
+                    <div class="form-group"><label>Texto del logo</label><input type="text" id="logoText" value="${settings.logo_text || '🐾 PELUDOS LOS PEDROCHES'}"></div>
+                    <div class="form-group"><label>Subtítulo</label><input type="text" id="logoSubtitle" value="${settings.logo_subtitle || 'Protectora de Animales'}"></div>
+                    <button class="btn-save" onclick="saveLogoSettings()">Guardar logo</button>
                 </div>
-            </div>
-            <div class="form-group">
-                <label>Subir nuevo logo</label>
-                <input type="file" id="logoImage" accept="image/*" onchange="previewLogo(this)">
-                <div class="image-preview" id="logoPreview"></div>
-            </div>
-            <div class="form-group"><label>Texto del logo</label><input type="text" id="logoText" value="${settings.logo_text || '🐾 PELUDOS LOS PEDROCHES'}"></div>
-            <div class="form-group"><label>Subtítulo</label><input type="text" id="logoSubtitle" value="${settings.logo_subtitle || 'Protectora de Animales'}"></div>
-            <button class="btn-save" onclick="saveLogoSettings()">Guardar logo</button>
-        </div>
-        
-        <!-- Imágenes de secciones -->
-        <div class="admin-section">
-            <h2>Imágenes de las secciones</h2>
-            
-            <div class="form-group">
-                <label>Imagen de Voluntariado</label>
-                <div style="margin-bottom: 10px;">
-                    ${settings.volunteer_image ? 
-                        `<img src="${settings.volunteer_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                
+                <!-- Imágenes de secciones -->
+                <div class="admin-section">
+                    <h2>Imágenes de las secciones</h2>
+                    
+                    <div class="form-group">
+                        <label>Imagen de Voluntariado</label>
+                        <div style="margin-bottom: 10px;">
+                            ${settings.volunteer_image ? 
+                                `<img src="${settings.volunteer_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                                '<span style="color: #999;">Sin imagen</span>'}
+                        </div>
+                        <input type="file" id="volunteerImageInput" accept="image/*" onchange="previewSectionImage(this, 'volunteerPreview')">
+                        <div class="image-preview" id="volunteerPreview"></div>
+                        <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('volunteer')">Guardar imagen</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Imagen de Apadrinamiento</label>
+                        <div style="margin-bottom: 10px;">
+                            ${settings.apadrina_image ? 
+                                `<img src="${settings.apadrina_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                                '<span style="color: #999;">Sin imagen</span>'}
+                        </div>
+                        <input type="file" id="apadrinaImageInput" accept="image/*" onchange="previewSectionImage(this, 'apadrinaPreview')">
+                        <div class="image-preview" id="apadrinaPreview"></div>
+                        <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('apadrina')">Guardar imagen</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Imagen de Casa de Acogida</label>
+                        <div style="margin-bottom: 10px;">
+                            ${settings.acoge_image ? 
+                                `<img src="${settings.acoge_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                                '<span style="color: #999;">Sin imagen</span>'}
+                        </div>
+                        <input type="file" id="acogeImageInput" accept="image/*" onchange="previewSectionImage(this, 'acogePreview')">
+                        <div class="image-preview" id="acogePreview"></div>
+                        <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('acoge')">Guardar imagen</button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Imagen de Quiénes Somos</label>
+                        <div style="margin-bottom: 10px;">
+                            ${settings.about_image ? 
+                                `<img src="${settings.about_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
+                                '<span style="color: #999;">Sin imagen</span>'}
+                        </div>
+                        <input type="file" id="aboutImageInput" accept="image/*" onchange="previewSectionImage(this, 'aboutPreview')">
+                        <div class="image-preview" id="aboutPreview"></div>
+                        <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('about')">Guardar imagen</button>
+                    </div>
                 </div>
-                <input type="file" id="volunteerImageInput" accept="image/*" onchange="previewSectionImage(this, 'volunteerPreview')">
-                <div class="image-preview" id="volunteerPreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('volunteer')">Guardar imagen</button>
-            </div>
-            
-            <div class="form-group">
-                <label>Imagen de Apadrinamiento</label>
-                <div style="margin-bottom: 10px;">
-                    ${settings.apadrina_image ? 
-                        `<img src="${settings.apadrina_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                
+                <!-- Página Quiénes Somos -->
+                <div class="admin-section">
+                    <h2>Página "Quiénes Somos"</h2>
+                    <div class="form-group"><label>Título principal</label><input type="text" id="aboutTitle" value="${settings.about_title || 'QUIÉNES SOMOS'}"></div>
+                    <div class="form-group"><label>Subtítulo</label><input type="text" id="aboutSubtitle" value="${settings.about_subtitle || ''}"></div>
+                    <div class="form-group"><label>Historia (HTML permitido)</label><textarea id="aboutHistory" rows="6">${settings.about_history || ''}</textarea></div>
+                    <div class="form-group"><label>Misión</label><textarea id="aboutMission" rows="3">${settings.about_mission || ''}</textarea></div>
+                    <div class="form-group"><label>Visión</label><textarea id="aboutVision" rows="3">${settings.about_vision || ''}</textarea></div>
+                    <div class="form-group"><label>Valores</label><textarea id="aboutValues" rows="3">${settings.about_values || ''}</textarea></div>
+                    <div class="form-group"><label>Colaboraciones (HTML permitido)</label><textarea id="aboutCollaborations" rows="5">${settings.about_collaborations || ''}</textarea></div>
+                    <button class="btn-save" onclick="saveAboutSettings()">Guardar página "Quiénes Somos"</button>
                 </div>
-                <input type="file" id="apadrinaImageInput" accept="image/*" onchange="previewSectionImage(this, 'apadrinaPreview')">
-                <div class="image-preview" id="apadrinaPreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('apadrina')">Guardar imagen</button>
-            </div>
-            
-            <div class="form-group">
-                <label>Imagen de Casa de Acogida</label>
-                <div style="margin-bottom: 10px;">
-                    ${settings.acoge_image ? 
-                        `<img src="${settings.acoge_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                
+                <!-- Colores -->
+                <div class="admin-section">
+                    <h2>Colores</h2>
+                    <div class="form-group"><label>Color principal</label><input type="color" id="primaryColor" value="${settings.primary_color || '#e04f2e'}"></div>
+                    <div class="form-group"><label>Color secundario</label><input type="color" id="secondaryColor" value="${settings.secondary_color || '#2c5f2d'}"></div>
+                    <button class="btn-save" onclick="saveColorSettings()">Guardar colores</button>
                 </div>
-                <input type="file" id="acogeImageInput" accept="image/*" onchange="previewSectionImage(this, 'acogePreview')">
-                <div class="image-preview" id="acogePreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('acoge')">Guardar imagen</button>
-            </div>
-            
-            <div class="form-group">
-                <label>Imagen de Quiénes Somos</label>
-                <div style="margin-bottom: 10px;">
-                    ${settings.about_image ? 
-                        `<img src="${settings.about_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                
+                <!-- Contacto -->
+                <div class="admin-section">
+                    <h2>Contacto</h2>
+                    <div class="form-group"><label>Teléfono principal</label><input type="text" id="phone1" value="${settings.contact_phone1 || '661 44 79 42'}"></div>
+                    <div class="form-group"><label>Teléfono secundario</label><input type="text" id="phone2" value="${settings.contact_phone2 || '666 86 16 20'}"></div>
+                    <div class="form-group"><label>Email</label><input type="email" id="email" value="${settings.contact_email || 'peludoslospedroches@gmail.com'}"></div>
+                    <button class="btn-save" onclick="saveContactSettings()">Guardar contacto</button>
                 </div>
-                <input type="file" id="aboutImageInput" accept="image/*" onchange="previewSectionImage(this, 'aboutPreview')">
-                <div class="image-preview" id="aboutPreview"></div>
-                <button class="btn-save" style="margin-top: 10px;" onclick="saveSectionImage('about')">Guardar imagen</button>
-            </div>
-        </div>
-        
-        <!-- Página Quiénes Somos -->
-        <div class="admin-section">
-            <h2>Página "Quiénes Somos"</h2>
-            <div class="form-group">
-                <label>Título principal</label>
-                <input type="text" id="aboutTitle" value="${settings.about_title || 'QUIÉNES SOMOS'}">
-            </div>
-            <div class="form-group">
-                <label>Subtítulo</label>
-                <input type="text" id="aboutSubtitle" value="${settings.about_subtitle || ''}">
-            </div>
-            <div class="form-group">
-                <label>Historia (HTML permitido)</label>
-                <textarea id="aboutHistory" rows="6">${settings.about_history || ''}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Misión</label>
-                <textarea id="aboutMission" rows="3">${settings.about_mission || ''}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Visión</label>
-                <textarea id="aboutVision" rows="3">${settings.about_vision || ''}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Valores</label>
-                <textarea id="aboutValues" rows="3">${settings.about_values || ''}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Colaboraciones (HTML permitido)</label>
-                <textarea id="aboutCollaborations" rows="5">${settings.about_collaborations || ''}</textarea>
-            </div>
-            <button class="btn-save" onclick="saveAboutSettings()">Guardar página "Quiénes Somos"</button>
-        </div>
-        
-        <!-- Colores -->
-        <div class="admin-section">
-            <h2>Colores</h2>
-            <div class="form-group"><label>Color principal</label><input type="color" id="primaryColor" value="${settings.primary_color || '#e04f2e'}"></div>
-            <div class="form-group"><label>Color secundario</label><input type="color" id="secondaryColor" value="${settings.secondary_color || '#2c5f2d'}"></div>
-            <button class="btn-save" onclick="saveColorSettings()">Guardar colores</button>
-        </div>
-        
-        <!-- Contacto -->
-        <div class="admin-section">
-            <h2>Contacto</h2>
-            <div class="form-group"><label>Teléfono principal</label><input type="text" id="phone1" value="${settings.contact_phone1 || '661 44 79 42'}"></div>
-            <div class="form-group"><label>Teléfono secundario</label><input type="text" id="phone2" value="${settings.contact_phone2 || '666 86 16 20'}"></div>
-            <div class="form-group"><label>Email</label><input type="email" id="email" value="${settings.contact_email || 'peludoslospedroches@gmail.com'}"></div>
-            <button class="btn-save" onclick="saveContactSettings()">Guardar contacto</button>
-        </div>
-    `;
-}
+            `;
+        }
+
+        function renderMessagesPage(messages) {
+            return `
+                <div class="admin-header"><h1>Mensajes de Contacto</h1></div>
+                <div class="admin-section">
+                    <table class="admin-table">
+                        <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th></tr></thead>
+                        <tbody>
+                            ${messages.map(m => `
+                                <tr>
+                                    <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td>${m.name}</td>
+                                    <td>${m.email}</td>
+                                    <td>${m.subject || '-'}</td>
+                                    <td>${m.message}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderAdoptionsAdminPage(requests) {
+            return `
+                <div class="admin-header"><h1>Solicitudes de Adopción</h1></div>
+                <div class="admin-section">
+                    <table class="admin-table">
+                        <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            ${requests.map(r => `
+                                <tr>
+                                    <td>${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td>${r.name}</td>
+                                    <td>${r.email}</td>
+                                    <td>${r.phone || '-'}</td>
+                                    <td>${r.dog_name || '-'}</td>
+                                    <td><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
+                                    <td>
+                                        <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅</button>
+                                        <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function updateRequestStatus(id, status) {
+            await supabaseClient.from('adoption_requests').update({ status }).eq('id', id);
+            const requests = await loadAdoptionRequests();
+            document.getElementById('adminContent').innerHTML = 
+                '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>' +
+                renderAdoptionsAdminPage(requests);
+            document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
+                document.getElementById('adminSidebar').classList.add('active');
+                document.getElementById('sidebarOverlay').classList.add('active');
+            });
+        }
 
         // ========================================
         // FUNCIONES DE GUARDADO
@@ -644,6 +640,24 @@ async function updateRequestStatus(id, status) {
             init();
         }
 
+        async function saveAboutSettings() {
+            const fields = {
+                'about_title': 'aboutTitle',
+                'about_subtitle': 'aboutSubtitle',
+                'about_history': 'aboutHistory',
+                'about_mission': 'aboutMission',
+                'about_vision': 'aboutVision',
+                'about_values': 'aboutValues',
+                'about_collaborations': 'aboutCollaborations'
+            };
+            for (const [key, inputId] of Object.entries(fields)) {
+                const value = document.getElementById(inputId)?.value || '';
+                await supabaseClient.from('settings').update({ value }).eq('key', key);
+                settings[key] = value;
+            }
+            showToast('Página "Quiénes Somos" actualizada');
+        }
+
         // ========================================
         // SUBIDA DE ARCHIVOS
         // ========================================
@@ -671,39 +685,38 @@ async function updateRequestStatus(id, status) {
             const body = document.getElementById('modalBody');
 
             if (type === 'dog') {
-                const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', gender: 'Macho', size: 'Mediano', status: 'Disponible', description: '', badge: '', image_url: '' };
-                // Dentro del case 'dog' en openModal:
-title.textContent = id ? 'Editar perro' : 'Añadir perro';
-const existingImages = (dog.images && dog.images.length > 0) ? dog.images : (dog.image_url ? [dog.image_url] : []);
-const imagesPreviewHtml = existingImages.map((url, index) => 
-    `<div style="position:relative; display:inline-block; margin:5px;">
-        <img src="${url}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
-        <button type="button" onclick="removeExistingImage(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
-    </div>`
-).join('');
+                const dog = id ? dogs.find(d => d.id === id) : { name: '', breed: '', age: '', gender: 'Macho', size: 'Mediano', status: 'Disponible', description: '', badge: '', image_url: '', images: [] };
+                const existingImages = (dog.images && dog.images.length > 0) ? dog.images : (dog.image_url ? [dog.image_url] : []);
+                existingImagesToKeep = [...existingImages];
+                selectedFiles = [];
                 
-existingImagesToKeep = (dog.images && dog.images.length > 0) ? [...dog.images] : (dog.image_url ? [dog.image_url] : []);
-                
-body.innerHTML = `
-    <div class="form-group">
-        <label>Fotos del perro (puedes seleccionar varias)</label>
-        <input type="file" id="dogImages" accept="image/*" multiple onchange="previewMultipleImages(this)">
-        <div class="image-preview" id="imagePreview" style="display:flex; flex-wrap:wrap;">
-            ${imagesPreviewHtml}
-        </div>
-        <div id="newImagesPreview" style="display:flex; flex-wrap:wrap;"></div>
-    </div>
-    <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
-    <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
-    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}"></div>
-    <div class="form-group"><label>Sexo</label><select id="dogGender"><option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option><option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option></select></div>
-    <div class="form-group"><label>Tamaño</label><select id="dogSize"><option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option><option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option><option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option></select></div>
-    <div class="form-group"><label>Estado</label><select id="dogStatus"><option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option><option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option><option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option></select></div>
-    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}"></div>
-    <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
-    <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar perro</button>
-`;
-                selectedImageFile = null;
+                const imagesPreviewHtml = existingImagesToKeep.map((url, index) => 
+                    `<div style="position:relative; display:inline-block; margin:5px;">
+                        <img src="${url}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+                        <button type="button" onclick="removeExistingImage(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+                    </div>`
+                ).join('');
+
+                title.textContent = id ? 'Editar perro' : 'Añadir perro';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Fotos del perro (puedes seleccionar varias)</label>
+                        <input type="file" id="dogImages" accept="image/*" multiple onchange="previewMultipleImages(this)">
+                        <div class="image-preview" id="imagePreview" style="display:flex; flex-wrap:wrap;">
+                            ${imagesPreviewHtml}
+                        </div>
+                        <div id="newImagesPreview" style="display:flex; flex-wrap:wrap;"></div>
+                    </div>
+                    <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
+                    <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
+                    <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}"></div>
+                    <div class="form-group"><label>Sexo</label><select id="dogGender"><option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option><option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option></select></div>
+                    <div class="form-group"><label>Tamaño</label><select id="dogSize"><option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option><option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option><option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option></select></div>
+                    <div class="form-group"><label>Estado</label><select id="dogStatus"><option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option><option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option><option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option></select></div>
+                    <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}"></div>
+                    <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
+                    <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar perro</button>
+                `;
             } else if (type === 'blog') {
                 const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado', image_url: '' };
                 title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
@@ -720,6 +733,55 @@ body.innerHTML = `
             modal.classList.add('active');
         }
 
+        function previewMultipleImages(input) {
+            const newPreview = document.getElementById('newImagesPreview');
+            newPreview.innerHTML = '';
+            selectedFiles = Array.from(input.files);
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+                        <button type="button" onclick="removeNewFile(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+                    `;
+                    newPreview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeNewFile(index) {
+            selectedFiles.splice(index, 1);
+            const newPreview = document.getElementById('newImagesPreview');
+            newPreview.innerHTML = '';
+            selectedFiles.forEach((file, i) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+                        <button type="button" onclick="removeNewFile(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+                    `;
+                    newPreview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function removeExistingImage(index) {
+            existingImagesToKeep.splice(index, 1);
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = existingImagesToKeep.map((url, i) => 
+                `<div style="position:relative; display:inline-block; margin:5px;">
+                    <img src="${url}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
+                    <button type="button" onclick="removeExistingImage(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
+                </div>`
+            ).join('');
+        }
+
         function previewImage(input) {
             const file = input.files[0];
             if (file) {
@@ -729,63 +791,7 @@ body.innerHTML = `
                 reader.readAsDataURL(file);
             }
         }
-// Variables para almacenar archivos nuevos seleccionados e imágenes existentes a conservar
-let selectedFiles = [];
-let existingImagesToKeep = []; // URLs que permanecen
 
-function previewMultipleImages(input) {
-    const newPreview = document.getElementById('newImagesPreview');
-    // Limpiar preview de nuevos archivos
-    newPreview.innerHTML = '';
-    selectedFiles = Array.from(input.files);
-    selectedFiles.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const div = document.createElement('div');
-            div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
-            div.innerHTML = `
-                <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
-                <button type="button" onclick="removeNewFile(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
-            `;
-            newPreview.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function removeNewFile(index) {
-    selectedFiles.splice(index, 1);
-    // Refrescar la vista previa
-    const newPreview = document.getElementById('newImagesPreview');
-    newPreview.innerHTML = '';
-    selectedFiles.forEach((file, i) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const div = document.createElement('div');
-            div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
-            div.innerHTML = `
-                <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
-                <button type="button" onclick="removeNewFile(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
-            `;
-            newPreview.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function removeExistingImage(index) {
-    // Eliminar de existingImagesToKeep
-    existingImagesToKeep.splice(index, 1);
-    // Refrescar la vista previa de imágenes existentes
-    const preview = document.getElementById('imagePreview');
-    // Reconstruir el HTML de existentes
-    preview.innerHTML = existingImagesToKeep.map((url, i) => 
-        `<div style="position:relative; display:inline-block; margin:5px;">
-            <img src="${url}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
-            <button type="button" onclick="removeExistingImage(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
-        </div>`
-    ).join('');
-}
         function previewBlogImage(input) {
             const file = input.files[0];
             if (file) {
@@ -806,126 +812,117 @@ function removeExistingImage(index) {
             }
         }
 
-function openImportModal() {
-    document.getElementById('importModal').classList.add('active');
-}
-
-function closeImportModal() {
-    document.getElementById('importModal').classList.remove('active');
-}
-
-async function importCSV() {
-    const fileInput = document.getElementById('csvFileInput');
-    const statusDiv = document.getElementById('importStatus');
-    
-    if (!fileInput.files[0]) {
-        statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Selecciona un archivo CSV primero.</p>';
-        return;
-    }
-    
-    const file = fileInput.files[0];
-    statusDiv.innerHTML = '<p style="color: #666;">⏳ Leyendo archivo...</p>';
-    
-    Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        encoding: 'UTF-8',
-        complete: async function(results) {
-            if (results.errors.length > 0) {
-                statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Error al leer el archivo CSV.</p>';
-                return;
+        function previewSectionImage(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) { document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="max-width: 200px; border-radius: 8px;">`; };
+                reader.readAsDataURL(file);
             }
-            
-            const perros = results.data.map(row => ({
-                name: row['Nombre'] || '',
-                breed: row['Raza'] || '',
-                age: row['Edad'] || '',
-                size: row['Tamaño'] || 'Mediano',
-                gender: row['Sexo'] || 'Macho',
-                description: row['Descripción'] || '',
-                badge: row['Etiqueta'] || '',
-                status: row['Estado'] || 'Disponible',
-                image_url: ''
-            }));
-            
-            const validos = perros.filter(p => p.name.trim() !== '');
-            
-            if (validos.length === 0) {
-                statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ No se encontraron perros válidos en el archivo.</p>';
-                return;
-            }
-            
-            statusDiv.innerHTML = `<p style="color: #666;">⏳ Importando ${validos.length} perros...</p>`;
-            
-            try {
-                const { error } = await supabaseClient.from('dogs').insert(validos);
-                if (error) throw error;
-                
-                statusDiv.innerHTML = `<p style="color: #2c5f2d;">✅ ${validos.length} perros importados correctamente.</p>`;
-                await loadDogs();
-                renderPage();
-                setTimeout(closeImportModal, 1500);
-            } catch (error) {
-                statusDiv.innerHTML = `<p style="color: #e04f2e;">❌ Error al importar: ${error.message}</p>`;
-            }
-        },
-        error: function(error) {
-            statusDiv.innerHTML = `<p style="color: #e04f2e;">❌ Error al procesar el archivo: ${error.message}</p>`;
         }
-    });
-}
-        
+
+        async function saveSectionImage(section) {
+            let inputId, key;
+            switch(section) {
+                case 'volunteer': inputId = 'volunteerImageInput'; key = 'volunteer_image'; break;
+                case 'apadrina': inputId = 'apadrinaImageInput'; key = 'apadrina_image'; break;
+                case 'acoge': inputId = 'acogeImageInput'; key = 'acoge_image'; break;
+                case 'about': inputId = 'aboutImageInput'; key = 'about_image'; break;
+                default: return;
+            }
+            const fileInput = document.getElementById(inputId);
+            if (!fileInput || !fileInput.files[0]) { showToast('Selecciona una imagen', 'error'); return; }
+            const imageUrl = await uploadFile(fileInput.files[0], 'secciones');
+            if (!imageUrl) { showToast('Error al subir la imagen', 'error'); return; }
+            await supabaseClient.from('settings').update({ value: imageUrl }).eq('key', key);
+            settings[key] = imageUrl;
+            showToast('Imagen guardada correctamente');
+            renderPage();
+        }
+
         function closeModal() {
             document.getElementById('editModal').classList.remove('active');
             selectedImageFile = null;
             selectedBlogImageFile = null;
             selectedLogoFile = null;
+            selectedFiles = [];
+            existingImagesToKeep = [];
+        }
+
+        // ========================================
+        // IMPORTACIÓN CSV
+        // ========================================
+        function openImportModal() { document.getElementById('importModal').classList.add('active'); }
+        function closeImportModal() { document.getElementById('importModal').classList.remove('active'); }
+
+        async function importCSV() {
+            const fileInput = document.getElementById('csvFileInput');
+            const statusDiv = document.getElementById('importStatus');
+            if (!fileInput.files[0]) { statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Selecciona un archivo CSV primero.</p>'; return; }
+            const file = fileInput.files[0];
+            statusDiv.innerHTML = '<p style="color: #666;">⏳ Leyendo archivo...</p>';
+            Papa.parse(file, {
+                header: true, skipEmptyLines: true, encoding: 'UTF-8',
+                complete: async function(results) {
+                    if (results.errors.length > 0) { statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Error al leer el archivo CSV.</p>'; return; }
+                    const perros = results.data.map(row => ({
+                        name: row['Nombre'] || '', breed: row['Raza'] || '', age: row['Edad'] || '',
+                        size: row['Tamaño'] || 'Mediano', gender: row['Sexo'] || 'Macho',
+                        description: row['Descripción'] || '', badge: row['Etiqueta'] || '',
+                        status: row['Estado'] || 'Disponible', image_url: '', images: []
+                    }));
+                    const validos = perros.filter(p => p.name.trim() !== '');
+                    if (validos.length === 0) { statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ No se encontraron perros válidos.</p>'; return; }
+                    statusDiv.innerHTML = `<p style="color: #666;">⏳ Importando ${validos.length} perros...</p>`;
+                    try {
+                        const { error } = await supabaseClient.from('dogs').insert(validos);
+                        if (error) throw error;
+                        statusDiv.innerHTML = `<p style="color: #2c5f2d;">✅ ${validos.length} perros importados correctamente.</p>`;
+                        await loadDogs();
+                        renderPage();
+                        setTimeout(closeImportModal, 1500);
+                    } catch (error) {
+                        statusDiv.innerHTML = `<p style="color: #e04f2e;">❌ Error al importar: ${error.message}</p>`;
+                    }
+                },
+                error: function(error) { statusDiv.innerHTML = `<p style="color: #e04f2e;">❌ Error al procesar: ${error.message}</p>`; }
+            });
         }
 
         // ========================================
         // CRUD DE PERROS Y BLOG
         // ========================================
         async function saveDog(id) {
-    const name = document.getElementById('dogName')?.value;
-    if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
-
-    // Subir nuevos archivos seleccionados
-    let newUrls = [];
-    if (selectedFiles.length > 0) {
-        for (const file of selectedFiles) {
-            const url = await uploadFile(file, 'dogs');
-            if (url) newUrls.push(url);
-        }
-    }
-
-    // Combinar imágenes existentes que se mantienen + nuevas
-    const finalImages = [...existingImagesToKeep, ...newUrls];
-
-    const dogData = {
-        name,
-        breed: document.getElementById('dogBreed')?.value || '',
-        age: document.getElementById('dogAge')?.value || '',
-        gender: document.getElementById('dogGender')?.value || 'Macho',
-        size: document.getElementById('dogSize')?.value || 'Mediano',
-        status: document.getElementById('dogStatus')?.value || 'Disponible',
-        badge: document.getElementById('dogBadge')?.value || '',
-        description: document.getElementById('dogDescription')?.value || '',
-        images: finalImages,
-        image_url: finalImages.length > 0 ? finalImages[0] : '' // mantener compatibilidad
-    };
-
-    if (id && id !== 'null') {
-        await supabaseClient.from('dogs').update(dogData).eq('id', id);
-    } else {
-        await supabaseClient.from('dogs').insert([dogData]);
-    }
-
-    closeModal();
-    await loadDogs();
-    renderPage();
-    showToast('Perro guardado');
-    selectedFiles = [];
-    existingImagesToKeep = [];
+            const name = document.getElementById('dogName')?.value;
+            if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
+            let newUrls = [];
+            if (selectedFiles.length > 0) {
+                for (const file of selectedFiles) {
+                    const url = await uploadFile(file, 'dogs');
+                    if (url) newUrls.push(url);
+                }
+            }
+            const finalImages = [...existingImagesToKeep, ...newUrls];
+            const dogData = {
+                name, breed: document.getElementById('dogBreed')?.value || '',
+                age: document.getElementById('dogAge')?.value || '',
+                gender: document.getElementById('dogGender')?.value || 'Macho',
+                size: document.getElementById('dogSize')?.value || 'Mediano',
+                status: document.getElementById('dogStatus')?.value || 'Disponible',
+                badge: document.getElementById('dogBadge')?.value || '',
+                description: document.getElementById('dogDescription')?.value || '',
+                images: finalImages,
+                image_url: finalImages.length > 0 ? finalImages[0] : ''
+            };
+            if (id && id !== 'null') {
+                await supabaseClient.from('dogs').update(dogData).eq('id', id);
+            } else {
+                await supabaseClient.from('dogs').insert([dogData]);
+            }
+            closeModal();
+            await loadDogs();
+            renderPage();
+            showToast('Perro guardado');
         }
 
         async function deleteDog(id) {
@@ -945,17 +942,11 @@ async function importCSV() {
                 imageUrl = await uploadFile(selectedBlogImageFile, 'blog');
                 if (!imageUrl) { showToast('Error al subir la imagen', 'error'); return; }
             }
-            const postData = {
-                title, excerpt: document.getElementById('postExcerpt')?.value || '',
+            const postData = { title, excerpt: document.getElementById('postExcerpt')?.value || '',
                 content: document.getElementById('postContent')?.value || '',
-                status: document.getElementById('postStatus')?.value || 'Publicado',
-                image_url: imageUrl
-            };
-            if (id && id !== 'null') {
-                await supabaseClient.from('blog_posts').update(postData).eq('id', id);
-            } else {
-                await supabaseClient.from('blog_posts').insert([postData]);
-            }
+                status: document.getElementById('postStatus')?.value || 'Publicado', image_url: imageUrl };
+            if (id && id !== 'null') await supabaseClient.from('blog_posts').update(postData).eq('id', id);
+            else await supabaseClient.from('blog_posts').insert([postData]);
             closeModal();
             await loadBlogPosts();
             renderPage();
@@ -981,78 +972,7 @@ async function importCSV() {
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
-        // Previsualizar imagen de sección
-function previewSectionImage(input, previewId) {
-    const file = input.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById(previewId).innerHTML = `<img src="${e.target.result}" style="max-width: 200px; border-radius: 8px;">`;
-        };
-        reader.readAsDataURL(file);
-    }
-}
 
-// Guardar imagen de sección
-async function saveSectionImage(section) {
-    let inputId, key;
-    switch(section) {
-        case 'volunteer':
-            inputId = 'volunteerImageInput';
-            key = 'volunteer_image';
-            break;
-        case 'apadrina':
-            inputId = 'apadrinaImageInput';
-            key = 'apadrina_image';
-            break;
-        case 'acoge':
-            inputId = 'acogeImageInput';
-            key = 'acoge_image';
-            break;
-        case 'about':
-            inputId = 'aboutImageInput';
-            key = 'about_image';
-            break;
-        default:
-            return;
-    }
-    
-    const fileInput = document.getElementById(inputId);
-    if (!fileInput || !fileInput.files[0]) {
-        showToast('Selecciona una imagen primero', 'error');
-        return;
-    }
-    
-    const imageUrl = await uploadFile(fileInput.files[0], 'secciones');
-    if (!imageUrl) {
-        showToast('Error al subir la imagen', 'error');
-        return;
-    }
-    
-    await supabaseClient.from('settings').update({ value: imageUrl }).eq('key', key);
-    settings[key] = imageUrl;
-    showToast('Imagen guardada correctamente');
-    renderPage(); // Refrescar la vista
-}
-async function saveAboutSettings() {
-    const fields = {
-        'about_title': 'aboutTitle',
-        'about_subtitle': 'aboutSubtitle',
-        'about_history': 'aboutHistory',
-        'about_mission': 'aboutMission',
-        'about_vision': 'aboutVision',
-        'about_values': 'aboutValues',
-        'about_collaborations': 'aboutCollaborations'
-    };
-    
-    for (const [key, inputId] of Object.entries(fields)) {
-        const value = document.getElementById(inputId)?.value || '';
-        await supabaseClient.from('settings').update({ value }).eq('key', key);
-        settings[key] = value;
-    }
-    
-    showToast('Página "Quiénes Somos" actualizada correctamente');
-}
         function logout() {
             localStorage.removeItem('adminToken');
             window.location.href = 'login.html';
@@ -1066,20 +986,24 @@ async function saveAboutSettings() {
         window.saveDog = saveDog;
         window.deleteDog = deleteDog;
         window.previewImage = previewImage;
+        window.previewMultipleImages = previewMultipleImages;
+        window.removeNewFile = removeNewFile;
+        window.removeExistingImage = removeExistingImage;
         window.previewBlogImage = previewBlogImage;
         window.previewLogo = previewLogo;
+        window.previewSectionImage = previewSectionImage;
+        window.saveSectionImage = saveSectionImage;
         window.saveBlogPost = saveBlogPost;
         window.deleteBlogPost = deleteBlogPost;
         window.saveLogoSettings = saveLogoSettings;
         window.saveColorSettings = saveColorSettings;
         window.saveContactSettings = saveContactSettings;
-        window.logout = logout;
-        window.previewSectionImage = previewSectionImage;
-        window.saveSectionImage = saveSectionImage;
         window.saveAboutSettings = saveAboutSettings;
         window.openImportModal = openImportModal;
         window.closeImportModal = closeImportModal;
         window.importCSV = importCSV;
+        window.updateRequestStatus = updateRequestStatus;
+        window.logout = logout;
     </script>
 </body>
 </html>
