@@ -1570,3 +1570,85 @@ img {
     color: white;
     border-color: var(--primary);
 }
+
+/* ===== ANIMACIONES SUTILES ===== */
+
+/* Clase base para elementos que se animarán al aparecer */
+.reveal {
+    opacity: 0;
+    transform: translateY(25px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Variaciones de dirección */
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Retardo para animaciones escalonadas */
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+.delay-400 { transition-delay: 0.4s; }
+.delay-500 { transition-delay: 0.5s; }
+
+/* Mejora de hover en tarjetas y botones */
+.dog-card, .blog-card, .help-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+.dog-card:hover, .blog-card:hover, .help-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* Efecto de ondulación en botones (ripple) */
+.btn, .btn-adopt, .btn-donate, .page-btn {
+    position: relative;
+    overflow: hidden;
+}
+.btn::after, .btn-adopt::after, .btn-donate::after, .page-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+.btn:active::after, .btn-adopt:active::after, .btn-donate:active::after, .page-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Animación de entrada para modales */
+.modal.active .modal-content {
+    animation: modalSlideIn 0.35s ease;
+}
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
