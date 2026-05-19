@@ -125,6 +125,8 @@
         .image-preview { margin-top: 10px; max-width: 200px; }
         .image-preview img { width: 100%; border-radius: 8px; }
 
+        /* ===== TARJETAS DE PERROS EN MÓVIL ===== */
+        .dogs-cards-grid { display: none; }
         @media (max-width: 768px) {
             .admin-sidebar { transform: translateX(-100%); }
             .admin-sidebar.active { transform: translateX(0); }
@@ -132,9 +134,61 @@
             .mobile-menu-toggle { display: block; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .admin-header h1 { font-size: 1.4rem; }
-            .admin-table { min-width: auto; }
 
-            /* ===== TABLAS RESPONSIVE (MÓVIL) ===== */
+            /* Ocultar tabla en escritorio en secciones de perros */
+            .dogs-table { display: none; }
+            /* Mostrar grid de tarjetas */
+            .dogs-cards-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            .dog-admin-card {
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+                padding: 10px;
+                text-align: center;
+            }
+            .dog-admin-card img {
+                width: 100%;
+                height: 120px;
+                object-fit: cover;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+            .dog-admin-card .dog-placeholder {
+                width: 100%;
+                height: 120px;
+                background: #f0f0f0;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2.5rem;
+            }
+            .dog-admin-card h4 {
+                font-size: 0.9rem;
+                margin: 5px 0 2px;
+                color: #2c5f2d;
+            }
+            .dog-admin-card p {
+                font-size: 0.7rem;
+                color: #666;
+                margin: 2px 0;
+            }
+            .dog-admin-card .status-badge {
+                display: inline-block;
+                margin: 5px 0;
+            }
+            .dog-admin-card .card-actions {
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 6px;
+            }
+
+            /* Tablas responsive para otras secciones */
             .admin-section table thead { display: none; }
             .admin-section table tbody tr {
                 display: block;
@@ -164,6 +218,55 @@
             }
             .admin-section table tbody td > * { flex: 1; text-align: right; }
             .admin-section table tbody td:last-child { justify-content: center; }
+
+            /* Botón de menú flotante */
+            .floating-menu-btn {
+                display: flex;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+                background: #2c5f2d;
+                color: white;
+                border: none;
+                border-radius: 50%;
+                font-size: 1.4rem;
+                cursor: pointer;
+                z-index: 150;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            }
+        }
+        @media (min-width: 769px) {
+            .floating-menu-btn { display: none; }
+        }
+
+        /* Paginación admin */
+        .admin-pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .admin-page-btn {
+            padding: 8px 14px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            min-width: 40px;
+            text-align: center;
+        }
+        .admin-page-btn:hover { background: #f0f0f0; }
+        .admin-page-btn.active {
+            background: var(--primary, #e04f2e);
+            color: white;
+            border-color: var(--primary);
         }
     </style>
 </head>
@@ -196,6 +299,11 @@
             </button>
         </main>
     </div>
+
+    <!-- Botón flotante para móvil -->
+    <button class="floating-menu-btn" id="floatingMenuBtn" title="Menú">
+        <i class="fas fa-bars"></i>
+    </button>
 
     <div class="modal" id="editModal">
         <div class="modal-content">
@@ -261,6 +369,8 @@
         let selectedLogoFile = null;
         let selectedFiles = [];
         let existingImagesToKeep = [];
+        let adminCurrentPage = 1;
+        const adminPerPage = 10;
 
         // ========================================
         // INICIALIZACIÓN Y NAVEGACIÓN
@@ -272,6 +382,7 @@
             renderPage();
             setupNavigation();
             setupMobileMenu();
+            setupFloatingMenu();
         }
 
         function setupNavigation() {
@@ -304,6 +415,18 @@
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
             });
+        }
+
+        function setupFloatingMenu() {
+            const btn = document.getElementById('floatingMenuBtn');
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    sidebar.classList.add('active');
+                    overlay.classList.add('active');
+                });
+            }
         }
 
         // ========================================
@@ -363,16 +486,16 @@
             const toggleBtn = '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>';
             let html = '';
             if (currentPage === 'dashboard') html = renderDashboard();
-            else if (currentPage === 'dogs') html = renderDogsPage();
-            else if (currentPage === 'blog') html = renderBlogPage();
+            else if (currentPage === 'dogs') html = renderDogsPage(1);
+            else if (currentPage === 'blog') html = renderBlogPage(1);
             else if (currentPage === 'settings') html = renderSettingsPage();
             else if (currentPage === 'messages') {
                 const messages = await loadMessages();
-                html = renderMessagesPage(messages);
+                html = renderMessagesPage(messages, 1);
             }
             else if (currentPage === 'adoptions') {
                 const requests = await loadAdoptionRequests();
-                html = renderAdoptionsAdminPage(requests);
+                html = renderAdoptionsAdminPage(requests, 1);
             }
             content.innerHTML = toggleBtn + html;
             document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
@@ -384,6 +507,7 @@
         function renderDashboard() {
             const available = dogs.filter(d => d.status !== 'Adoptado').length;
             const adopted = dogs.filter(d => d.status === 'Adoptado').length;
+            const dashboardDogs = dogs.filter(d => d.status !== 'Adoptado').slice(0, 5);
             return `
                 <div class="admin-header"><h1>Dashboard</h1></div>
                 <div class="stats-grid">
@@ -394,24 +518,50 @@
                 </div>
                 <div class="admin-section">
                     <h2>Perros disponibles</h2>
-                    <table class="admin-table">
-                        <thead><tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr></thead>
-                        <tbody>
-                            ${dogs.filter(d => d.status !== 'Adoptado').slice(0, 5).map(d => `
-                                <tr>
-                                    <td data-label="Nombre">${d.name}</td>
-                                    <td data-label="Raza">${d.breed}</td>
-                                    <td data-label="Edad">${d.age}</td>
-                                    <td data-label="Estado"><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <!-- Vista escritorio: tabla -->
+                    <div class="dogs-table">
+                        <table class="admin-table">
+                            <thead><tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr></thead>
+                            <tbody>
+                                ${dashboardDogs.map(d => `
+                                    <tr>
+                                        <td>${d.name}</td>
+                                        <td>${d.breed}</td>
+                                        <td>${d.age}</td>
+                                        <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Vista móvil: tarjetas -->
+                    <div class="dogs-cards-grid">
+                        ${dashboardDogs.map(d => `
+                            <div class="dog-admin-card">
+                                ${d.image_url ? `<img src="${d.image_url}" alt="${d.name}">` : '<div class="dog-placeholder">🐕</div>'}
+                                <h4>${d.name}</h4>
+                                <p>${d.breed} · ${d.age}</p>
+                                <span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span>
+                            </div>
+                        `).join('')}
+                    </div>
                 </div>
             `;
         }
 
-        function renderDogsPage() {
+        function renderDogsPage(page = 1) {
+            adminCurrentPage = page;
+            const totalPages = Math.ceil(dogs.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginatedDogs = dogs.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="renderDogsPage(${i})">${i}</button>`;
+                }
+            }
+            
             return `
                 <div class="admin-header"><h1>Gestión de Perros</h1></div>
                 <div class="admin-section">
@@ -422,29 +572,60 @@
                             <button class="btn-add" style="background: #2c5f2d;" onclick="openImportModal()"><i class="fas fa-file-csv"></i> Importar perros</button>
                         </div>
                     </h2>
-                    <table class="admin-table">
-                        <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            ${dogs.map(d => `
-                                <tr>
-                                    <td data-label="Foto">${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
-                                    <td data-label="Nombre">${d.name}</td>
-                                    <td data-label="Raza">${d.breed}</td>
-                                    <td data-label="Edad">${d.age}</td>
-                                    <td data-label="Estado"><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
-                                    <td data-label="Acciones">
-                                        <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
-                                        <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <!-- Vista escritorio: tabla -->
+                    <div class="dogs-table">
+                        <table class="admin-table">
+                            <thead><tr><th>Foto</th><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody>
+                                ${paginatedDogs.map(d => `
+                                    <tr>
+                                        <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
+                                        <td>${d.name}</td>
+                                        <td>${d.breed}</td>
+                                        <td>${d.age}</td>
+                                        <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
+                                        <td>
+                                            <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
+                                            <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Vista móvil: tarjetas -->
+                    <div class="dogs-cards-grid">
+                        ${paginatedDogs.map(d => `
+                            <div class="dog-admin-card">
+                                ${d.image_url ? `<img src="${d.image_url}" alt="${d.name}">` : '<div class="dog-placeholder">🐕</div>'}
+                                <h4>${d.name}</h4>
+                                <p>${d.breed} · ${d.age}</p>
+                                <span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span>
+                                <div class="card-actions">
+                                    <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
+                                    <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="admin-pagination">${paginationHtml}</div>
                 </div>
             `;
         }
 
-        function renderBlogPage() {
+        function renderBlogPage(page = 1) {
+            adminCurrentPage = page;
+            const totalPages = Math.ceil(blogPosts.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginatedPosts = blogPosts.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="renderBlogPage(${i})">${i}</button>`;
+                }
+            }
+            
             return `
                 <div class="admin-header"><h1>Gestión del Blog</h1></div>
                 <div class="admin-section">
@@ -452,7 +633,7 @@
                     <table class="admin-table">
                         <thead><tr><th>Título</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody>
-                            ${blogPosts.map(p => `
+                            ${paginatedPosts.map(p => `
                                 <tr>
                                     <td data-label="Título">${p.title}</td>
                                     <td data-label="Fecha">${p.created_at ? new Date(p.created_at).toLocaleDateString('es-ES') : '-'}</td>
@@ -465,6 +646,7 @@
                             `).join('')}
                         </tbody>
                     </table>
+                    <div class="admin-pagination">${paginationHtml}</div>
                 </div>
             `;
         }
@@ -579,14 +761,26 @@
             `;
         }
 
-        function renderMessagesPage(messages) {
+        function renderMessagesPage(messages, page = 1) {
+            adminCurrentPage = page;
+            const totalPages = Math.ceil(messages.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginatedMessages = messages.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="renderMessagesPage(${JSON.stringify(messages)}, ${i})">${i}</button>`;
+                }
+            }
+            
             return `
                 <div class="admin-header"><h1>Mensajes de Contacto</h1></div>
                 <div class="admin-section">
                     <table class="admin-table">
                         <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th></tr></thead>
                         <tbody>
-                            ${messages.map(m => `
+                            ${paginatedMessages.map(m => `
                                 <tr>
                                     <td data-label="Fecha">${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
                                     <td data-label="Nombre">${m.name}</td>
@@ -597,18 +791,31 @@
                             `).join('')}
                         </tbody>
                     </table>
+                    <div class="admin-pagination">${paginationHtml}</div>
                 </div>
             `;
         }
 
-        function renderAdoptionsAdminPage(requests) {
+        function renderAdoptionsAdminPage(requests, page = 1) {
+            adminCurrentPage = page;
+            const totalPages = Math.ceil(requests.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginatedRequests = requests.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="renderAdoptionsAdminPage(${JSON.stringify(requests)}, ${i})">${i}</button>`;
+                }
+            }
+            
             return `
                 <div class="admin-header"><h1>Solicitudes de Adopción</h1></div>
                 <div class="admin-section">
                     <table class="admin-table">
                         <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody>
-                            ${requests.map(r => `
+                            ${paginatedRequests.map(r => `
                                 <tr>
                                     <td data-label="Fecha">${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
                                     <td data-label="Nombre">${r.name}</td>
@@ -624,6 +831,7 @@
                             `).join('')}
                         </tbody>
                     </table>
+                    <div class="admin-pagination">${paginationHtml}</div>
                 </div>
             `;
         }
@@ -1043,6 +1251,10 @@
         window.importCSV = importCSV;
         window.updateRequestStatus = updateRequestStatus;
         window.logout = logout;
+        window.renderDogsPage = renderDogsPage;
+        window.renderBlogPage = renderBlogPage;
+        window.renderMessagesPage = renderMessagesPage;
+        window.renderAdoptionsAdminPage = renderAdoptionsAdminPage;
     </script>
 </body>
 </html>
