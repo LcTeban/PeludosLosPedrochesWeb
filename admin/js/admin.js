@@ -577,7 +577,7 @@ function renderAdoptionsAdminPage(requests, page = 1) {
     `;
 }
 
-// --- NUEVAS FUNCIONES DE RENDERIZADO PARA LOS FORMULARIOS (con clase form-table) ---
+// --- NUEVAS FUNCIONES DE RENDERIZADO CON TARJETAS RESPONSIVE ---
 function renderVolunteersPage(data, page = 1) {
     const totalPages = Math.ceil(data.length / adminPerPage);
     const start = (page - 1) * adminPerPage;
@@ -593,21 +593,35 @@ function renderVolunteersPage(data, page = 1) {
     return `
         <div class="admin-header"><h1>Solicitudes de Voluntariado</h1></div>
         <div class="admin-section">
-            <table class="admin-table form-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Disponibilidad</th><th>Intereses</th></tr></thead>
-                <tbody>
-                    ${paginated.map(v => `
-                        <tr>
-                            <td data-label="Fecha">${new Date(v.created_at).toLocaleDateString('es-ES')}</td>
-                            <td data-label="Nombre">${v.name}</td>
-                            <td data-label="Email">${v.email}</td>
-                            <td data-label="Teléfono">${v.phone || '-'}</td>
-                            <td data-label="Disponibilidad">${v.availability || '-'}</td>
-                            <td data-label="Intereses">${v.interests || '-'}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+            <div class="volunteers-table">
+                <table class="admin-table">
+                    <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Disponibilidad</th><th>Intereses</th></tr></thead>
+                    <tbody>
+                        ${paginated.map(v => `
+                            <tr>
+                                <td>${new Date(v.created_at).toLocaleDateString('es-ES')}</td>
+                                <td>${v.name}</td>
+                                <td>${v.email}</td>
+                                <td>${v.phone || '-'}</td>
+                                <td>${v.availability || '-'}</td>
+                                <td>${v.interests || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-cards-grid">
+                ${paginated.map(v => `
+                    <div class="form-admin-card">
+                        <h4>${v.name}</h4>
+                        <p><strong>Email:</strong> ${v.email}</p>
+                        <p><strong>Teléfono:</strong> ${v.phone || '-'}</p>
+                        <p><strong>Disponibilidad:</strong> ${v.availability || '-'}</p>
+                        <p><strong>Intereses:</strong> ${v.interests || '-'}</p>
+                        <p class="form-date">${new Date(v.created_at).toLocaleDateString('es-ES')}</p>
+                    </div>
+                `).join('')}
+            </div>
             <div class="admin-pagination">${paginationHtml}</div>
         </div>
     `;
@@ -628,22 +642,37 @@ function renderSponsorsPage(data, page = 1) {
     return `
         <div class="admin-header"><h1>Solicitudes de Apadrinamiento</h1></div>
         <div class="admin-section">
-            <table class="admin-table form-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Decisión</th><th>Perro</th><th>Aportación</th></tr></thead>
-                <tbody>
-                    ${paginated.map(s => `
-                        <tr>
-                            <td data-label="Fecha">${new Date(s.created_at).toLocaleDateString('es-ES')}</td>
-                            <td data-label="Nombre">${s.name}</td>
-                            <td data-label="Email">${s.email}</td>
-                            <td data-label="Teléfono">${s.phone || '-'}</td>
-                            <td data-label="Decisión">${s.dog_choice === 'especifico' ? 'Eligió perro' : 'Elegid por mí'}</td>
-                            <td data-label="Perro">${s.specific_dog || '-'}</td>
-                            <td data-label="Aportación">${s.amount ? s.amount + '€/mes' : '-'}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+            <div class="sponsors-table">
+                <table class="admin-table">
+                    <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Decisión</th><th>Perro</th><th>Aportación</th></tr></thead>
+                    <tbody>
+                        ${paginated.map(s => `
+                            <tr>
+                                <td>${new Date(s.created_at).toLocaleDateString('es-ES')}</td>
+                                <td>${s.name}</td>
+                                <td>${s.email}</td>
+                                <td>${s.phone || '-'}</td>
+                                <td>${s.dog_choice === 'especifico' ? 'Eligió perro' : 'Elegid por mí'}</td>
+                                <td>${s.specific_dog || '-'}</td>
+                                <td>${s.amount ? s.amount + '€/mes' : '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-cards-grid">
+                ${paginated.map(s => `
+                    <div class="form-admin-card">
+                        <h4>${s.name}</h4>
+                        <p><strong>Email:</strong> ${s.email}</p>
+                        <p><strong>Teléfono:</strong> ${s.phone || '-'}</p>
+                        <p><strong>Decisión:</strong> ${s.dog_choice === 'especifico' ? 'Eligió perro' : 'Elegid por mí'}</p>
+                        <p><strong>Perro:</strong> ${s.specific_dog || '-'}</p>
+                        <p><strong>Aportación:</strong> ${s.amount ? s.amount + '€/mes' : '-'}</p>
+                        <p class="form-date">${new Date(s.created_at).toLocaleDateString('es-ES')}</p>
+                    </div>
+                `).join('')}
+            </div>
             <div class="admin-pagination">${paginationHtml}</div>
         </div>
     `;
@@ -664,22 +693,37 @@ function renderFostersPage(data, page = 1) {
     return `
         <div class="admin-header"><h1>Solicitudes de Acogida</h1></div>
         <div class="admin-section">
-            <table class="admin-table form-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Vivienda</th><th>Otros animales</th><th>Mensaje</th></tr></thead>
-                <tbody>
-                    ${paginated.map(f => `
-                        <tr>
-                            <td data-label="Fecha">${new Date(f.created_at).toLocaleDateString('es-ES')}</td>
-                            <td data-label="Nombre">${f.name}</td>
-                            <td data-label="Email">${f.email}</td>
-                            <td data-label="Teléfono">${f.phone || '-'}</td>
-                            <td data-label="Vivienda">${f.housing_type || '-'}</td>
-                            <td data-label="Otros animales">${f.has_pets || '-'}</td>
-                            <td data-label="Mensaje">${f.message || '-'}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+            <div class="fosters-table">
+                <table class="admin-table">
+                    <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Vivienda</th><th>Otros animales</th><th>Mensaje</th></tr></thead>
+                    <tbody>
+                        ${paginated.map(f => `
+                            <tr>
+                                <td>${new Date(f.created_at).toLocaleDateString('es-ES')}</td>
+                                <td>${f.name}</td>
+                                <td>${f.email}</td>
+                                <td>${f.phone || '-'}</td>
+                                <td>${f.housing_type || '-'}</td>
+                                <td>${f.has_pets || '-'}</td>
+                                <td>${f.message || '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-cards-grid">
+                ${paginated.map(f => `
+                    <div class="form-admin-card">
+                        <h4>${f.name}</h4>
+                        <p><strong>Email:</strong> ${f.email}</p>
+                        <p><strong>Teléfono:</strong> ${f.phone || '-'}</p>
+                        <p><strong>Vivienda:</strong> ${f.housing_type || '-'}</p>
+                        <p><strong>Otros animales:</strong> ${f.has_pets || '-'}</p>
+                        <p><strong>Mensaje:</strong> ${f.message || '-'}</p>
+                        <p class="form-date">${new Date(f.created_at).toLocaleDateString('es-ES')}</p>
+                    </div>
+                `).join('')}
+            </div>
             <div class="admin-pagination">${paginationHtml}</div>
         </div>
     `;
@@ -700,20 +744,33 @@ function renderMembersPage(data, page = 1) {
     return `
         <div class="admin-header"><h1>Solicitudes de Membresía (Socios)</h1></div>
         <div class="admin-section">
-            <table class="admin-table form-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Cuota</th></tr></thead>
-                <tbody>
-                    ${paginated.map(m => `
-                        <tr>
-                            <td data-label="Fecha">${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
-                            <td data-label="Nombre">${m.name}</td>
-                            <td data-label="Email">${m.email}</td>
-                            <td data-label="Teléfono">${m.phone || '-'}</td>
-                            <td data-label="Cuota">${m.amount ? m.amount + '€/mes' : '-'}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+            <div class="members-table">
+                <table class="admin-table">
+                    <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Cuota</th></tr></thead>
+                    <tbody>
+                        ${paginated.map(m => `
+                            <tr>
+                                <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                                <td>${m.name}</td>
+                                <td>${m.email}</td>
+                                <td>${m.phone || '-'}</td>
+                                <td>${m.amount ? m.amount + '€/mes' : '-'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-cards-grid">
+                ${paginated.map(m => `
+                    <div class="form-admin-card">
+                        <h4>${m.name}</h4>
+                        <p><strong>Email:</strong> ${m.email}</p>
+                        <p><strong>Teléfono:</strong> ${m.phone || '-'}</p>
+                        <p><strong>Cuota:</strong> ${m.amount ? m.amount + '€/mes' : '-'}</p>
+                        <p class="form-date">${new Date(m.created_at).toLocaleDateString('es-ES')}</p>
+                    </div>
+                `).join('')}
+            </div>
             <div class="admin-pagination">${paginationHtml}</div>
         </div>
     `;
