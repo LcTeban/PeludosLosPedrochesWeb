@@ -574,14 +574,37 @@ function initNewsletter() {
 }
 
 function initForms() {
+    
     const adoptionForm = document.getElementById('adoptionForm');
-    if (adoptionForm) {
-        adoptionForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('¡Solicitud recibida! Te contactaremos pronto.');
+if (adoptionForm) {
+    adoptionForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = {
+            name: this.querySelector('[name="nombre"]')?.value || this.querySelector('input[placeholder="Nombre completo"]')?.value || '',
+            email: this.querySelector('[name="email"]')?.value || this.querySelector('input[placeholder="Email"]')?.value || '',
+            phone: this.querySelector('[name="telefono"]')?.value || this.querySelector('input[placeholder="Teléfono"]')?.value || '',
+            dog_name: this.querySelector('[name="perro"]')?.value || '',
+            housing_type: this.querySelector('[name="vivienda"]')?.value || this.querySelector('select:nth-of-type(1)')?.value || '',
+            has_pets: this.querySelector('[name="otros_animales"]')?.value || this.querySelector('select:nth-of-type(2)')?.value || '',
+            message: this.querySelector('[name="mensaje"]')?.value || this.querySelector('textarea')?.value || '',
+            status: 'Pendiente',
+            created_at: new Date().toISOString()
+        };
+        if (!formData.name || !formData.email) {
+            showToast('Por favor completa al menos nombre y email.', 'error');
+            return;
+        }
+        try {
+            const { error } = await supabaseClient.from('adoption_requests').insert([formData]);
+            if (error) throw error;
+            showToast('¡Solicitud enviada! Te contactaremos pronto.', 'success');
             this.reset();
-        });
-    }
+        } catch (err) {
+            console.error('Error al enviar solicitud:', err);
+            showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
+        }
+    });
+}
 
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
