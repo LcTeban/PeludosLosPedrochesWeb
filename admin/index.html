@@ -135,8 +135,8 @@
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .admin-header h1 { font-size: 1.4rem; }
 
-            /* Quitar scroll horizontal en todas las secciones */
-            .admin-section { overflow-x: visible !important; }
+            /* Eliminar scroll horizontal en todas las secciones */
+            .admin-section { overflow-x: hidden !important; }
 
             /* Ocultar tabla en escritorio en secciones de perros */
             .dogs-table { display: none; }
@@ -202,6 +202,7 @@
             }
 
             /* Tablas responsive para otras secciones (Mensajes, Adopciones, Blog) */
+            .admin-section table { width: 100%; }
             .admin-section table thead { display: none; }
             .admin-section table tbody tr {
                 display: block;
@@ -210,15 +211,21 @@
                 border-radius: 10px;
                 padding: 10px;
                 box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                width: 100%;
+                max-width: 100%;
+                overflow: hidden;
             }
             .admin-section table tbody td {
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
+                align-items: flex-start;
                 padding: 8px 10px;
                 border-bottom: 1px solid #eee;
                 font-size: 0.9rem;
                 word-break: break-word;
+                overflow-wrap: break-word;
+                width: 100%;
+                box-sizing: border-box;
             }
             .admin-section table tbody td:last-child { border-bottom: none; }
             .admin-section table tbody td::before {
@@ -228,9 +235,16 @@
                 margin-right: 10px;
                 white-space: nowrap;
                 flex-shrink: 0;
-                width: 40%;
+                width: 35%;
+                min-width: 70px;
             }
-            .admin-section table tbody td > * { flex: 1; text-align: right; word-break: break-word; }
+            .admin-section table tbody td > * {
+                flex: 1;
+                text-align: right;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                max-width: 65%;
+            }
             .admin-section table tbody td:last-child { justify-content: center; }
 
             /* Botón de menú flotante */
@@ -385,7 +399,6 @@
         let existingImagesToKeep = [];
         let adminCurrentPage = 1;
         const adminPerPage = 10;
-        // Variables para almacenar datos de Mensajes y Adopciones
         let currentMessages = [];
         let currentRequests = [];
 
@@ -409,7 +422,7 @@
                     document.querySelectorAll('[data-page]').forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                     currentSection = this.dataset.page;
-                    adminCurrentPage = 1; // Reiniciar paginación al cambiar de sección
+                    adminCurrentPage = 1;
                     await renderPage();
                     if (window.innerWidth <= 768) {
                         document.getElementById('adminSidebar').classList.remove('active');
@@ -525,7 +538,6 @@
             });
         }
 
-        // Función para cambiar de página desde los botones de paginación
         function goToAdminPage(page) {
             renderPage(page);
         }
@@ -862,8 +874,8 @@
 
         async function updateRequestStatus(id, status) {
             await supabaseClient.from('adoption_requests').update({ status }).eq('id', id);
-            await loadAdoptionRequests(); // Recargar datos
-            renderPage(adminCurrentPage); // Refrescar la página actual
+            await loadAdoptionRequests();
+            renderPage(adminCurrentPage);
         }
 
         // ========================================
