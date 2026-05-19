@@ -215,10 +215,9 @@
                 margin-top: 10px;
             }
 
-            /* Tablas responsive para otras secciones (Mensajes, Adopciones, Voluntarios, etc.) */
-            .admin-section table { width: 100%; }
-            .admin-section table thead { display: none; }
-            .admin-section table tbody tr {
+            /* Tablas responsive para formularios (voluntariado, apadrinamiento, acogida, socios) */
+            .form-table thead { display: none; }
+            .form-table tbody tr {
                 display: block;
                 margin-bottom: 20px;
                 background: #f9f9f9;
@@ -229,7 +228,7 @@
                 max-width: 100%;
                 overflow: hidden;
             }
-            .admin-section table tbody td {
+            .form-table tbody td {
                 display: flex;
                 justify-content: space-between;
                 align-items: flex-start;
@@ -241,8 +240,8 @@
                 width: 100%;
                 box-sizing: border-box;
             }
-            .admin-section table tbody td:last-child { border-bottom: none; }
-            .admin-section table tbody td::before {
+            .form-table tbody td:last-child { border-bottom: none; }
+            .form-table tbody td::before {
                 content: attr(data-label);
                 font-weight: 600;
                 color: #2c5f2d;
@@ -252,14 +251,14 @@
                 width: 35%;
                 min-width: 70px;
             }
-            .admin-section table tbody td > * {
+            .form-table tbody td > * {
                 flex: 1;
                 text-align: right;
                 word-break: break-word;
                 overflow-wrap: break-word;
                 max-width: 65%;
             }
-            .admin-section table tbody td:last-child { justify-content: center; }
+            .form-table tbody td:last-child { justify-content: center; }
 
             /* Botón de menú flotante */
             .floating-menu-btn {
@@ -963,7 +962,7 @@
             `;
         }
 
-        // --- NUEVAS FUNCIONES DE RENDERIZADO PARA LOS FORMULARIOS ---
+        // --- NUEVAS FUNCIONES DE RENDERIZADO PARA LOS FORMULARIOS (con clase form-table) ---
         function renderVolunteersPage(data, page = 1) {
             const totalPages = Math.ceil(data.length / adminPerPage);
             const start = (page - 1) * adminPerPage;
@@ -979,7 +978,7 @@
             return `
                 <div class="admin-header"><h1>Solicitudes de Voluntariado</h1></div>
                 <div class="admin-section">
-                    <table class="admin-table">
+                    <table class="admin-table form-table">
                         <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Disponibilidad</th><th>Intereses</th></tr></thead>
                         <tbody>
                             ${paginated.map(v => `
@@ -1014,7 +1013,7 @@
             return `
                 <div class="admin-header"><h1>Solicitudes de Apadrinamiento</h1></div>
                 <div class="admin-section">
-                    <table class="admin-table">
+                    <table class="admin-table form-table">
                         <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Decisión</th><th>Perro</th><th>Aportación</th></tr></thead>
                         <tbody>
                             ${paginated.map(s => `
@@ -1050,7 +1049,7 @@
             return `
                 <div class="admin-header"><h1>Solicitudes de Acogida</h1></div>
                 <div class="admin-section">
-                    <table class="admin-table">
+                    <table class="admin-table form-table">
                         <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Vivienda</th><th>Otros animales</th><th>Mensaje</th></tr></thead>
                         <tbody>
                             ${paginated.map(f => `
@@ -1086,7 +1085,7 @@
             return `
                 <div class="admin-header"><h1>Solicitudes de Membresía (Socios)</h1></div>
                 <div class="admin-section">
-                    <table class="admin-table">
+                    <table class="admin-table form-table">
                         <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Cuota</th></tr></thead>
                         <tbody>
                             ${paginated.map(m => `
