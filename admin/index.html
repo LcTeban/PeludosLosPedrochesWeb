@@ -302,6 +302,79 @@
             }
         }
 
+        async function loadMessages() {
+    try {
+        const { data, error } = await supabaseClient.from('contact_messages').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        return data || [];
+    } catch (err) { console.error(err); return []; }
+}
+
+async function loadAdoptionRequests() {
+    try {
+        const { data, error } = await supabaseClient.from('adoption_requests').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        return data || [];
+    } catch (err) { console.error(err); return []; }
+}
+
+function renderMessagesPage(messages) {
+    return `
+        <div class="admin-header"><h1>Mensajes de Contacto</h1></div>
+        <div class="admin-section">
+            <table class="admin-table">
+                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th></tr></thead>
+                <tbody>
+                    ${messages.map(m => `
+                        <tr>
+                            <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                            <td>${m.name}</td>
+                            <td>${m.email}</td>
+                            <td>${m.subject || '-'}</td>
+                            <td>${m.message}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function renderAdoptionsAdminPage(requests) {
+    return `
+        <div class="admin-header"><h1>Solicitudes de Adopción</h1></div>
+        <div class="admin-section">
+            <table class="admin-table">
+                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr></thead>
+                <tbody>
+                    ${requests.map(r => `
+                        <tr>
+                            <td>${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
+                            <td>${r.name}</td>
+                            <td>${r.email}</td>
+                            <td>${r.phone || '-'}</td>
+                            <td>${r.dog_name || '-'}</td>
+                            <td><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
+                            <td>
+                                <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅</button>
+                                <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+async function updateRequestStatus(id, status) {
+    await supabaseClient.from('adoption_requests').update({ status }).eq('id', id);
+    const requests = await loadAdoptionRequests();
+    document.getElementById('adminContent').innerHTML = 
+        '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>' +
+        renderAdoptionsAdminPage(requests);
+}
+        
         // ========================================
         // RENDERIZADO DE PÁGINAS
         // ========================================
