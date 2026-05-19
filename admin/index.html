@@ -215,7 +215,7 @@
                 margin-top: 10px;
             }
 
-            /* Tablas responsive para Mensajes y Adopciones */
+            /* Tablas responsive para otras secciones (Mensajes, Adopciones, Voluntarios, etc.) */
             .admin-section table { width: 100%; }
             .admin-section table thead { display: none; }
             .admin-section table tbody tr {
@@ -329,6 +329,10 @@
                 <li><a data-page="settings"><i class="fas fa-cog"></i> Configuración</a></li>
                 <li><a data-page="messages"><i class="fas fa-envelope"></i> Mensajes</a></li>
                 <li><a data-page="adoptions"><i class="fas fa-home"></i> Adopciones</a></li>
+                <li><a data-page="volunteers"><i class="fas fa-hands-helping"></i> Voluntariado</a></li>
+                <li><a data-page="sponsors"><i class="fas fa-heart"></i> Apadrinamiento</a></li>
+                <li><a data-page="fosters"><i class="fas fa-house-user"></i> Acogida</a></li>
+                <li><a data-page="members"><i class="fas fa-user-plus"></i> Socios</a></li>
             </ul>
             <button class="btn-logout" onclick="logout()" style="margin-top: 30px; width: 100%;">
                 <i class="fas fa-sign-out-alt"></i> Cerrar sesión
@@ -415,6 +419,10 @@
         const adminPerPage = 10;
         let currentMessages = [];
         let currentRequests = [];
+        let currentVolunteers = [];
+        let currentSponsors = [];
+        let currentFosters = [];
+        let currentMembers = [];
 
         // ========================================
         // INICIALIZACIÓN Y NAVEGACIÓN
@@ -525,6 +533,42 @@
             } catch (err) { console.error(err); currentRequests = []; return []; }
         }
 
+        async function loadVolunteerRequests() {
+            try {
+                const { data, error } = await supabaseClient.from('volunteer_requests').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                currentVolunteers = data || [];
+                return currentVolunteers;
+            } catch (err) { console.error(err); currentVolunteers = []; return []; }
+        }
+
+        async function loadSponsorRequests() {
+            try {
+                const { data, error } = await supabaseClient.from('sponsor_requests').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                currentSponsors = data || [];
+                return currentSponsors;
+            } catch (err) { console.error(err); currentSponsors = []; return []; }
+        }
+
+        async function loadFosterRequests() {
+            try {
+                const { data, error } = await supabaseClient.from('foster_requests').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                currentFosters = data || [];
+                return currentFosters;
+            } catch (err) { console.error(err); currentFosters = []; return []; }
+        }
+
+        async function loadMembershipRequests() {
+            try {
+                const { data, error } = await supabaseClient.from('membership_requests').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                currentMembers = data || [];
+                return currentMembers;
+            } catch (err) { console.error(err); currentMembers = []; return []; }
+        }
+
         // ========================================
         // RENDERIZADO DE PÁGINAS (con paginación unificada)
         // ========================================
@@ -544,6 +588,22 @@
             else if (currentSection === 'adoptions') {
                 if (currentRequests.length === 0) await loadAdoptionRequests();
                 html = renderAdoptionsAdminPage(currentRequests, adminCurrentPage);
+            }
+            else if (currentSection === 'volunteers') {
+                if (currentVolunteers.length === 0) await loadVolunteerRequests();
+                html = renderVolunteersPage(currentVolunteers, adminCurrentPage);
+            }
+            else if (currentSection === 'sponsors') {
+                if (currentSponsors.length === 0) await loadSponsorRequests();
+                html = renderSponsorsPage(currentSponsors, adminCurrentPage);
+            }
+            else if (currentSection === 'fosters') {
+                if (currentFosters.length === 0) await loadFosterRequests();
+                html = renderFostersPage(currentFosters, adminCurrentPage);
+            }
+            else if (currentSection === 'members') {
+                if (currentMembers.length === 0) await loadMembershipRequests();
+                html = renderMembersPage(currentMembers, adminCurrentPage);
             }
             content.innerHTML = toggleBtn + html;
             document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
@@ -903,6 +963,148 @@
             `;
         }
 
+        // --- NUEVAS FUNCIONES DE RENDERIZADO PARA LOS FORMULARIOS ---
+        function renderVolunteersPage(data, page = 1) {
+            const totalPages = Math.ceil(data.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginated = data.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="goToAdminPage(${i})">${i}</button>`;
+                }
+            }
+            
+            return `
+                <div class="admin-header"><h1>Solicitudes de Voluntariado</h1></div>
+                <div class="admin-section">
+                    <table class="admin-table">
+                        <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Disponibilidad</th><th>Intereses</th></tr></thead>
+                        <tbody>
+                            ${paginated.map(v => `
+                                <tr>
+                                    <td data-label="Fecha">${new Date(v.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td data-label="Nombre">${v.name}</td>
+                                    <td data-label="Email">${v.email}</td>
+                                    <td data-label="Teléfono">${v.phone || '-'}</td>
+                                    <td data-label="Disponibilidad">${v.availability || '-'}</td>
+                                    <td data-label="Intereses">${v.interests || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="admin-pagination">${paginationHtml}</div>
+                </div>
+            `;
+        }
+
+        function renderSponsorsPage(data, page = 1) {
+            const totalPages = Math.ceil(data.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginated = data.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="goToAdminPage(${i})">${i}</button>`;
+                }
+            }
+            
+            return `
+                <div class="admin-header"><h1>Solicitudes de Apadrinamiento</h1></div>
+                <div class="admin-section">
+                    <table class="admin-table">
+                        <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Decisión</th><th>Perro</th><th>Aportación</th></tr></thead>
+                        <tbody>
+                            ${paginated.map(s => `
+                                <tr>
+                                    <td data-label="Fecha">${new Date(s.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td data-label="Nombre">${s.name}</td>
+                                    <td data-label="Email">${s.email}</td>
+                                    <td data-label="Teléfono">${s.phone || '-'}</td>
+                                    <td data-label="Decisión">${s.dog_choice === 'especifico' ? 'Eligió perro' : 'Elegid por mí'}</td>
+                                    <td data-label="Perro">${s.specific_dog || '-'}</td>
+                                    <td data-label="Aportación">${s.amount ? s.amount + '€/mes' : '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="admin-pagination">${paginationHtml}</div>
+                </div>
+            `;
+        }
+
+        function renderFostersPage(data, page = 1) {
+            const totalPages = Math.ceil(data.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginated = data.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="goToAdminPage(${i})">${i}</button>`;
+                }
+            }
+            
+            return `
+                <div class="admin-header"><h1>Solicitudes de Acogida</h1></div>
+                <div class="admin-section">
+                    <table class="admin-table">
+                        <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Vivienda</th><th>Otros animales</th><th>Mensaje</th></tr></thead>
+                        <tbody>
+                            ${paginated.map(f => `
+                                <tr>
+                                    <td data-label="Fecha">${new Date(f.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td data-label="Nombre">${f.name}</td>
+                                    <td data-label="Email">${f.email}</td>
+                                    <td data-label="Teléfono">${f.phone || '-'}</td>
+                                    <td data-label="Vivienda">${f.housing_type || '-'}</td>
+                                    <td data-label="Otros animales">${f.has_pets || '-'}</td>
+                                    <td data-label="Mensaje">${f.message || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="admin-pagination">${paginationHtml}</div>
+                </div>
+            `;
+        }
+
+        function renderMembersPage(data, page = 1) {
+            const totalPages = Math.ceil(data.length / adminPerPage);
+            const start = (page - 1) * adminPerPage;
+            const paginated = data.slice(start, start + adminPerPage);
+            
+            let paginationHtml = '';
+            if (totalPages > 1) {
+                for (let i = 1; i <= totalPages; i++) {
+                    paginationHtml += `<button class="admin-page-btn ${i === page ? 'active' : ''}" onclick="goToAdminPage(${i})">${i}</button>`;
+                }
+            }
+            
+            return `
+                <div class="admin-header"><h1>Solicitudes de Membresía (Socios)</h1></div>
+                <div class="admin-section">
+                    <table class="admin-table">
+                        <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Cuota</th></tr></thead>
+                        <tbody>
+                            ${paginated.map(m => `
+                                <tr>
+                                    <td data-label="Fecha">${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td data-label="Nombre">${m.name}</td>
+                                    <td data-label="Email">${m.email}</td>
+                                    <td data-label="Teléfono">${m.phone || '-'}</td>
+                                    <td data-label="Cuota">${m.amount ? m.amount + '€/mes' : '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div class="admin-pagination">${paginationHtml}</div>
+                </div>
+            `;
+        }
+
         async function updateRequestStatus(id, status) {
             await supabaseClient.from('adoption_requests').update({ status }).eq('id', id);
             await loadAdoptionRequests();
@@ -910,7 +1112,7 @@
         }
 
         // ========================================
-        // FUNCIONES DE GUARDADO
+        // FUNCIONES DE GUARDADO (Logo, colores, etc.) - Sin cambios
         // ========================================
         async function saveLogoSettings() {
             const logoText = document.getElementById('logoText').value;
@@ -967,7 +1169,7 @@
         }
 
         // ========================================
-        // SUBIDA DE ARCHIVOS
+        // SUBIDA DE ARCHIVOS - Sin cambios
         // ========================================
         async function uploadFile(file, bucket) {
             if (!file) return null;
@@ -985,7 +1187,7 @@
         }
 
         // ========================================
-        // MODALES Y FORMULARIOS
+        // MODALES Y FORMULARIOS - Sin cambios
         // ========================================
         function openModal(type, id = null) {
             const modal = document.getElementById('editModal');
@@ -1158,7 +1360,7 @@
         }
 
         // ========================================
-        // IMPORTACIÓN CSV
+        // IMPORTACIÓN CSV - Sin cambios
         // ========================================
         function openImportModal() { document.getElementById('importModal').classList.add('active'); }
         function closeImportModal() { document.getElementById('importModal').classList.remove('active'); }
@@ -1198,7 +1400,7 @@
         }
 
         // ========================================
-        // CRUD DE PERROS Y BLOG
+        // CRUD DE PERROS Y BLOG - Sin cambios
         // ========================================
         async function saveDog(id) {
             const name = document.getElementById('dogName')?.value;
@@ -1271,7 +1473,7 @@
         }
 
         // ========================================
-        // UTILIDADES
+        // UTILIDADES - Sin cambios
         // ========================================
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
