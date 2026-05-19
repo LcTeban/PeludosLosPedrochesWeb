@@ -10,9 +10,6 @@ console.log('✅ Supabase inicializado');
 let dogs = [];
 let blogPosts = [];
 let settings = {};
-let currentPage = 1;
-let perPage = 9; // 3 columnas x 3 filas
-let currentFilters = {};
 
 // Variables del carrusel (declaradas una sola vez)
 let currentDogImages = [];
@@ -180,14 +177,15 @@ function renderFeaturedDogs() {
     container.innerHTML = dogsToShow.map(dog => createDogCard(dog)).join('');
 }
 
+let currentPage = 1;
+let perPage = 9;
+let currentFilters = {};
+
 function renderDogsList(filter = {}, page = 1) {
     const container = document.getElementById('dogsList');
     if (!container) return;
-
-    // Guardar filtros y página actual
     currentFilters = filter;
     currentPage = page;
-
     let filtered = dogs.filter(d => d.status !== 'Adoptado');
     if (filter.size) filtered = filtered.filter(d => d.size?.toLowerCase().includes(filter.size));
     if (filter.gender) filtered = filtered.filter(d => d.gender?.toLowerCase() === filter.gender);
@@ -196,7 +194,6 @@ function renderDogsList(filter = {}, page = 1) {
     const totalPages = Math.ceil(filtered.length / perPage);
     const start = (page - 1) * perPage;
     const paginatedDogs = filtered.slice(start, start + perPage);
-
     container.innerHTML = paginatedDogs.map(dog => createDogCard(dog)).join('');
     renderPagination(totalPages);
 }
@@ -204,11 +201,7 @@ function renderDogsList(filter = {}, page = 1) {
 function renderPagination(totalPages) {
     const pagContainer = document.getElementById('pagination');
     if (!pagContainer) return;
-    if (totalPages <= 1) {
-        pagContainer.innerHTML = '';
-        return;
-    }
-
+    if (totalPages <= 1) { pagContainer.innerHTML = ''; return; }
     let html = '';
     for (let i = 1; i <= totalPages; i++) {
         html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
@@ -218,7 +211,6 @@ function renderPagination(totalPages) {
 
 function goToPage(page) {
     renderDogsList(currentFilters, page);
-    // Scroll suave al principio de la lista (opcional)
     document.getElementById('dogsList')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -312,7 +304,7 @@ function renderDogModalBody(dog) {
             <div style="position: relative; width: 100%; max-height: 400px; overflow: hidden; margin-bottom: 20px; text-align: center;">
                 <img id="dogCarouselImage" src="${currentDogImages[currentImageIndex]}" 
                      style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; cursor: pointer;" 
-                     onclick="openLightbox(document.getElementById('dogCarouselImage').src)"
+                     onclick="openLightbox(document.getElementById('dogCarouselImage').src)">
                 ${currentDogImages.length > 1 ? `
                     <button onclick="prevImage()" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">‹</button>
                     <button onclick="nextImage()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">›</button>
@@ -470,6 +462,7 @@ function createBlogCard(post) {
         </article>
     `;
 }
+
 function openBlogModal(postId) {
     const post = blogPosts.find(p => p.id === postId);
     if (!post) return;
@@ -574,38 +567,67 @@ function initNewsletter() {
 }
 
 function initForms() {
-    
-    const adoptionForm = document.getElementById('adoptionForm');
-if (adoptionForm) {
-    adoptionForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = {
-            name: this.querySelector('[name="nombre"]')?.value || this.querySelector('input[placeholder="Nombre completo"]')?.value || '',
-            email: this.querySelector('[name="email"]')?.value || this.querySelector('input[placeholder="Email"]')?.value || '',
-            phone: this.querySelector('[name="telefono"]')?.value || this.querySelector('input[placeholder="Teléfono"]')?.value || '',
-            dog_name: this.querySelector('[name="perro"]')?.value || '',
-            housing_type: this.querySelector('[name="vivienda"]')?.value || this.querySelector('select:nth-of-type(1)')?.value || '',
-            has_pets: this.querySelector('[name="otros_animales"]')?.value || this.querySelector('select:nth-of-type(2)')?.value || '',
-            message: this.querySelector('[name="mensaje"]')?.value || this.querySelector('textarea')?.value || '',
-            status: 'Pendiente',
-            created_at: new Date().toISOString()
-        };
-        if (!formData.name || !formData.email) {
-            showToast('Por favor completa al menos nombre y email.', 'error');
-            return;
-        }
-        try {
-            const { error } = await supabaseClient.from('adoption_requests').insert([formData]);
-            if (error) throw error;
-            showToast('¡Solicitud enviada! Te contactaremos pronto.', 'success');
-            this.reset();
-        } catch (err) {
-            console.error('Error al enviar solicitud:', err);
-            showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
-        }
-    });
-}
+    // Formulario de contacto
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = {
+                name: this.querySelector('[name="nombre"]')?.value || '',
+                email: this.querySelector('[name="email"]')?.value || '',
+                subject: this.querySelector('[name="asunto"]')?.value || '',
+                message: this.querySelector('[name="mensaje"]')?.value || '',
+                created_at: new Date().toISOString()
+            };
+            if (!formData.name || !formData.email || !formData.message) {
+                showToast('Por favor completa los campos obligatorios.', 'error');
+                return;
+            }
+            try {
+                const { error } = await supabaseClient.from('contact_messages').insert([formData]);
+                if (error) throw error;
+                showToast('¡Mensaje enviado correctamente!', 'success');
+                this.reset();
+            } catch (err) {
+                console.error('Error al enviar mensaje:', err);
+                showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
+            }
+        });
+    }
 
+    // Formulario de adopción
+    const adoptionForm = document.getElementById('adoptionForm');
+    if (adoptionForm) {
+        adoptionForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = {
+                name: this.querySelector('[name="nombre"]')?.value || '',
+                email: this.querySelector('[name="email"]')?.value || '',
+                phone: this.querySelector('[name="telefono"]')?.value || '',
+                dog_name: this.querySelector('[name="perro"]')?.value || '',
+                housing_type: this.querySelector('[name="vivienda"]')?.value || '',
+                has_pets: this.querySelector('[name="otros_animales"]')?.value || '',
+                message: this.querySelector('[name="mensaje"]')?.value || '',
+                status: 'Pendiente',
+                created_at: new Date().toISOString()
+            };
+            if (!formData.name || !formData.email) {
+                showToast('Por favor completa al menos nombre y email.', 'error');
+                return;
+            }
+            try {
+                const { error } = await supabaseClient.from('adoption_requests').insert([formData]);
+                if (error) throw error;
+                showToast('¡Solicitud enviada! Te contactaremos pronto.', 'success');
+                this.reset();
+            } catch (err) {
+                console.error('Error al enviar solicitud:', err);
+                showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
+            }
+        });
+    }
+
+    // Formulario de donación
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
@@ -653,38 +675,32 @@ if (adoptionForm) {
     }
 }
 
-const contactForm = document.getElementById('contactForm');
-if (contactForm) {
-    contactForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = {
-            name: this.querySelector('[name="nombre"]')?.value || '',
-            email: this.querySelector('[name="email"]')?.value || '',
-            subject: this.querySelector('[name="asunto"]')?.value || '',
-            message: this.querySelector('[name="mensaje"]')?.value || '',
-            created_at: new Date().toISOString()
-        };
-        if (!formData.name || !formData.email || !formData.message) {
-            showToast('Por favor completa los campos obligatorios.', 'error');
-            return;
-        }
-        try {
-            const { error } = await supabaseClient.from('contact_messages').insert([formData]);
-            if (error) throw error;
-            showToast('¡Mensaje enviado correctamente!', 'success');
-            this.reset();
-        } catch (err) {
-            console.error('Error al enviar mensaje:', err);
-            showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
-        }
-    });
-}
-
 // ========================================
 // FUNCIONES AUXILIARES
 // ========================================
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'}"></i> ${message}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+}
+
 function setSelectedDog(dogName) {
     localStorage.setItem('selectedDog', dogName);
+}
+
+// Animaciones al hacer scroll
+function initScrollReveal() {
+    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.15 });
+    reveals.forEach(el => observer.observe(el));
 }
 
 // ========================================
@@ -702,28 +718,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     initForms();
     initScrollReveal();
 
-    // Animaciones al hacer scroll
-function initScrollReveal() {
-    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, { threshold: 0.15 });
-
-    reveals.forEach(el => observer.observe(el));
-}
-    
-    const perPageSelect = document.getElementById('perPageSelect');
-if (perPageSelect) {
-    perPageSelect.addEventListener('change', function() {
-        perPage = parseInt(this.value);
-        renderDogsList(currentFilters, 1);
-    });
-}
-    
     const selectedDog = localStorage.getItem('selectedDog');
     if (selectedDog) {
         const select = document.querySelector('select[name="perro"]');
@@ -739,13 +733,12 @@ if (perPageSelect) {
     const genderFilter = document.getElementById('genderFilter');
     const searchInput = document.getElementById('searchDog');
     function applyFilters() {
-    const filters = {};
-    if (sizeFilter?.value) filters.size = sizeFilter.value;
-    if (genderFilter?.value) filters.gender = genderFilter.value;
-    if (searchInput?.value) filters.search = searchInput.value;
-    renderDogsList(filters, 1); // siempre volver a página 1 al filtrar
+        const filters = {};
+        if (sizeFilter?.value) filters.size = sizeFilter.value;
+        if (genderFilter?.value) filters.gender = genderFilter.value;
+        if (searchInput?.value) filters.search = searchInput.value;
+        renderDogsList(filters, 1);
     }
-    
     sizeFilter?.addEventListener('change', applyFilters);
     ageFilter?.addEventListener('change', applyFilters);
     genderFilter?.addEventListener('change', applyFilters);
