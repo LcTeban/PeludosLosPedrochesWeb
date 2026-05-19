@@ -650,7 +650,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     initDropdownMobile();
     initNewsletter();
     initForms();
+    initScrollReveal();
 
+    // Animaciones al hacer scroll
+function initScrollReveal() {
+    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.15 });
+
+    reveals.forEach(el => observer.observe(el));
+}
+    
     const perPageSelect = document.getElementById('perPageSelect');
 if (perPageSelect) {
     perPageSelect.addEventListener('change', function() {
