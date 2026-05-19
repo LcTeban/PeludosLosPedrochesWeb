@@ -132,6 +132,38 @@
             .mobile-menu-toggle { display: block; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
             .admin-header h1 { font-size: 1.4rem; }
+            .admin-table { min-width: auto; }
+
+            /* ===== TABLAS RESPONSIVE (MÓVIL) ===== */
+            .admin-section table thead { display: none; }
+            .admin-section table tbody tr {
+                display: block;
+                margin-bottom: 20px;
+                background: #f9f9f9;
+                border-radius: 10px;
+                padding: 10px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }
+            .admin-section table tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 10px;
+                border-bottom: 1px solid #eee;
+                font-size: 0.9rem;
+            }
+            .admin-section table tbody td:last-child { border-bottom: none; }
+            .admin-section table tbody td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: #2c5f2d;
+                margin-right: 10px;
+                white-space: nowrap;
+                flex-shrink: 0;
+                width: 40%;
+            }
+            .admin-section table tbody td > * { flex: 1; text-align: right; }
+            .admin-section table tbody td:last-child { justify-content: center; }
         }
     </style>
 </head>
@@ -366,7 +398,12 @@
                         <thead><tr><th>Nombre</th><th>Raza</th><th>Edad</th><th>Estado</th></tr></thead>
                         <tbody>
                             ${dogs.filter(d => d.status !== 'Adoptado').slice(0, 5).map(d => `
-                                <tr><td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td><td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td></tr>
+                                <tr>
+                                    <td data-label="Nombre">${d.name}</td>
+                                    <td data-label="Raza">${d.breed}</td>
+                                    <td data-label="Edad">${d.age}</td>
+                                    <td data-label="Estado"><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -390,10 +427,12 @@
                         <tbody>
                             ${dogs.map(d => `
                                 <tr>
-                                    <td>${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
-                                    <td>${d.name}</td><td>${d.breed}</td><td>${d.age}</td>
-                                    <td><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
-                                    <td>
+                                    <td data-label="Foto">${d.image_url ? `<img src="${d.image_url}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">` : '🐕'}</td>
+                                    <td data-label="Nombre">${d.name}</td>
+                                    <td data-label="Raza">${d.breed}</td>
+                                    <td data-label="Edad">${d.age}</td>
+                                    <td data-label="Estado"><span class="status-badge status-${d.status?.toLowerCase().replace(' ', '-') || 'disponible'}">${d.status || 'Disponible'}</span></td>
+                                    <td data-label="Acciones">
                                         <button class="btn-icon" onclick="openModal('dog', ${d.id})">✏️</button>
                                         <button class="btn-icon" onclick="deleteDog(${d.id})">🗑️</button>
                                     </td>
@@ -415,10 +454,10 @@
                         <tbody>
                             ${blogPosts.map(p => `
                                 <tr>
-                                    <td>${p.title}</td>
-                                    <td>${p.created_at ? new Date(p.created_at).toLocaleDateString('es-ES') : '-'}</td>
-                                    <td><span class="status-badge ${p.status === 'Publicado' ? 'status-disponible' : ''}">${p.status || 'Publicado'}</span></td>
-                                    <td>
+                                    <td data-label="Título">${p.title}</td>
+                                    <td data-label="Fecha">${p.created_at ? new Date(p.created_at).toLocaleDateString('es-ES') : '-'}</td>
+                                    <td data-label="Estado"><span class="status-badge ${p.status === 'Publicado' ? 'status-disponible' : ''}">${p.status || 'Publicado'}</span></td>
+                                    <td data-label="Acciones">
                                         <button class="btn-icon" onclick="openModal('blog', ${p.id})">✏️</button>
                                         <button class="btn-icon" onclick="deleteBlogPost(${p.id})">🗑️</button>
                                     </td>
@@ -549,11 +588,11 @@
                         <tbody>
                             ${messages.map(m => `
                                 <tr>
-                                    <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
-                                    <td>${m.name}</td>
-                                    <td>${m.email}</td>
-                                    <td>${m.subject || '-'}</td>
-                                    <td>${m.message}</td>
+                                    <td data-label="Fecha">${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td data-label="Nombre">${m.name}</td>
+                                    <td data-label="Email">${m.email}</td>
+                                    <td data-label="Asunto">${m.subject || '-'}</td>
+                                    <td data-label="Mensaje">${m.message}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -571,13 +610,13 @@
                         <tbody>
                             ${requests.map(r => `
                                 <tr>
-                                    <td>${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
-                                    <td>${r.name}</td>
-                                    <td>${r.email}</td>
-                                    <td>${r.phone || '-'}</td>
-                                    <td>${r.dog_name || '-'}</td>
-                                    <td><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
-                                    <td>
+                                    <td data-label="Fecha">${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
+                                    <td data-label="Nombre">${r.name}</td>
+                                    <td data-label="Email">${r.email}</td>
+                                    <td data-label="Teléfono">${r.phone || '-'}</td>
+                                    <td data-label="Perro">${r.dog_name || '-'}</td>
+                                    <td data-label="Estado"><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
+                                    <td data-label="Acciones">
                                         <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅</button>
                                         <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌</button>
                                     </td>
