@@ -127,6 +127,7 @@
 
         /* ===== TARJETAS DE PERROS EN MÓVIL ===== */
         .dogs-cards-grid { display: none; }
+        .blog-cards-grid { display: none; }
         @media (max-width: 768px) {
             .admin-sidebar { transform: translateX(-100%); }
             .admin-sidebar.active { transform: translateX(0); }
@@ -138,21 +139,27 @@
             /* Eliminar scroll horizontal en todas las secciones */
             .admin-section { overflow-x: hidden !important; }
 
-            /* Ocultar tabla en escritorio en secciones de perros */
+            /* Ocultar tabla en escritorio en secciones de perros y blog */
             .dogs-table { display: none; }
+            .blog-table { display: none; }
             /* Mostrar grid de tarjetas */
             .dogs-cards-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 15px;
             }
-            .dog-admin-card {
+            .blog-cards-grid {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .dog-admin-card, .blog-admin-card {
                 background: white;
                 border-radius: 12px;
                 box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-                padding: 10px;
-                text-align: center;
+                padding: 15px;
             }
+            .dog-admin-card { text-align: center; }
             .dog-admin-card img {
                 width: 100%;
                 height: 120px;
@@ -170,15 +177,21 @@
                 justify-content: center;
                 font-size: 2.5rem;
             }
-            .dog-admin-card h4 {
-                font-size: 0.9rem;
-                margin: 5px 0 2px;
+            .dog-admin-card h4, .blog-admin-card h4 {
+                font-size: 1rem;
+                margin: 0 0 5px;
                 color: #2c5f2d;
             }
-            .dog-admin-card p {
-                font-size: 0.7rem;
+            .dog-admin-card p, .blog-admin-card p {
+                font-size: 0.8rem;
                 color: #666;
                 margin: 2px 0;
+            }
+            .blog-admin-card .blog-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin: 5px 0;
             }
             .dog-admin-card .dog-desc {
                 font-size: 0.7rem;
@@ -190,18 +203,18 @@
                 -webkit-box-orient: vertical;
                 overflow: hidden;
             }
-            .dog-admin-card .status-badge {
+            .dog-admin-card .status-badge, .blog-admin-card .status-badge {
                 display: inline-block;
                 margin: 5px 0;
             }
-            .dog-admin-card .card-actions {
+            .dog-admin-card .card-actions, .blog-admin-card .card-actions {
                 display: flex;
                 justify-content: center;
                 gap: 8px;
-                margin-top: 6px;
+                margin-top: 10px;
             }
 
-            /* Tablas responsive para otras secciones (Mensajes, Adopciones, Blog) */
+            /* Tablas responsive para otras secciones (Mensajes, Adopciones) */
             .admin-section table { width: 100%; }
             .admin-section table thead { display: none; }
             .admin-section table tbody tr {
@@ -668,22 +681,41 @@
                 <div class="admin-header"><h1>Gestión del Blog</h1></div>
                 <div class="admin-section">
                     <h2>Entradas <button class="btn-add" onclick="openModal('blog')"><i class="fas fa-plus"></i> Nueva entrada</button></h2>
-                    <table class="admin-table">
-                        <thead><tr><th>Título</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-                        <tbody>
-                            ${paginatedPosts.map(p => `
-                                <tr>
-                                    <td data-label="Título">${p.title}</td>
-                                    <td data-label="Fecha">${p.created_at ? new Date(p.created_at).toLocaleDateString('es-ES') : '-'}</td>
-                                    <td data-label="Estado"><span class="status-badge ${p.status === 'Publicado' ? 'status-disponible' : ''}">${p.status || 'Publicado'}</span></td>
-                                    <td data-label="Acciones">
-                                        <button class="btn-icon" onclick="openModal('blog', ${p.id})">✏️</button>
-                                        <button class="btn-icon" onclick="deleteBlogPost(${p.id})">🗑️</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <!-- Vista escritorio: tabla -->
+                    <div class="blog-table">
+                        <table class="admin-table">
+                            <thead><tr><th>Título</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+                            <tbody>
+                                ${paginatedPosts.map(p => `
+                                    <tr>
+                                        <td>${p.title}</td>
+                                        <td>${p.created_at ? new Date(p.created_at).toLocaleDateString('es-ES') : '-'}</td>
+                                        <td><span class="status-badge ${p.status === 'Publicado' ? 'status-disponible' : ''}">${p.status || 'Publicado'}</span></td>
+                                        <td>
+                                            <button class="btn-icon" onclick="openModal('blog', ${p.id})">✏️</button>
+                                            <button class="btn-icon" onclick="deleteBlogPost(${p.id})">🗑️</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Vista móvil: tarjetas -->
+                    <div class="blog-cards-grid">
+                        ${paginatedPosts.map(p => `
+                            <div class="blog-admin-card">
+                                <h4>${p.title}</h4>
+                                <div class="blog-meta">
+                                    <p>${p.created_at ? new Date(p.created_at).toLocaleDateString('es-ES') : '-'}</p>
+                                    <span class="status-badge ${p.status === 'Publicado' ? 'status-disponible' : ''}">${p.status || 'Publicado'}</span>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-icon" onclick="openModal('blog', ${p.id})">✏️</button>
+                                    <button class="btn-icon" onclick="deleteBlogPost(${p.id})">🗑️</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
                     <div class="admin-pagination">${paginationHtml}</div>
                 </div>
             `;
