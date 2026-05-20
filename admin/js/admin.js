@@ -504,7 +504,7 @@ function renderSettingsPage() {
     `;
 }
 
-function renderMessagesPage(messages, page = 1) {
+    function renderMessagesPage(messages, page = 1) {
     const totalPages = Math.ceil(messages.length / adminPerPage);
     const start = (page - 1) * adminPerPage;
     const paginatedMessages = messages.slice(start, start + adminPerPage);
@@ -519,20 +519,33 @@ function renderMessagesPage(messages, page = 1) {
     return `
         <div class="admin-header"><h1>Mensajes de Contacto</h1></div>
         <div class="admin-section">
-            <table class="admin-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th></tr></thead>
-                <tbody>
-                    ${paginatedMessages.map(m => `
-                        <tr>
-                            <td data-label="Fecha">${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
-                            <td data-label="Nombre">${m.name}</td>
-                            <td data-label="Email">${m.email}</td>
-                            <td data-label="Asunto">${m.subject || '-'}</td>
-                            <td data-label="Mensaje">${m.message}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+            <div class="messages-table">
+                <table class="admin-table">
+                    <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th></tr></thead>
+                    <tbody>
+                        ${paginatedMessages.map(m => `
+                            <tr>
+                                <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                                <td>${m.name}</td>
+                                <td>${m.email}</td>
+                                <td>${m.subject || '-'}</td>
+                                <td>${m.message}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-cards-grid">
+                ${paginatedMessages.map(m => `
+                    <div class="form-admin-card">
+                        <h4>${m.name}</h4>
+                        <p><strong>Email:</strong> ${m.email}</p>
+                        <p><strong>Asunto:</strong> ${m.subject || '-'}</p>
+                        <p><strong>Mensaje:</strong> ${m.message}</p>
+                        <p class="form-date">${new Date(m.created_at).toLocaleDateString('es-ES')}</p>
+                    </div>
+                `).join('')}
+            </div>
             <div class="admin-pagination">${paginationHtml}</div>
         </div>
     `;
@@ -553,25 +566,43 @@ function renderAdoptionsAdminPage(requests, page = 1) {
     return `
         <div class="admin-header"><h1>Solicitudes de Adopción</h1></div>
         <div class="admin-section">
-            <table class="admin-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr></thead>
-                <tbody>
-                    ${paginatedRequests.map(r => `
-                        <tr>
-                            <td data-label="Fecha">${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
-                            <td data-label="Nombre">${r.name}</td>
-                            <td data-label="Email">${r.email}</td>
-                            <td data-label="Teléfono">${r.phone || '-'}</td>
-                            <td data-label="Perro">${r.dog_name || '-'}</td>
-                            <td data-label="Estado"><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
-                            <td data-label="Acciones">
-                                <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅</button>
-                                <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌</button>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
+            <div class="adoptions-table">
+                <table class="admin-table">
+                    <thead><tr><th>Fecha</th><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Perro</th><th>Estado</th><th>Acciones</th></tr></thead>
+                    <tbody>
+                        ${paginatedRequests.map(r => `
+                            <tr>
+                                <td>${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
+                                <td>${r.name}</td>
+                                <td>${r.email}</td>
+                                <td>${r.phone || '-'}</td>
+                                <td>${r.dog_name || '-'}</td>
+                                <td><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
+                                <td>
+                                    <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅</button>
+                                    <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-cards-grid">
+                ${paginatedRequests.map(r => `
+                    <div class="form-admin-card">
+                        <h4>${r.name}</h4>
+                        <p><strong>Email:</strong> ${r.email}</p>
+                        <p><strong>Teléfono:</strong> ${r.phone || '-'}</p>
+                        <p><strong>Perro:</strong> ${r.dog_name || '-'}</p>
+                        <p><strong>Estado:</strong> <span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></p>
+                        <div class="card-actions">
+                            <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅ Aprobar</button>
+                            <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌ Rechazar</button>
+                        </div>
+                        <p class="form-date">${new Date(r.created_at).toLocaleDateString('es-ES')}</p>
+                    </div>
+                `).join('')}
+            </div>
             <div class="admin-pagination">${paginationHtml}</div>
         </div>
     `;
