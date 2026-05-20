@@ -301,3 +301,37 @@ body { font-family: 'Open Sans', sans-serif; background: #f5f5f5; overflow-x: hi
     color: white;
     border-color: var(--primary);
 }
+
+/* ===== TARJETAS PARA FORMULARIOS EN MÓVIL ===== */
+.form-cards-grid { display: none; }
+.volunteers-table, .sponsors-table, .fosters-table, .members-table { display: block; }
+
+@media (max-width: 768px) {
+    .volunteers-table, .sponsors-table, .fosters-table, .members-table { display: none; }
+    .form-cards-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    .form-admin-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        padding: 15px;
+    }
+    .form-admin-card h4 {
+        font-size: 1rem;
+        margin: 0 0 8px;
+        color: #2c5f2d;
+    }
+    .form-admin-card p {
+        font-size: 0.85rem;
+        color: #555;
+        margin: 4px 0;
+    }
+    .form-admin-card .form-date {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 8px;
+    }
+}
