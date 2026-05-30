@@ -554,7 +554,7 @@ img {
 
 .dog-image {
     position: relative;
-    height: 220px;
+    height: 300px;
 }
 
 .dog-image .placeholder-image {
@@ -1443,7 +1443,7 @@ img {
     
     .dogs-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        gap: 10px;
     }
     
     .blog-grid {
@@ -1452,11 +1452,11 @@ img {
     }
     
     .dog-card {
-        font-size: 0.7rem;
+        font-size: 0.8rem;
     }
     
     .dog-image {
-        height: 100px;
+        height: 150px;
     }
     
     .dog-info {
