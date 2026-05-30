@@ -252,7 +252,7 @@ function createDogCard(dog) {
                     <span><i class="fas fa-${dog.gender === 'Macho' ? 'mars' : 'venus'}"></i> ${dog.gender}</span>
                 </div>
                 <p class="dog-description">${dog.description}</p>
-                <a href="adopta.html#formulario" class="btn-adopt" onclick="event.stopPropagation(); setSelectedDog('${dog.name}');">Quiero adoptar</a>
+                <a href="/pages/adopta.html#formulario" class="btn-adopt" onclick="event.stopPropagation(); setSelectedDog('${dog.name}');">Quiero adoptar</a>
             </div>
         </div>
     `;
@@ -327,8 +327,18 @@ function renderDogModalBody(dog) {
             <span><i class="fas fa-ruler"></i> ${dog.size}</span>
         </div>
         <p style="margin-bottom:20px;">${dog.description}</p>
-        <a href="adopta.html#formulario" class="btn btn-primary" style="display:block; text-align:center;" onclick="setSelectedDog('${dog.name}')">¡Quiero adoptar a ${dog.name}!</a>
+        <button class="btn btn-primary" style="display:block; width:100%; text-align:center;" onclick="adoptFromModal('${dog.name}')">¡Quiero adoptar a ${dog.name}!</button>
     `;
+}
+
+// Nueva función para manejar la adopción desde el modal
+function adoptFromModal(dogName) {
+    // Cerrar el modal del perro
+    closeDogModal();
+    // Guardar el perro seleccionado
+    setSelectedDog(dogName);
+    // Navegar al formulario de adopción
+    window.location.href = '/pages/adopta.html#formulario';
 }
 
 function prevImage() {
@@ -656,7 +666,7 @@ function initForms() {
         });
     }
 
-    // --- Formulario de apadrinamiento (CORREGIDO) ---
+    // --- Formulario de apadrinamiento ---
     const sponsorForm = document.getElementById('sponsorForm');
     if (sponsorForm) {
         sponsorForm.addEventListener('submit', async function(e) {
@@ -878,6 +888,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Exponer globalmente
 window.openDogModal = openDogModal;
 window.closeDogModal = closeDogModal;
+window.adoptFromModal = adoptFromModal;
 window.prevImage = prevImage;
 window.nextImage = nextImage;
 window.openLightbox = openLightbox;
