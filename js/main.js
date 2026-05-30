@@ -178,7 +178,7 @@ function renderFeaturedDogs() {
 }
 
 let currentPage = 1;
-let perPage = 9;
+let perPage = 6;
 let currentFilters = {};
 
 function renderDogsList(filter = {}, page = 1) {
