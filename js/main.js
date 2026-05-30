@@ -567,7 +567,7 @@ function initNewsletter() {
 }
 
 function initForms() {
-    // --- Formulario de contacto (ya funcional) ---
+    // --- Formulario de contacto ---
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', async function(e) {
@@ -595,7 +595,7 @@ function initForms() {
         });
     }
 
-    // --- Formulario de adopción (ya funcional) ---
+    // --- Formulario de adopción ---
     const adoptionForm = document.getElementById('adoptionForm');
     if (adoptionForm) {
         adoptionForm.addEventListener('submit', async function(e) {
@@ -656,21 +656,25 @@ function initForms() {
         });
     }
 
-    // --- Formulario de apadrinamiento ---
+    // --- Formulario de apadrinamiento (CORREGIDO) ---
     const sponsorForm = document.getElementById('sponsorForm');
     if (sponsorForm) {
         sponsorForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             const dogChoice = this.querySelector('[name="perro_opcion"]')?.value || '';
+            const cantidadSelect = this.querySelector('[name="cantidad"]');
+            const cantidadPersonalizada = this.querySelector('[name="cantidad_personalizada"]');
+            let amount = '';
+            if (cantidadSelect) {
+                amount = cantidadSelect.value === 'otra' ? (cantidadPersonalizada?.value || '') : cantidadSelect.value;
+            }
             const formData = {
                 name: this.querySelector('[name="nombre"]')?.value || '',
                 email: this.querySelector('[name="email"]')?.value || '',
                 phone: this.querySelector('[name="telefono"]')?.value || '',
                 dog_choice: dogChoice,
                 specific_dog: dogChoice === 'especifico' ? (this.querySelector('[name="perro_nombre"]')?.value || '') : '',
-                amount: this.querySelector('[name="cantidad"]').value === 'otra' 
-                    ? (this.querySelector('[name="cantidad_personalizada"]')?.value || '')
-                    : (this.querySelector('[name="cantidad"]')?.value || ''),
+                amount: amount,
                 created_at: new Date().toISOString()
             };
             if (!formData.name || !formData.email || !formData.amount) {
@@ -682,8 +686,10 @@ function initForms() {
                 if (error) throw error;
                 showToast('¡Solicitud de apadrinamiento enviada! Te contactaremos pronto.', 'success');
                 this.reset();
-                document.getElementById('dogNameGroup').style.display = 'none';
-                document.getElementById('customAmountGroup').style.display = 'none';
+                const dogNameGroup = document.getElementById('dogNameGroup');
+                const customAmountGroup = document.getElementById('customAmountGroup');
+                if (dogNameGroup) dogNameGroup.style.display = 'none';
+                if (customAmountGroup) customAmountGroup.style.display = 'none';
             } catch (err) {
                 console.error('Error al enviar:', err);
                 showToast('Hubo un error. Intenta de nuevo.', 'error');
@@ -749,7 +755,7 @@ function initForms() {
         });
     }
 
-    // --- Formulario de donación (simulado, solo alerta) ---
+    // --- Formulario de donación (simulado) ---
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
