@@ -7,13 +7,11 @@ async function loadDogs() {
         const { data, error } = await supabaseClient.from('dogs').select('*').order('id', { ascending: false });
         if (error) throw error;
         dogs = data || [];
-        console.log('🐕 Perros cargados:', dogs.length);
         renderFeaturedDogs();
         renderDogsList();
         renderSponsorDogs();
         fillAdoptionSelect();
     } catch (err) {
-        console.error('❌ Error cargando perros:', err);
         loadDefaultDogs();
     }
 }
@@ -144,9 +142,7 @@ function openDogModal(dogId) {
             </div>
         `;
         document.body.appendChild(modal);
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) closeDogModal();
-        });
+        modal.addEventListener('click', function(e) { if (e.target === modal) closeDogModal(); });
     }
 
     renderDogModalBody(dog);
@@ -213,9 +209,7 @@ function nextImage() {
 
 function updateCarouselIndicators() {
     const dots = document.querySelectorAll('#dogModal .modal-body span[style*="border-radius:50%"]');
-    dots.forEach((dot, i) => {
-        dot.style.background = i === currentImageIndex ? '#e04f2e' : '#ccc';
-    });
+    dots.forEach((dot, i) => { dot.style.background = i === currentImageIndex ? '#e04f2e' : '#ccc'; });
 }
 
 function openLightbox(url) {
@@ -229,24 +223,15 @@ function openLightbox(url) {
             <button id="lightboxClose" style="position:absolute; top:20px; right:30px; background:white; color:black; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:24px;">&times;</button>
         `;
         document.body.appendChild(lightbox);
-        lightbox.addEventListener('click', function(e) {
-            if (e.target === lightbox || e.target === lightbox.querySelector('img')) closeLightbox();
-        });
+        lightbox.addEventListener('click', function(e) { if (e.target === lightbox || e.target === lightbox.querySelector('img')) closeLightbox(); });
         lightbox.querySelector('#lightboxClose').addEventListener('click', closeLightbox);
     }
     document.getElementById('lightboxImg').src = url;
     lightbox.style.display = 'flex';
 }
 
-function closeLightbox() {
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox) lightbox.style.display = 'none';
-}
-
-function closeDogModal() {
-    const modal = document.getElementById('dogModal');
-    if (modal) modal.classList.remove('active');
-}
+function closeLightbox() { const lightbox = document.getElementById('lightbox'); if (lightbox) lightbox.style.display = 'none'; }
+function closeDogModal() { const modal = document.getElementById('dogModal'); if (modal) modal.classList.remove('active'); }
 
 // Exponer globalmente
 window.openDogModal = openDogModal;
