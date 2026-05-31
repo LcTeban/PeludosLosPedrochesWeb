@@ -5,12 +5,8 @@
 // CONFIGURACIÓN DE EMAILJS – REEMPLAZA CON TUS DATOS
 const EMAILJS_PUBLIC_KEY = 'P5E2Nyz_zPSdS4Onh';
 const EMAILJS_SERVICE_ID = 'service_2jfl1x3';
-const TEMPLATE_ID_CONTACTO = 'template_contacto';
-const TEMPLATE_ID_ADOPCION = 'template_adopcion';
-const TEMPLATE_ID_VOLUNTARIO = 'template_voluntario';
-const TEMPLATE_ID_APADRINA = 'template_apadrina';
-const TEMPLATE_ID_ACOGIDA = 'template_acogida';
-const TEMPLATE_ID_SOCIO = 'template_socio';
+const TEMPLATE_ID_GENERICO = 'template_generico';
+
 
 // Inicializar EmailJS
 (function() {
