@@ -4,16 +4,11 @@
 
 function initNewsletter() {
     document.querySelectorAll('.newsletter-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('¡Gracias por suscribirte!');
-            this.reset();
-        });
+        form.addEventListener('submit', function(e) { e.preventDefault(); alert('¡Gracias por suscribirte!'); this.reset(); });
     });
 }
 
 function initForms() {
-    // --- Formulario de contacto ---
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', async function(e) {
@@ -25,23 +20,15 @@ function initForms() {
                 message: this.querySelector('[name="mensaje"]')?.value || '',
                 created_at: new Date().toISOString()
             };
-            if (!formData.name || !formData.email || !formData.message) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                return;
-            }
+            if (!formData.name || !formData.email || !formData.message) { showToast('Por favor completa los campos obligatorios.', 'error'); return; }
             try {
                 const { error } = await supabaseClient.from('contact_messages').insert([formData]);
                 if (error) throw error;
                 showToast('¡Mensaje enviado correctamente!', 'success');
                 this.reset();
-            } catch (err) {
-                console.error('Error al enviar mensaje:', err);
-                showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
-            }
+            } catch (err) { showToast('Hubo un error al enviar. Intenta de nuevo.', 'error'); }
         });
     }
-
-    // --- Formulario de adopción ---
     const adoptionForm = document.getElementById('adoptionForm');
     if (adoptionForm) {
         adoptionForm.addEventListener('submit', async function(e) {
@@ -54,26 +41,17 @@ function initForms() {
                 housing_type: this.querySelector('[name="vivienda"]')?.value || '',
                 has_pets: this.querySelector('[name="otros_animales"]')?.value || '',
                 message: this.querySelector('[name="mensaje"]')?.value || '',
-                status: 'Pendiente',
-                created_at: new Date().toISOString()
+                status: 'Pendiente', created_at: new Date().toISOString()
             };
-            if (!formData.name || !formData.email) {
-                showToast('Por favor completa al menos nombre y email.', 'error');
-                return;
-            }
+            if (!formData.name || !formData.email) { showToast('Por favor completa al menos nombre y email.', 'error'); return; }
             try {
                 const { error } = await supabaseClient.from('adoption_requests').insert([formData]);
                 if (error) throw error;
                 showToast('¡Solicitud de adopción enviada! Te contactaremos pronto.', 'success');
                 this.reset();
-            } catch (err) {
-                console.error('Error al enviar solicitud:', err);
-                showToast('Hubo un error al enviar. Intenta de nuevo.', 'error');
-            }
+            } catch (err) { showToast('Hubo un error al enviar. Intenta de nuevo.', 'error'); }
         });
     }
-
-    // --- Formulario de voluntariado ---
     const volunteerForm = document.getElementById('volunteerForm');
     if (volunteerForm) {
         volunteerForm.addEventListener('submit', async function(e) {
@@ -86,23 +64,15 @@ function initForms() {
                 interests: this.querySelector('[name="intereses"]')?.value || '',
                 created_at: new Date().toISOString()
             };
-            if (!formData.name || !formData.email) {
-                showToast('Por favor completa nombre y email.', 'error');
-                return;
-            }
+            if (!formData.name || !formData.email) { showToast('Por favor completa nombre y email.', 'error'); return; }
             try {
                 const { error } = await supabaseClient.from('volunteer_requests').insert([formData]);
                 if (error) throw error;
                 showToast('¡Solicitud de voluntariado enviada! Te contactaremos pronto.', 'success');
                 this.reset();
-            } catch (err) {
-                console.error('Error al enviar:', err);
-                showToast('Hubo un error. Intenta de nuevo.', 'error');
-            }
+            } catch (err) { showToast('Hubo un error. Intenta de nuevo.', 'error'); }
         });
     }
-
-    // --- Formulario de apadrinamiento ---
     const sponsorForm = document.getElementById('sponsorForm');
     if (sponsorForm) {
         sponsorForm.addEventListener('submit', async function(e) {
@@ -111,22 +81,16 @@ function initForms() {
             const cantidadSelect = this.querySelector('[name="cantidad"]');
             const cantidadPersonalizada = this.querySelector('[name="cantidad_personalizada"]');
             let amount = '';
-            if (cantidadSelect) {
-                amount = cantidadSelect.value === 'otra' ? (cantidadPersonalizada?.value || '') : cantidadSelect.value;
-            }
+            if (cantidadSelect) amount = cantidadSelect.value === 'otra' ? (cantidadPersonalizada?.value || '') : cantidadSelect.value;
             const formData = {
                 name: this.querySelector('[name="nombre"]')?.value || '',
                 email: this.querySelector('[name="email"]')?.value || '',
                 phone: this.querySelector('[name="telefono"]')?.value || '',
                 dog_choice: dogChoice,
                 specific_dog: dogChoice === 'especifico' ? (this.querySelector('[name="perro_nombre"]')?.value || '') : '',
-                amount: amount,
-                created_at: new Date().toISOString()
+                amount: amount, created_at: new Date().toISOString()
             };
-            if (!formData.name || !formData.email || !formData.amount) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                return;
-            }
+            if (!formData.name || !formData.email || !formData.amount) { showToast('Por favor completa los campos obligatorios.', 'error'); return; }
             try {
                 const { error } = await supabaseClient.from('sponsor_requests').insert([formData]);
                 if (error) throw error;
@@ -136,14 +100,9 @@ function initForms() {
                 const customAmountGroup = document.getElementById('customAmountGroup');
                 if (dogNameGroup) dogNameGroup.style.display = 'none';
                 if (customAmountGroup) customAmountGroup.style.display = 'none';
-            } catch (err) {
-                console.error('Error al enviar:', err);
-                showToast('Hubo un error. Intenta de nuevo.', 'error');
-            }
+            } catch (err) { showToast('Hubo un error. Intenta de nuevo.', 'error'); }
         });
     }
-
-    // --- Formulario de casa de acogida ---
     const acogeForm = document.getElementById('acogeForm');
     if (acogeForm) {
         acogeForm.addEventListener('submit', async function(e) {
@@ -157,23 +116,15 @@ function initForms() {
                 message: this.querySelector('[name="mensaje"]')?.value || '',
                 created_at: new Date().toISOString()
             };
-            if (!formData.name || !formData.email) {
-                showToast('Por favor completa nombre y email.', 'error');
-                return;
-            }
+            if (!formData.name || !formData.email) { showToast('Por favor completa nombre y email.', 'error'); return; }
             try {
                 const { error } = await supabaseClient.from('foster_requests').insert([formData]);
                 if (error) throw error;
                 showToast('¡Solicitud de acogida enviada! Te contactaremos pronto.', 'success');
                 this.reset();
-            } catch (err) {
-                console.error('Error al enviar:', err);
-                showToast('Hubo un error. Intenta de nuevo.', 'error');
-            }
+            } catch (err) { showToast('Hubo un error. Intenta de nuevo.', 'error'); }
         });
     }
-
-    // --- Formulario de hazte socio ---
     const socioForm = document.getElementById('socioForm');
     if (socioForm) {
         socioForm.addEventListener('submit', async function(e) {
@@ -185,36 +136,26 @@ function initForms() {
                 amount: this.querySelector('[name="cuota"]')?.value || '',
                 created_at: new Date().toISOString()
             };
-            if (!formData.name || !formData.email || !formData.amount) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                return;
-            }
+            if (!formData.name || !formData.email || !formData.amount) { showToast('Por favor completa los campos obligatorios.', 'error'); return; }
             try {
                 const { error } = await supabaseClient.from('membership_requests').insert([formData]);
                 if (error) throw error;
                 showToast('¡Solicitud de membresía enviada! Te contactaremos pronto.', 'success');
                 this.reset();
-            } catch (err) {
-                console.error('Error al enviar:', err);
-                showToast('Hubo un error. Intenta de nuevo.', 'error');
-            }
+            } catch (err) { showToast('Hubo un error. Intenta de nuevo.', 'error'); }
         });
     }
-
-    // --- Formulario de donación (simulado) ---
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
         const customInput = donationForm.querySelector('#customAmount');
         const totalSpan = document.getElementById('donationTotal');
-        
         function updateTotal() {
             const activeBtn = donationForm.querySelector('.amount-btn.active');
             let amount = activeBtn ? parseFloat(activeBtn.dataset.amount) : (customInput?.value ? parseFloat(customInput.value) : 20);
             const isMonthly = donationForm.querySelector('input[name="type"]:checked')?.value === 'monthly';
             if (totalSpan) totalSpan.textContent = isMonthly ? `${amount}€/mes` : `${amount}€`;
         }
-
         amountBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 amountBtns.forEach(b => b.classList.remove('active'));
@@ -223,27 +164,14 @@ function initForms() {
                 updateTotal();
             });
         });
-        customInput?.addEventListener('input', () => {
-            amountBtns.forEach(b => b.classList.remove('active'));
-            updateTotal();
-        });
-        donationForm.querySelectorAll('input[name="type"]').forEach(radio => {
-            radio.addEventListener('change', updateTotal);
-        });
-
-        donationForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Redirigiendo a la pasarela de pago...');
-        });
-        
+        customInput?.addEventListener('input', () => { amountBtns.forEach(b => b.classList.remove('active')); updateTotal(); });
+        donationForm.querySelectorAll('input[name="type"]').forEach(radio => radio.addEventListener('change', updateTotal));
+        donationForm.addEventListener('submit', function(e) { e.preventDefault(); alert('Redirigiendo a la pasarela de pago...'); });
         updateTotal();
-        
         donationForm.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
             radio.addEventListener('change', function() {
                 const transferDetails = document.getElementById('transferDetails');
-                if (transferDetails) {
-                    transferDetails.style.display = this.value === 'transfer' ? 'block' : 'none';
-                }
+                if (transferDetails) transferDetails.style.display = this.value === 'transfer' ? 'block' : 'none';
             });
         });
     }
@@ -257,9 +185,7 @@ function showToast(message, type = 'info') {
     setTimeout(() => toast.remove(), 4000);
 }
 
-function setSelectedDog(dogName) {
-    localStorage.setItem('selectedDog', dogName);
-}
+function setSelectedDog(dogName) { localStorage.setItem('selectedDog', dogName); }
 
 // Exponer globalmente
 window.setSelectedDog = setSelectedDog;
