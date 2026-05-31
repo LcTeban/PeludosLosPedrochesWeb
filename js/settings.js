@@ -9,15 +9,12 @@ async function loadSettings() {
         if (data && data.length > 0) {
             settings = {};
             data.forEach(item => { settings[item.key] = item.value; });
-            console.log('✅ Configuración cargada:', settings);
         } else {
-            console.warn('⚠️ Sin ajustes en Supabase, usando valores por defecto');
             loadDefaultSettings();
             return;
         }
         applySettings();
     } catch (err) {
-        console.error('❌ Error cargando settings:', err);
         loadDefaultSettings();
     }
 }
@@ -46,9 +43,7 @@ function applySettings() {
             img.src = settings.logo_url;
             img.alt = settings.logo_text || 'Logo';
             img.style.maxHeight = '45px';
-            img.onerror = () => {
-                logoIcon.innerHTML = '<span class="logo-emoji">🐾</span>';
-            };
+            img.onerror = () => { logoIcon.innerHTML = '<span class="logo-emoji">🐾</span>'; };
             logoIcon.appendChild(img);
         } else {
             logoIcon.innerHTML = '<span class="logo-emoji">🐾</span>';
