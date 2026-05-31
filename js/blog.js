@@ -10,10 +10,7 @@ function initBlogListeners() {
         modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="modalTitle"></h2>
-                    <button class="modal-close" onclick="closeBlogModal()">&times;</button>
-                </div>
+                <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeBlogModal()">&times;</button></div>
                 <div class="modal-body" id="modalBody"></div>
             </div>
         `;
@@ -22,10 +19,7 @@ function initBlogListeners() {
     }
     document.body.addEventListener('click', function(e) {
         const card = e.target.closest('.blog-card');
-        if (card) {
-            const postId = parseInt(card.dataset.id);
-            openBlogModal(postId);
-        }
+        if (card) { const postId = parseInt(card.dataset.id); openBlogModal(postId); }
     });
 }
 
@@ -34,15 +28,9 @@ async function loadBlogPosts() {
         const { data, error } = await supabaseClient.from('blog_posts').select('*').eq('status', 'Publicado').order('id', { ascending: false });
         if (error) throw error;
         blogPosts = data || [];
-        console.log('📰 Blog cargado:', blogPosts.length);
         renderBlogPreview();
         renderAllBlogPosts();
-    } catch (err) {
-        console.error('❌ Error cargando blog:', err);
-        blogPosts = [];
-        renderBlogPreview();
-        renderAllBlogPosts();
-    }
+    } catch (err) { blogPosts = []; renderBlogPreview(); renderAllBlogPosts(); }
 }
 
 function renderBlogPreview() {
@@ -55,10 +43,7 @@ function renderBlogPreview() {
 function renderAllBlogPosts() {
     const container = document.getElementById('allBlogPosts');
     if (!container) return;
-    if (blogPosts.length === 0) {
-        container.innerHTML = '<p style="text-align:center;grid-column:1/-1;">No hay entradas publicadas aún.</p>';
-        return;
-    }
+    if (blogPosts.length === 0) { container.innerHTML = '<p style="text-align:center;grid-column:1/-1;">No hay entradas publicadas aún.</p>'; return; }
     container.innerHTML = blogPosts.map(post => createBlogCard(post)).join('');
 }
 
@@ -90,10 +75,7 @@ function openBlogModal(postId) {
         modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="modalTitle"></h2>
-                    <button class="modal-close" onclick="closeBlogModal()">&times;</button>
-                </div>
+                <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeBlogModal()">&times;</button></div>
                 <div class="modal-body" id="modalBody"></div>
             </div>
         `;
@@ -113,12 +95,9 @@ function openBlogModal(postId) {
     modal.classList.add('active');
 }
 
-function closeBlogModal() {
-    const modal = document.getElementById('blogModal');
-    if (modal) modal.classList.remove('active');
-}
+function closeBlogModal() { const modal = document.getElementById('blogModal'); if (modal) modal.classList.remove('active'); }
 
 // Exponer globalmente
 window.openBlogModal = openBlogModal;
 window.closeBlogModal = closeBlogModal;
-window.closeModal = closeBlogModal; // Compatibilidad con HTML estático
+window.closeModal = closeBlogModal;
