@@ -1,6 +1,23 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – FORMULARIOS
+// PELUDOS LOS PEDROCHES – FORMULARIOS CON EMAILJS
 // ========================================
+
+// CONFIGURACIÓN DE EMAILJS – REEMPLAZA CON TUS DATOS
+const EMAILJS_PUBLIC_KEY = 'P5E2Nyz_zPSdS4Onh';
+const EMAILJS_SERVICE_ID = 'service_2jfl1x3';
+const TEMPLATE_ID_CONTACTO = 'template_contacto';
+const TEMPLATE_ID_ADOPCION = 'template_adopcion';
+const TEMPLATE_ID_VOLUNTARIO = 'template_voluntario';
+const TEMPLATE_ID_APADRINA = 'template_apadrina';
+const TEMPLATE_ID_ACOGIDA = 'template_acogida';
+const TEMPLATE_ID_SOCIO = 'template_socio';
+
+// Inicializar EmailJS
+(function() {
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+    }
+})();
 
 // Funciones de validación
 function validateEmail(email) {
@@ -9,9 +26,14 @@ function validateEmail(email) {
 }
 
 function validatePhone(phone) {
-    // Acepta formatos: 661447942, 661 44 79 42, +34 661447942, etc.
     const re = /^(\+?\d{1,3}\s?)?\d{6,12}$/;
     return re.test(phone.replace(/\s/g, ''));
+}
+
+// Función genérica para enviar email
+function sendEmail(templateId, templateParams) {
+    if (typeof emailjs === 'undefined') return Promise.resolve(); // Si no está EmailJS, no hacer nada
+    return emailjs.send(EMAILJS_SERVICE_ID, templateId, templateParams).catch(err => console.warn('EmailJS error:', err));
 }
 
 function initNewsletter() {
@@ -36,20 +58,16 @@ function initForms() {
             const subject = this.querySelector('[name="asunto"]')?.value || '';
             const message = this.querySelector('[name="mensaje"]')?.value || '';
 
-            if (!name || !email || !message) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showToast('Por favor introduce un email válido.', 'error');
-                return;
-            }
+            if (!name || !email || !message) { showToast('Por favor completa los campos obligatorios.', 'error'); return; }
+            if (!validateEmail(email)) { showToast('Por favor introduce un email válido.', 'error'); return; }
 
             try {
-                const { error } = await supabaseClient.from('contact_messages').insert([{
-                    name, email, subject, message, created_at: new Date().toISOString()
-                }]);
+                const { error } = await supabaseClient.from('contact_messages').insert([{ name, email, subject, message, created_at: new Date().toISOString() }]);
                 if (error) throw error;
+
+                // Enviar email
+                sendEmail(TEMPLATE_ID_CONTACTO, { nombre: name, email: email, asunto: subject, mensaje: message });
+
                 showToast('¡Mensaje enviado correctamente!', 'success');
                 this.reset();
             } catch (err) {
@@ -67,30 +85,21 @@ function initForms() {
             const name = this.querySelector('[name="nombre"]')?.value || '';
             const email = this.querySelector('[name="email"]')?.value || '';
             const phone = this.querySelector('[name="telefono"]')?.value || '';
+            const dog_name = this.querySelector('[name="perro"]')?.value || '';
+            const housing_type = this.querySelector('[name="vivienda"]')?.value || '';
+            const has_pets = this.querySelector('[name="otros_animales"]')?.value || '';
+            const message = this.querySelector('[name="mensaje"]')?.value || '';
 
-            if (!name || !email) {
-                showToast('Por favor completa al menos nombre y email.', 'error');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showToast('Por favor introduce un email válido.', 'error');
-                return;
-            }
-            if (phone && !validatePhone(phone)) {
-                showToast('Por favor introduce un teléfono válido.', 'error');
-                return;
-            }
+            if (!name || !email) { showToast('Por favor completa al menos nombre y email.', 'error'); return; }
+            if (!validateEmail(email)) { showToast('Por favor introduce un email válido.', 'error'); return; }
+            if (phone && !validatePhone(phone)) { showToast('Por favor introduce un teléfono válido.', 'error'); return; }
 
             try {
-                const { error } = await supabaseClient.from('adoption_requests').insert([{
-                    name, email, phone,
-                    dog_name: this.querySelector('[name="perro"]')?.value || '',
-                    housing_type: this.querySelector('[name="vivienda"]')?.value || '',
-                    has_pets: this.querySelector('[name="otros_animales"]')?.value || '',
-                    message: this.querySelector('[name="mensaje"]')?.value || '',
-                    status: 'Pendiente', created_at: new Date().toISOString()
-                }]);
+                const { error } = await supabaseClient.from('adoption_requests').insert([{ name, email, phone, dog_name, housing_type, has_pets, message, status: 'Pendiente', created_at: new Date().toISOString() }]);
                 if (error) throw error;
+
+                sendEmail(TEMPLATE_ID_ADOPCION, { nombre: name, email: email, telefono: phone, perro: dog_name, vivienda: housing_type, otros_animales: has_pets, mensaje: message });
+
                 showToast('¡Solicitud de adopción enviada! Te contactaremos pronto.', 'success');
                 this.reset();
             } catch (err) {
@@ -108,28 +117,19 @@ function initForms() {
             const name = this.querySelector('[name="nombre"]')?.value || '';
             const email = this.querySelector('[name="email"]')?.value || '';
             const phone = this.querySelector('[name="telefono"]')?.value || '';
+            const availability = this.querySelector('[name="disponibilidad"]')?.value || '';
+            const interests = this.querySelector('[name="intereses"]')?.value || '';
 
-            if (!name || !email) {
-                showToast('Por favor completa nombre y email.', 'error');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showToast('Por favor introduce un email válido.', 'error');
-                return;
-            }
-            if (phone && !validatePhone(phone)) {
-                showToast('Por favor introduce un teléfono válido.', 'error');
-                return;
-            }
+            if (!name || !email) { showToast('Por favor completa nombre y email.', 'error'); return; }
+            if (!validateEmail(email)) { showToast('Por favor introduce un email válido.', 'error'); return; }
+            if (phone && !validatePhone(phone)) { showToast('Por favor introduce un teléfono válido.', 'error'); return; }
 
             try {
-                const { error } = await supabaseClient.from('volunteer_requests').insert([{
-                    name, email, phone,
-                    availability: this.querySelector('[name="disponibilidad"]')?.value || '',
-                    interests: this.querySelector('[name="intereses"]')?.value || '',
-                    created_at: new Date().toISOString()
-                }]);
+                const { error } = await supabaseClient.from('volunteer_requests').insert([{ name, email, phone, availability, interests, created_at: new Date().toISOString() }]);
                 if (error) throw error;
+
+                sendEmail(TEMPLATE_ID_VOLUNTARIO, { nombre: name, email: email, telefono: phone, disponibilidad: availability, intereses: interests });
+
                 showToast('¡Solicitud de voluntariado enviada! Te contactaremos pronto.', 'success');
                 this.reset();
             } catch (err) {
@@ -152,27 +152,18 @@ function initForms() {
             const cantidadPersonalizada = this.querySelector('[name="cantidad_personalizada"]');
             let amount = '';
             if (cantidadSelect) amount = cantidadSelect.value === 'otra' ? (cantidadPersonalizada?.value || '') : cantidadSelect.value;
+            const dogName = dogChoice === 'especifico' ? (this.querySelector('[name="perro_nombre"]')?.value || '') : 'Elegid por mí';
 
-            if (!name || !email || !amount) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showToast('Por favor introduce un email válido.', 'error');
-                return;
-            }
-            if (phone && !validatePhone(phone)) {
-                showToast('Por favor introduce un teléfono válido.', 'error');
-                return;
-            }
+            if (!name || !email || !amount) { showToast('Por favor completa los campos obligatorios.', 'error'); return; }
+            if (!validateEmail(email)) { showToast('Por favor introduce un email válido.', 'error'); return; }
+            if (phone && !validatePhone(phone)) { showToast('Por favor introduce un teléfono válido.', 'error'); return; }
 
             try {
-                const { error } = await supabaseClient.from('sponsor_requests').insert([{
-                    name, email, phone, dog_choice: dogChoice,
-                    specific_dog: dogChoice === 'especifico' ? (this.querySelector('[name="perro_nombre"]')?.value || '') : '',
-                    amount, created_at: new Date().toISOString()
-                }]);
+                const { error } = await supabaseClient.from('sponsor_requests').insert([{ name, email, phone, dog_choice: dogChoice, specific_dog: dogChoice === 'especifico' ? dogName : '', amount, created_at: new Date().toISOString() }]);
                 if (error) throw error;
+
+                sendEmail(TEMPLATE_ID_APADRINA, { nombre: name, email: email, telefono: phone, decision: dogChoice === 'especifico' ? 'Eligió perro' : 'Elegid por mí', perro_nombre: dogName, cantidad: amount });
+
                 showToast('¡Solicitud de apadrinamiento enviada! Te contactaremos pronto.', 'success');
                 this.reset();
                 const dogNameGroup = document.getElementById('dogNameGroup');
@@ -194,29 +185,20 @@ function initForms() {
             const name = this.querySelector('[name="nombre"]')?.value || '';
             const email = this.querySelector('[name="email"]')?.value || '';
             const phone = this.querySelector('[name="telefono"]')?.value || '';
+            const housing_type = this.querySelector('[name="vivienda"]')?.value || '';
+            const has_pets = this.querySelector('[name="otros_animales"]')?.value || '';
+            const message = this.querySelector('[name="mensaje"]')?.value || '';
 
-            if (!name || !email) {
-                showToast('Por favor completa nombre y email.', 'error');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showToast('Por favor introduce un email válido.', 'error');
-                return;
-            }
-            if (phone && !validatePhone(phone)) {
-                showToast('Por favor introduce un teléfono válido.', 'error');
-                return;
-            }
+            if (!name || !email) { showToast('Por favor completa nombre y email.', 'error'); return; }
+            if (!validateEmail(email)) { showToast('Por favor introduce un email válido.', 'error'); return; }
+            if (phone && !validatePhone(phone)) { showToast('Por favor introduce un teléfono válido.', 'error'); return; }
 
             try {
-                const { error } = await supabaseClient.from('foster_requests').insert([{
-                    name, email, phone,
-                    housing_type: this.querySelector('[name="vivienda"]')?.value || '',
-                    has_pets: this.querySelector('[name="otros_animales"]')?.value || '',
-                    message: this.querySelector('[name="mensaje"]')?.value || '',
-                    created_at: new Date().toISOString()
-                }]);
+                const { error } = await supabaseClient.from('foster_requests').insert([{ name, email, phone, housing_type, has_pets, message, created_at: new Date().toISOString() }]);
                 if (error) throw error;
+
+                sendEmail(TEMPLATE_ID_ACOGIDA, { nombre: name, email: email, telefono: phone, vivienda: housing_type, otros_animales: has_pets, mensaje: message });
+
                 showToast('¡Solicitud de acogida enviada! Te contactaremos pronto.', 'success');
                 this.reset();
             } catch (err) {
@@ -236,24 +218,16 @@ function initForms() {
             const phone = this.querySelector('[name="telefono"]')?.value || '';
             const amount = this.querySelector('[name="cuota"]')?.value || '';
 
-            if (!name || !email || !amount) {
-                showToast('Por favor completa los campos obligatorios.', 'error');
-                return;
-            }
-            if (!validateEmail(email)) {
-                showToast('Por favor introduce un email válido.', 'error');
-                return;
-            }
-            if (phone && !validatePhone(phone)) {
-                showToast('Por favor introduce un teléfono válido.', 'error');
-                return;
-            }
+            if (!name || !email || !amount) { showToast('Por favor completa los campos obligatorios.', 'error'); return; }
+            if (!validateEmail(email)) { showToast('Por favor introduce un email válido.', 'error'); return; }
+            if (phone && !validatePhone(phone)) { showToast('Por favor introduce un teléfono válido.', 'error'); return; }
 
             try {
-                const { error } = await supabaseClient.from('membership_requests').insert([{
-                    name, email, phone, amount, created_at: new Date().toISOString()
-                }]);
+                const { error } = await supabaseClient.from('membership_requests').insert([{ name, email, phone, amount, created_at: new Date().toISOString() }]);
                 if (error) throw error;
+
+                sendEmail(TEMPLATE_ID_SOCIO, { nombre: name, email: email, telefono: phone, cuota: amount });
+
                 showToast('¡Solicitud de membresía enviada! Te contactaremos pronto.', 'success');
                 this.reset();
             } catch (err) {
