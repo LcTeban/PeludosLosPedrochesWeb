@@ -49,7 +49,7 @@ function renderAllBlogPosts() {
 
 function createBlogCard(post) {
     const imageHtml = post.image_url 
-        ? `<div class="blog-image-wrapper"><img src="${post.image_url}" alt="${post.title}" onclick="event.stopPropagation(); openLightbox('${post.image_url}');"></div>` 
+        ? `<div class="blog-image-wrapper"><img src="${post.image_url}" alt="${post.title}" loading="lazy" onclick="event.stopPropagation(); openLightbox('${post.image_url}');"></div>` 
         : '<div class="blog-image-wrapper"><div class="placeholder-image">📰</div></div>';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     return `
@@ -88,7 +88,7 @@ function openBlogModal(postId) {
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     titleEl.textContent = post.title;
     bodyEl.innerHTML = `
-        ${post.image_url ? `<div class="blog-modal-image" onclick="openLightbox('${post.image_url}')"><img src="${post.image_url}" alt="${post.title}"></div>` : ''}
+        ${post.image_url ? `<div class="blog-modal-image" onclick="openLightbox('${post.image_url}')"><img src="${post.image_url}" alt="${post.title}" loading="lazy"></div>` : ''}
         <div class="blog-modal-date"><i class="far fa-calendar"></i> ${date}</div>
         <div class="blog-modal-text">${post.content || post.excerpt}</div>
     `;
