@@ -94,7 +94,7 @@ function fillAdoptionSelect() {
 function createDogCard(dog) {
     const firstImage = (dog.images && dog.images.length > 0) ? dog.images[0] : dog.image_url;
     const imageHtml = firstImage 
-        ? `<img src="${firstImage}" alt="${dog.name}" style="width:100%;height:100%;object-fit:cover;">` 
+        ? `<img src="${firstImage}" alt="${dog.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">` 
         : `<div class="placeholder-image">🐕</div>`;
     return `
         <div class="dog-card fade-in" onclick="openDogModal(${dog.id})" style="cursor:pointer;">
