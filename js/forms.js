@@ -31,7 +31,10 @@ function validatePhone(phone) {
 function sendEmail(templateParams) {
     if (typeof emailjs === 'undefined') return Promise.resolve();
     return emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_ID_GENERICO, templateParams)
-        .catch(err => console.warn('EmailJS error:', err));
+        .catch(err => {
+            console.error('Error crítico de EmailJS:', err);
+            showToast('Error EmailJS: ' + (err.text || 'Revisa la consola (F12)'), 'error');
+        });
 }
 
 // Utilidad para mostrar notificaciones (Toast)
