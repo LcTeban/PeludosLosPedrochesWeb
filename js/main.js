@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
-    // 4. Seleccionar perro para adopción (Desde URL o localStorage)
+    // 4. Seleccionar perro para adopción (Desde URL o localStorage como fallback)
     const urlParams = new URLSearchParams(window.location.search);
     let selectedDog = urlParams.get('perro') || localStorage.getItem('selectedDog');
     
