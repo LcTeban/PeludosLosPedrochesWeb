@@ -6,8 +6,7 @@
 const EMAILJS_PUBLIC_KEY = 'P5E2Nyz_zPSdS4Onh';
 const EMAILJS_SERVICE_ID = 'service_2jfl1x3';
 
-// Como solo tienes una plantilla genérica por ahora, usaremos esta para todos.
-// Cuando crees plantillas específicas en EmailJS, cambia estas variables.
+// Usamos la plantilla genérica para todos hasta que crees las específicas en EmailJS
 const TEMPLATE_ID_CONTACTO = 'template_generico';
 const TEMPLATE_ID_ADOPCION = 'template_generico';
 const TEMPLATE_ID_VOLUNTARIO = 'template_generico';
@@ -51,23 +50,7 @@ function showToast(message, type = 'info') {
     setTimeout(() => toast.remove(), 4000);
 }
 
-function initNewsletter() {
-    document.querySelectorAll('.newsletter-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const emailInput = this.querySelector('input[type="email"]');
-            if (!emailInput || !validateEmail(emailInput.value)) {
-                showToast('Por favor, introduce un email válido.', 'error');
-                return;
-            }
-            // TODO: Aquí habría que guardar el email en Supabase en una tabla 'subscribers'
-            showToast('¡Gracias por suscribirte!', 'success');
-            this.reset();
-        });
-    });
-}
-
-// Función helper para manejar el estado del botón de envío
+// Utilidad para manejar el estado de carga del botón
 function setLoadingState(button, isLoading, originalText) {
     if (isLoading) {
         button.disabled = true;
@@ -78,6 +61,21 @@ function setLoadingState(button, isLoading, originalText) {
         button.innerHTML = originalText;
         button.style.opacity = '1';
     }
+}
+
+function initNewsletter() {
+    document.querySelectorAll('.newsletter-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = this.querySelector('input[type="email"]');
+            if (!emailInput || !validateEmail(emailInput.value)) {
+                showToast('Por favor, introduce un email válido.', 'error');
+                return;
+            }
+            showToast('¡Gracias por suscribirte!', 'success');
+            this.reset();
+        });
+    });
 }
 
 function initForms() {
@@ -330,7 +328,6 @@ function initForms() {
 }
 
 function setSelectedDog(dogName) { 
-    // Guardamos en localStorage como fallback, pero ahora también usaremos URL
     localStorage.setItem('selectedDog', dogName); 
 }
 
