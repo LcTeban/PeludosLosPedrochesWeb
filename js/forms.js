@@ -7,8 +7,7 @@ const EMAILJS_PUBLIC_KEY = 'P5E2Nyz_zPSdS4Onh';
 const EMAILJS_SERVICE_ID = 'service_2jfl1x3';
 
 // Usamos UNA SOLA plantilla para todos los formularios (Plan Gratuito)
-// ⚠️ IMPORTANTE: Reemplaza 'template_generico' con el ID real de tu plantilla en EmailJS (ej: 'template_abc123')
-const TEMPLATE_ID_GENERICO = 'template_generico'; 
+const TEMPLATE_ID_GENERICO = 'template_peludos'; 
 
 // Inicializar EmailJS
 (function() {
