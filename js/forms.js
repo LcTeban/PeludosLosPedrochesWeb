@@ -6,8 +6,9 @@
 const EMAILJS_PUBLIC_KEY = 'P5E2Nyz_zPSdS4Onh';
 const EMAILJS_SERVICE_ID = 'service_2jfl1x3';
 
-// Usamos UNA SOLA plantilla para todos los formularios (Plan Gratuito)
-const TEMPLATE_ID_GENERICO = 'template_peludos'; 
+// ⚠️ IMPORTANTE: Reemplaza 'template_generico' con el ID real de tu plantilla en EmailJS
+// Lo encuentras en: EmailJS > Email Templates > tu plantilla > "Template ID"
+const TEMPLATE_ID_GENERICO = 'template_generico'; 
 
 // Inicializar EmailJS
 (function() {
@@ -16,7 +17,7 @@ const TEMPLATE_ID_GENERICO = 'template_peludos';
     }
 })();
 
-// Funciones de validación
+// 2. FUNCIONES DE VALIDACIÓN
 function validateEmail(email) {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
@@ -27,17 +28,22 @@ function validatePhone(phone) {
     return re.test(phone.replace(/\s/g, ''));
 }
 
-// Función genérica para enviar email
+// 3. FUNCIÓN GENÉRICA PARA ENVIAR EMAIL (con detección de errores visible)
 function sendEmail(templateParams) {
     if (typeof emailjs === 'undefined') return Promise.resolve();
     return emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_ID_GENERICO, templateParams)
+        .then(response => {
+            console.log('✅ EmailJS enviado correctamente:', response.status);
+        })
         .catch(err => {
-            console.error('Error crítico de EmailJS:', err);
-            showToast('Error EmailJS: ' + (err.text || 'Revisa la consola (F12)'), 'error');
+            console.error('❌ Error crítico de EmailJS:', err);
+            // Mostramos notificación roja con el motivo real del error
+            const errorMsg = err.text || err.message || 'Error desconocido';
+            showToast('Error EmailJS: ' + errorMsg, 'error');
         });
 }
 
-// Utilidad para mostrar notificaciones (Toast)
+// 4. NOTIFICACIONES (TOAST)
 function showToast(message, type = 'info') {
     const existingToast = document.querySelector('.toast');
     if (existingToast) existingToast.remove();
@@ -46,10 +52,10 @@ function showToast(message, type = 'info') {
     toast.className = `toast ${type}`;
     toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : (type === 'error' ? 'exclamation-circle' : 'info-circle')}"></i> ${message}`;
     document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
+    setTimeout(() => toast.remove(), 5000);
 }
 
-// Utilidad para manejar el estado de carga del botón (evita doble clic)
+// 5. ESTADO DE CARGA DEL BOTÓN (evita doble clic)
 function setLoadingState(button, isLoading, originalText) {
     if (isLoading) {
         button.disabled = true;
@@ -64,7 +70,9 @@ function setLoadingState(button, isLoading, originalText) {
     }
 }
 
+// 6. INICIALIZACIÓN DE FORMULARIOS
 function initForms() {
+    
     // --- Formulario de contacto ---
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
@@ -79,8 +87,16 @@ function initForms() {
             const subject = this.querySelector('[name="asunto"]')?.value || '';
             const message = this.querySelector('[name="mensaje"]')?.value || '';
 
-            if (!name || !email || !message) { showToast('Completa los campos obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
-            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!name || !email || !message) { 
+                showToast('Completa los campos obligatorios.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
+            if (!validateEmail(email)) { 
+                showToast('Email no válido.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
 
             try {
                 const { error } = await supabaseClient.from('contact_messages').insert([{ name, email, subject, message }]);
@@ -116,11 +132,21 @@ function initForms() {
             const has_pets = this.querySelector('[name="otros_animales"]')?.value || '';
             const message = this.querySelector('[name="mensaje"]')?.value || '';
 
-            if (!name || !email) { showToast('Nombre y email son obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
-            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!name || !email) { 
+                showToast('Nombre y email son obligatorios.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
+            if (!validateEmail(email)) { 
+                showToast('Email no válido.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
 
             try {
-                const { error } = await supabaseClient.from('adoption_requests').insert([{ name, email, phone, dog_name, housing_type, has_pets, message, status: 'Pendiente' }]);
+                const { error } = await supabaseClient.from('adoption_requests').insert([{ 
+                    name, email, phone, dog_name, housing_type, has_pets, message, status: 'Pendiente' 
+                }]);
                 if (error) throw error;
 
                 const detalles = `Perro de interés: ${dog_name || 'No especificado'}\nVivienda: ${housing_type}\nOtros animales: ${has_pets}\nMensaje: ${message}`;
@@ -151,8 +177,16 @@ function initForms() {
             const availability = this.querySelector('[name="disponibilidad"]')?.value || '';
             const interests = this.querySelector('[name="intereses"]')?.value || '';
 
-            if (!name || !email) { showToast('Nombre y email son obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
-            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!name || !email) { 
+                showToast('Nombre y email son obligatorios.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
+            if (!validateEmail(email)) { 
+                showToast('Email no válido.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
 
             try {
                 const { error } = await supabaseClient.from('volunteer_requests').insert([{ name, email, phone, availability, interests }]);
@@ -190,11 +224,23 @@ function initForms() {
             if (cantidadSelect) amount = cantidadSelect.value === 'otra' ? (cantidadPersonalizada?.value || '') : cantidadSelect.value;
             const dogName = dogChoice === 'especifico' ? (this.querySelector('[name="perro_nombre"]')?.value || '') : 'Elegid por mí';
 
-            if (!name || !email || !amount) { showToast('Completa los campos obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
-            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!name || !email || !amount) { 
+                showToast('Completa los campos obligatorios.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
+            if (!validateEmail(email)) { 
+                showToast('Email no válido.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
 
             try {
-                const { error } = await supabaseClient.from('sponsor_requests').insert([{ name, email, phone, dog_choice: dogChoice, specific_dog: dogChoice === 'especifico' ? dogName : '', amount }]);
+                const { error } = await supabaseClient.from('sponsor_requests').insert([{ 
+                    name, email, phone, dog_choice: dogChoice, 
+                    specific_dog: dogChoice === 'especifico' ? dogName : '', 
+                    amount 
+                }]);
                 if (error) throw error;
 
                 const decisionText = dogChoice === 'especifico' ? `Eligió perro: ${dogName}` : 'Elegid por mí';
@@ -227,8 +273,16 @@ function initForms() {
             const has_pets = this.querySelector('[name="otros_animales"]')?.value || '';
             const message = this.querySelector('[name="mensaje"]')?.value || '';
 
-            if (!name || !email) { showToast('Nombre y email son obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
-            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!name || !email) { 
+                showToast('Nombre y email son obligatorios.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
+            if (!validateEmail(email)) { 
+                showToast('Email no válido.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
 
             try {
                 const { error } = await supabaseClient.from('foster_requests').insert([{ name, email, phone, housing_type, has_pets, message }]);
@@ -261,8 +315,16 @@ function initForms() {
             const phone = this.querySelector('[name="telefono"]')?.value || '';
             const amount = this.querySelector('[name="cuota"]')?.value || '';
 
-            if (!name || !email || !amount) { showToast('Completa los campos obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
-            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!name || !email || !amount) { 
+                showToast('Completa los campos obligatorios.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
+            if (!validateEmail(email)) { 
+                showToast('Email no válido.', 'error'); 
+                setLoadingState(btn, false, originalText); 
+                return; 
+            }
 
             try {
                 const { error } = await supabaseClient.from('membership_requests').insert([{ name, email, phone, amount }]);
@@ -281,24 +343,20 @@ function initForms() {
         });
     }
 
-    // ==========================================
     // --- Formulario de donación (PREPARADO PARA PRODUCCIÓN) ---
-    // ==========================================
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
         const customInput = donationForm.querySelector('#customAmount');
         const totalSpan = document.getElementById('donationTotal');
         
-        // Función para calcular el total visualmente
         function updateTotal() {
             const activeBtn = donationForm.querySelector('.amount-btn.active');
             let amount = activeBtn ? parseFloat(activeBtn.dataset.amount) : (customInput?.value ? parseFloat(customInput.value) : 20);
             const isMonthly = donationForm.querySelector('input[name="type"]:checked')?.value === 'monthly';
-            if (totalSpan) totalSpan.textContent = isMonthly ? `${amount}€/mes` : `${amount}€`;
+            if (totalSpan) totalSpan.textContent = amount > 0 ? (isMonthly ? `${amount}€/mes` : `${amount}€`) : '0€';
         }
 
-        // Lógica de los botones de cantidad
         amountBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 amountBtns.forEach(b => b.classList.remove('active'));
@@ -322,21 +380,15 @@ function initForms() {
             });
         });
 
-        // ==========================================
-        // MANEJO DEL ENVÍO DEL FORMULARIO DE DONACIÓN
-        // ==========================================
         donationForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
             
-            // 1. Activar estado de carga
             if (typeof setLoadingState === 'function') {
                 setLoadingState(btn, true, originalText);
             }
 
-            // 2. Recopilar datos del formulario
             const formData = new FormData(this);
             const amount = formData.get('custom_amount') || donationForm.querySelector('.amount-btn.active')?.dataset.amount || '20';
             const type = formData.get('type');
@@ -346,51 +398,29 @@ function initForms() {
             const paymentMethod = formData.get('paymentMethod');
 
             try {
-                // 3. (Opcional pero recomendado) Guardar el intento en Supabase para tener registro
-                /* 
-                await supabaseClient.from('donations').insert([{ 
-                    name, email, phone, amount, 
-                    type: type === 'monthly' ? 'Mensual' : 'Única',
-                    payment_method: paymentMethod,
-                    status: 'Pendiente de pago'
-                }]);
-                */
-
                 // ==========================================================
                 // 🚨 ZONA DE INTEGRACIÓN DE PAGO REAL 🚨
-                // Cuando tengas el código, BORRA el "setTimeout" de abajo 
-                // y DESCOMENTA la opción que vayas a usar:
+                // Cuando tengas el código, DESCOMENTA la opción que uses:
                 // ==========================================================
 
                 /* 
-                // OPCIÓN A: PAYPAL (Redirección simple con Hosted Button)
-                // Reemplaza 'TU_HOSTED_BUTTON_ID' con el ID real de PayPal
+                // OPCIÓN A: PAYPAL
                 const paypalUrl = `https://www.paypal.com/donate/?hosted_button_id=TU_HOSTED_BUTTON_ID&amount=${amount}`;
                 window.location.href = paypalUrl;
                 */
 
                 /* 
-                // OPCIÓN B: STRIPE PAYMENT LINKS (Recomendado por facilidad)
-                // Creas un "Payment Link" en Stripe y le pasas el email como referencia
-                const stripeUrl = `https://buy.stripe.com/TU_ENLACE_DE_STRIPE_AQUI?client_reference_id=${encodeURIComponent(email)}&prefilled_email=${encodeURIComponent(email)}`;
+                // OPCIÓN B: STRIPE
+                const stripeUrl = `https://buy.stripe.com/TU_ENLACE?client_reference_id=${encodeURIComponent(email)}&prefilled_email=${encodeURIComponent(email)}`;
                 window.location.href = stripeUrl;
                 */
 
-                /* 
-                // OPCIÓN C: PAYPAL JS SDK (Avanzado, abre ventana modal)
-                // Requiere añadir el script de PayPal en el <head> del HTML
-                // paypal.Buttons({ createOrder: function() { ... } }).render('#paypal-button-container');
-                */
-
-                // ==========================================================
-                // MODO PRUEBA ACTUAL (Simulación)
-                // ==========================================================
+                // MODO PRUEBA ACTUAL
                 setTimeout(() => {
-                    showToast(`Modo prueba: Se procesaría una donación de ${amount}€ por ${paymentMethod}.`, 'info');
+                    showToast(`Modo prueba: Se procesaría ${amount}€ por ${paymentMethod}.`, 'info');
                     if (typeof setLoadingState === 'function') {
                         setLoadingState(btn, false, originalText);
                     }
-                    // this.reset(); // Descomentar en producción para limpiar el formulario
                 }, 1500);
 
             } catch (err) {
@@ -402,9 +432,11 @@ function initForms() {
             }
         });
         
-        // Inicializar el total al cargar
         updateTotal();
     }
+} // ← AQUÍ ESTABA LA LLAVE QUE FALTABA
+
+// 7. NEWSLETTER
 function initNewsletter() {
     document.querySelectorAll('.newsletter-form').forEach(form => {
         form.addEventListener('submit', function(e) {
@@ -420,6 +452,7 @@ function initNewsletter() {
     });
 }
 
+// 8. UTILIDADES GLOBALES
 function setSelectedDog(dogName) { 
     localStorage.setItem('selectedDog', dogName); 
 }
