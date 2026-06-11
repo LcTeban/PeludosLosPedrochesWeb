@@ -8,10 +8,10 @@ async function loadDogs() {
         if (error) throw error;
         dogs = data || [];
         
-        // Si no hay perros, limpiamos los contenedores
         if (dogs.length === 0) {
             renderEmptyState('featuredDogs', 'Pronto tendremos peludos buscando hogar.');
             renderEmptyState('dogsList', 'No hay perros disponibles en este momento.');
+            renderEmptyState('sponsorDogs', 'No hay perros disponibles para apadrinar.');
             return;
         }
 
@@ -51,7 +51,7 @@ let currentPage = 1;
 let perPage = 6;
 let currentFilters = {};
 
-// Función helper para parsear la edad y poder filtrar
+// Función helper para parsear la edad y poder filtrar correctamente
 function parseAgeToYears(ageStr) {
     if (!ageStr) return 99;
     const lower = ageStr.toLowerCase();
@@ -78,7 +78,7 @@ function renderDogsList(filter = {}, page = 1) {
     if (filter.gender) filtered = filtered.filter(d => d.gender?.toLowerCase() === filter.gender);
     if (filter.search) filtered = filtered.filter(d => d.name?.toLowerCase().includes(filter.search.toLowerCase()) || d.breed?.toLowerCase().includes(filter.search.toLowerCase()));
     
-    // ¡Nuevo! Filtro de edad
+    // Filtro de edad
     if (filter.age) {
         filtered = filtered.filter(d => {
             const ageYears = parseAgeToYears(d.age);
@@ -143,7 +143,7 @@ function createDogCard(dog) {
         ? `<img src="${firstImage}" alt="${dog.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">` 
         : `<div class="placeholder-image">🐕</div>`;
     
-    // ¡Cambio importante! Pasamos el nombre del perro por URL
+    // ¡Mejora! Pasamos el nombre del perro por URL para que el formulario lo seleccione
     const adoptUrl = `/pages/adopta.html?perro=${encodeURIComponent(dog.name)}#formulario`;
 
     return `
