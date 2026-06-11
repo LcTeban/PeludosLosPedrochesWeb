@@ -1,5 +1,5 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – BLOG
+// PELUDOS LOS PEDROCHES – BLOG CON SKELETON LOADERS
 // ========================================
 
 function initBlogListeners() {
@@ -10,7 +10,10 @@ function initBlogListeners() {
         modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
-                <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeBlogModal()">&times;</button></div>
+                <div class="modal-header">
+                    <h2 id="modalTitle"></h2>
+                    <button class="modal-close" onclick="closeBlogModal()">&times;</button>
+                </div>
                 <div class="modal-body" id="modalBody"></div>
             </div>
         `;
@@ -19,18 +22,53 @@ function initBlogListeners() {
     }
     document.body.addEventListener('click', function(e) {
         const card = e.target.closest('.blog-card');
-        if (card) { const postId = parseInt(card.dataset.id); openBlogModal(postId); }
+        if (card) { 
+            const postId = parseInt(card.dataset.id); 
+            openBlogModal(postId); 
+        }
     });
 }
 
 async function loadBlogPosts() {
+    // 1. Mostrar skeletons inmediatamente
+    renderBlogSkeletons('blogPreview', 3);
+    renderBlogSkeletons('allBlogPosts', 6);
+
     try {
         const { data, error } = await supabaseClient.from('blog_posts').select('*').eq('status', 'Publicado').order('id', { ascending: false });
         if (error) throw error;
         blogPosts = data || [];
+        
+        // 2. Reemplazar skeletons con datos reales
         renderBlogPreview();
         renderAllBlogPosts();
-    } catch (err) { blogPosts = []; renderBlogPreview(); renderAllBlogPosts(); }
+    } catch (err) { 
+        blogPosts = []; 
+        renderBlogPreview(); 
+        renderAllBlogPosts(); 
+    }
+}
+
+// Función para generar el HTML de los skeletons del blog
+function renderBlogSkeletons(containerId, count) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        html += `
+            <article class="skeleton-dog-card">
+                <div class="skeleton skeleton-dog-image" style="height: 200px;"></div>
+                <div class="skeleton-dog-info">
+                    <div class="skeleton skeleton-detail" style="width: 40%; margin-bottom: 12px;"></div>
+                    <div class="skeleton skeleton-title" style="width: 90%;"></div>
+                    <div class="skeleton skeleton-desc"></div>
+                    <div class="skeleton skeleton-desc" style="width: 70%;"></div>
+                </div>
+            </article>
+        `;
+    }
+    container.innerHTML = html;
 }
 
 function renderBlogPreview() {
@@ -43,7 +81,10 @@ function renderBlogPreview() {
 function renderAllBlogPosts() {
     const container = document.getElementById('allBlogPosts');
     if (!container) return;
-    if (blogPosts.length === 0) { container.innerHTML = '<p style="text-align:center;grid-column:1/-1;">No hay entradas publicadas aún.</p>'; return; }
+    if (blogPosts.length === 0) { 
+        container.innerHTML = '<p style="text-align:center;grid-column:1/-1;">No hay entradas publicadas aún.</p>'; 
+        return; 
+    }
     container.innerHTML = blogPosts.map(post => createBlogCard(post)).join('');
 }
 
@@ -52,9 +93,10 @@ function createBlogCard(post) {
         ? `<div class="blog-image-wrapper"><img src="${post.image_url}" alt="${post.title}" loading="lazy" onclick="event.stopPropagation(); openLightbox('${post.image_url}');"></div>` 
         : '<div class="blog-image-wrapper"><div class="placeholder-image">📰</div></div>';
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+    
     return `
         <article class="blog-card fade-in" data-id="${post.id}">
-            ${imageHtml}
+           ${imageHtml}
             <div class="blog-content">
                 <div class="blog-date"><i class="far fa-calendar"></i> ${date}</div>
                 <h3 class="blog-title">${post.title}</h3>
@@ -68,6 +110,7 @@ function createBlogCard(post) {
 function openBlogModal(postId) {
     const post = blogPosts.find(p => p.id === postId);
     if (!post) return;
+    
     let modal = document.getElementById('blogModal');
     if (!modal) {
         modal = document.createElement('div');
@@ -75,16 +118,21 @@ function openBlogModal(postId) {
         modal.className = 'modal';
         modal.innerHTML = `
             <div class="modal-content">
-                <div class="modal-header"><h2 id="modalTitle"></h2><button class="modal-close" onclick="closeBlogModal()">&times;</button></div>
+                <div class="modal-header">
+                    <h2 id="modalTitle"></h2>
+                    <button class="modal-close" onclick="closeBlogModal()">&times;</button>
+                </div>
                 <div class="modal-body" id="modalBody"></div>
             </div>
         `;
         document.body.appendChild(modal);
         modal.addEventListener('click', function(e) { if (e.target === modal) closeBlogModal(); });
     }
+    
     const titleEl = document.getElementById('modalTitle');
     const bodyEl = document.getElementById('modalBody');
     if (!titleEl || !bodyEl) return;
+    
     const date = post.created_at ? new Date(post.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
     titleEl.textContent = post.title;
     bodyEl.innerHTML = `
@@ -95,9 +143,11 @@ function openBlogModal(postId) {
     modal.classList.add('active');
 }
 
-function closeBlogModal() { const modal = document.getElementById('blogModal'); if (modal) modal.classList.remove('active'); }
+function closeBlogModal() { 
+    const modal = document.getElementById('blogModal'); 
+    if (modal) modal.classList.remove('active'); 
+}
 
-// Exponer globalmente
 window.openBlogModal = openBlogModal;
 window.closeBlogModal = closeBlogModal;
 window.closeModal = closeBlogModal;
