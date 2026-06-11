@@ -1802,3 +1802,63 @@ img {
     margin-top: 12px;
     border-radius: var(--radius-lg);
 }
+/* ========================================
+   MEJORAS DE ACCESIBILIDAD Y UX TÁCTIL (PRO)
+   ======================================== */
+
+/* 1. ACCESIBILIDAD: Foco visible SOLO para navegación por teclado (Tab) */
+*:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+/* Ajuste para inputs y selects: el foco se queda dentro del borde */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 0;
+    border-color: var(--primary);
+}
+
+/* Eliminar el outline por defecto al hacer clic con el ratón (solo se muestra con teclado) */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* 2. RETROALIMENTACIÓN TÁCTIL (MÓVIL): Efecto al pulsar */
+/* Botones */
+.btn:active,
+.btn-adopt:active,
+.btn-donate:active,
+.page-btn:active,
+.amount-btn:active,
+.btn-save:active,
+.btn-add:active {
+    transform: scale(0.96) !important;
+    opacity: 0.9;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+/* Tarjetas interactivas */
+.help-card:active,
+.dog-card:active,
+.blog-card:active,
+.mission-card:active,
+.payment-option:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+}
+
+/* 3. DETALLES VISUALES: Mejorar la sensación de "clic" en móviles */
+/* Asegurar cursor de mano y eliminar el flash azul de Android/iOS al tocar */
+a, button, .help-card, .dog-card, .blog-card, .payment-option, .amount-btn, .mission-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent; 
+}
+
+/* Suavizar el scroll en toda la web al hacer clic en enlaces internos */
+html {
+    scroll-behavior: smooth;
+}
