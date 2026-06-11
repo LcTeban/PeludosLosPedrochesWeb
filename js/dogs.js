@@ -7,25 +7,37 @@ async function loadDogs() {
         const { data, error } = await supabaseClient.from('dogs').select('*').order('id', { ascending: false });
         if (error) throw error;
         dogs = data || [];
+        
+        // Si no hay perros, limpiamos los contenedores
+        if (dogs.length === 0) {
+            renderEmptyState('featuredDogs', 'Pronto tendremos peludos buscando hogar.');
+            renderEmptyState('dogsList', 'No hay perros disponibles en este momento.');
+            return;
+        }
+
         renderFeaturedDogs();
         renderDogsList();
         renderSponsorDogs();
         fillAdoptionSelect();
     } catch (err) {
-        loadDefaultDogs();
+        console.error('Error cargando perros:', err);
+        renderErrorState('featuredDogs');
+        renderErrorState('dogsList');
     }
 }
 
-function loadDefaultDogs() {
-    dogs = [
-        { id: 1, name: 'Luna', breed: 'Mastina atigrada', age: '2 años', gender: 'Hembra', badge: 'Urgente', description: 'Cariñosa a rabiar y juguetona.', images: [], status: 'Disponible' },
-        { id: 2, name: 'Arena', breed: 'Cruce de labrador', age: '2 años', gender: 'Hembra', badge: 'En acogida', description: 'Activa y noble.', images: [], status: 'En acogida' },
-        { id: 3, name: 'Toby', breed: 'Podenco', age: '1 año', gender: 'Macho', badge: 'Nuevo', description: 'Joven y juguetón.', images: [], status: 'Disponible' }
-    ];
-    renderFeaturedDogs();
-    renderDogsList();
-    renderSponsorDogs();
-    fillAdoptionSelect();
+function renderEmptyState(containerId, message) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = `<p style="text-align:center; grid-column:1/-1; color:var(--gray); padding:40px;">${message}</p>`;
+    }
+}
+
+function renderErrorState(containerId) {
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.innerHTML = `<p style="text-align:center; grid-column:1/-1; color:var(--primary); padding:40px;"><i class="fas fa-exclamation-triangle"></i> Error al cargar los peludos. Por favor, recarga la página.</p>`;
+    }
 }
 
 function renderFeaturedDogs() {
@@ -39,15 +51,49 @@ let currentPage = 1;
 let perPage = 6;
 let currentFilters = {};
 
+// Función helper para parsear la edad y poder filtrar
+function parseAgeToYears(ageStr) {
+    if (!ageStr) return 99;
+    const lower = ageStr.toLowerCase();
+    if (lower.includes('mes') || lower.includes('month')) {
+        const num = parseInt(lower) || 0;
+        return num / 12;
+    }
+    if (lower.includes('año') || lower.includes('year') || lower.includes('senior')) {
+        const num = parseInt(lower) || 99;
+        return num;
+    }
+    return 99;
+}
+
 function renderDogsList(filter = {}, page = 1) {
     const container = document.getElementById('dogsList');
     if (!container) return;
     currentFilters = filter;
     currentPage = page;
+    
     let filtered = dogs.filter(d => d.status !== 'Adoptado');
+    
     if (filter.size) filtered = filtered.filter(d => d.size?.toLowerCase().includes(filter.size));
     if (filter.gender) filtered = filtered.filter(d => d.gender?.toLowerCase() === filter.gender);
-    if (filter.search) filtered = filtered.filter(d => d.name?.toLowerCase().includes(filter.search.toLowerCase()));
+    if (filter.search) filtered = filtered.filter(d => d.name?.toLowerCase().includes(filter.search.toLowerCase()) || d.breed?.toLowerCase().includes(filter.search.toLowerCase()));
+    
+    // ¡Nuevo! Filtro de edad
+    if (filter.age) {
+        filtered = filtered.filter(d => {
+            const ageYears = parseAgeToYears(d.age);
+            if (filter.age === 'cachorro') return ageYears < 1;
+            if (filter.age === 'adulto') return ageYears >= 1 && ageYears <= 7;
+            if (filter.age === 'senior') return ageYears > 7;
+            return true;
+        });
+    }
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<p style="text-align:center; grid-column:1/-1; color:var(--gray); padding:40px;">No hay perros que coincidan con esos filtros.</p>`;
+        renderPagination(0);
+        return;
+    }
 
     const totalPages = Math.ceil(filtered.length / perPage);
     const start = (page - 1) * perPage;
@@ -96,11 +142,15 @@ function createDogCard(dog) {
     const imageHtml = firstImage 
         ? `<img src="${firstImage}" alt="${dog.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">` 
         : `<div class="placeholder-image">🐕</div>`;
+    
+    // ¡Cambio importante! Pasamos el nombre del perro por URL
+    const adoptUrl = `/pages/adopta.html?perro=${encodeURIComponent(dog.name)}#formulario`;
+
     return `
         <div class="dog-card fade-in" onclick="openDogModal(${dog.id})" style="cursor:pointer;">
             <div class="dog-image">
-                ${imageHtml}
-                ${dog.badge ? `<span class="dog-badge">${dog.badge}</span>` : ''}
+               ${imageHtml}
+               ${dog.badge ? `<span class="dog-badge">${dog.badge}</span>` : ''}
             </div>
             <div class="dog-info">
                 <h3 class="dog-name">${dog.name}</h3>
@@ -110,10 +160,10 @@ function createDogCard(dog) {
                     <span><i class="fas fa-${dog.gender === 'Macho' ? 'mars' : 'venus'}"></i> ${dog.gender}</span>
                 </div>
                 <p class="dog-description">${dog.description}</p>
-                <a href="/pages/adopta.html#formulario" class="btn-adopt" onclick="event.stopPropagation(); setSelectedDog('${dog.name}');">Quiero adoptar</a>
+                <a href="${adoptUrl}" class="btn-adopt" onclick="event.stopPropagation(); setSelectedDog('${dog.name}');">Quiero adoptar</a>
             </div>
         </div>
-    `;
+   `;
 }
 
 // ========================================
@@ -159,23 +209,25 @@ function renderDogModalBody(dog) {
         carouselHtml = `
             <div style="position: relative; width: 100%; max-height: 400px; overflow: hidden; margin-bottom: 20px; text-align: center;">
                 <img id="dogCarouselImage" src="${currentDogImages[currentImageIndex]}" 
-                     style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; cursor: pointer;" 
-                     onclick="openLightbox(document.getElementById('dogCarouselImage').src)">
-                ${currentDogImages.length > 1 ? `
+                    style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; cursor: pointer;" 
+                    onclick="openLightbox(document.getElementById('dogCarouselImage').src)">
+               ${currentDogImages.length > 1 ? `
                     <button onclick="prevImage()" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">‹</button>
                     <button onclick="nextImage()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">›</button>
                     <div style="margin-top:10px;">
-                        ${currentDogImages.map((_, i) => `<span style="display:inline-block; width:10px; height:10px; background:${i === currentImageIndex ? '#e04f2e' : '#ccc'}; border-radius:50%; margin:0 3px;"></span>`).join('')}
+                       ${currentDogImages.map((_, i) => `<span style="display:inline-block; width:10px; height:10px; background:${i === currentImageIndex ? '#e04f2e' : '#ccc'}; border-radius:50%; margin:0 3px;"></span>`).join('')}
                     </div>
-                ` : ''}
+               ` : ''}
             </div>
         `;
     } else {
         carouselHtml = '<div class="placeholder-image" style="height:250px;">🐕</div>';
     }
 
+    const adoptUrl = `/pages/adopta.html?perro=${encodeURIComponent(dog.name)}#formulario`;
+
     body.innerHTML = `
-        ${carouselHtml}
+       ${carouselHtml}
         <div class="dog-details" style="margin-bottom:15px;">
             <span><i class="fas fa-paw"></i> ${dog.breed}</span>
             <span><i class="fas fa-calendar"></i> ${dog.age}</span>
@@ -184,13 +236,13 @@ function renderDogModalBody(dog) {
         </div>
         <p style="margin-bottom:20px;">${dog.description}</p>
         <button class="btn btn-primary" style="display:block; width:100%; text-align:center;" onclick="adoptFromModal('${dog.name}')">¡Quiero adoptar a ${dog.name}!</button>
-    `;
+   `;
 }
 
 function adoptFromModal(dogName) {
     closeDogModal();
     setSelectedDog(dogName);
-    window.location.href = '/pages/adopta.html#formulario';
+    window.location.href = `/pages/adopta.html?perro=${encodeURIComponent(dogName)}#formulario`;
 }
 
 function prevImage() {
