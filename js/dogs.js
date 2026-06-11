@@ -1,13 +1,19 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – PERROS
+// PELUDOS LOS PEDROCHES – PERROS CON SKELETON LOADERS
 // ========================================
 
 async function loadDogs() {
+    // 1. Mostrar skeletons inmediatamente para una UX profesional
+    renderDogSkeletons('featuredDogs', 3);
+    renderDogSkeletons('dogsList', 6);
+    renderDogSkeletons('sponsorDogs', 3);
+
     try {
         const { data, error } = await supabaseClient.from('dogs').select('*').order('id', { ascending: false });
         if (error) throw error;
         dogs = data || [];
         
+        // 2. Si no hay perros, mostrar mensaje elegante (sin perros falsos)
         if (dogs.length === 0) {
             renderEmptyState('featuredDogs', 'Pronto tendremos peludos buscando hogar.');
             renderEmptyState('dogsList', 'No hay perros disponibles en este momento.');
@@ -15,6 +21,7 @@ async function loadDogs() {
             return;
         }
 
+        // 3. Reemplazar skeletons con los datos reales
         renderFeaturedDogs();
         renderDogsList();
         renderSponsorDogs();
@@ -40,6 +47,33 @@ function renderErrorState(containerId) {
     }
 }
 
+// Función para generar el HTML de los skeletons
+function renderDogSkeletons(containerId, count) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        html += `
+            <div class="skeleton-dog-card">
+                <div class="skeleton skeleton-dog-image"></div>
+                <div class="skeleton-dog-info">
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton-details">
+                        <div class="skeleton skeleton-detail"></div>
+                        <div class="skeleton skeleton-detail"></div>
+                        <div class="skeleton skeleton-detail"></div>
+                    </div>
+                    <div class="skeleton skeleton-desc"></div>
+                    <div class="skeleton skeleton-desc" style="width: 80%"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                </div>
+            </div>
+        `;
+    }
+    container.innerHTML = html;
+}
+
 function renderFeaturedDogs() {
     const container = document.getElementById('featuredDogs');
     if (!container) return;
@@ -51,7 +85,6 @@ let currentPage = 1;
 let perPage = 6;
 let currentFilters = {};
 
-// Función helper para parsear la edad y poder filtrar correctamente
 function parseAgeToYears(ageStr) {
     if (!ageStr) return 99;
     const lower = ageStr.toLowerCase();
@@ -78,7 +111,6 @@ function renderDogsList(filter = {}, page = 1) {
     if (filter.gender) filtered = filtered.filter(d => d.gender?.toLowerCase() === filter.gender);
     if (filter.search) filtered = filtered.filter(d => d.name?.toLowerCase().includes(filter.search.toLowerCase()) || d.breed?.toLowerCase().includes(filter.search.toLowerCase()));
     
-    // Filtro de edad
     if (filter.age) {
         filtered = filtered.filter(d => {
             const ageYears = parseAgeToYears(d.age);
@@ -143,7 +175,6 @@ function createDogCard(dog) {
         ? `<img src="${firstImage}" alt="${dog.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">` 
         : `<div class="placeholder-image">🐕</div>`;
     
-    // ¡Mejora! Pasamos el nombre del perro por URL para que el formulario lo seleccione
     const adoptUrl = `/pages/adopta.html?perro=${encodeURIComponent(dog.name)}#formulario`;
 
     return `
@@ -224,8 +255,6 @@ function renderDogModalBody(dog) {
         carouselHtml = '<div class="placeholder-image" style="height:250px;">🐕</div>';
     }
 
-    const adoptUrl = `/pages/adopta.html?perro=${encodeURIComponent(dog.name)}#formulario`;
-
     body.innerHTML = `
        ${carouselHtml}
         <div class="dog-details" style="margin-bottom:15px;">
@@ -285,7 +314,6 @@ function openLightbox(url) {
 function closeLightbox() { const lightbox = document.getElementById('lightbox'); if (lightbox) lightbox.style.display = 'none'; }
 function closeDogModal() { const modal = document.getElementById('dogModal'); if (modal) modal.classList.remove('active'); }
 
-// Exponer globalmente
 window.openDogModal = openDogModal;
 window.closeDogModal = closeDogModal;
 window.adoptFromModal = adoptFromModal;
