@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin · Peludos Los Pedroches</title>
+    <!-- Cargamos la librería de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -72,43 +73,58 @@
     </div>
    
     <script>
-        const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Si ya está logueado, redirigir
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) window.location.href = 'index.html';
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        // Usamos una función autoejecutable (IIFE) para aislar las variables 
+        // y evitar CUALQUIER conflicto de nombres con otros scripts.
+        (function() {
+            const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
             
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMsg = document.getElementById('errorMessage');
-            const loginBtn = document.getElementById('loginBtn');
+            // Usamos un nombre de variable único (authClient) para evitar el error de "ya declarado"
+            const authClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-            loginBtn.disabled = true;
-            loginBtn.textContent = 'Verificando...';
-            errorMsg.classList.remove('show');
-
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
+            // 1. Verificar si ya hay una sesión activa al cargar la página
+            authClient.auth.getSession().then(({ data: { session } }) => {
+                if (session) {
+                    window.location.href = 'index.html';
+                }
             });
 
-            if (error) {
-                errorMsg.textContent = error.message === 'Invalid login credentials' 
-                    ? 'Correo o contraseña incorrectos' 
-                    : 'Error de conexión. Inténtalo de nuevo.';
-                errorMsg.classList.add('show');
-                loginBtn.disabled = false;
-                loginBtn.textContent = 'INICIAR SESIÓN';
-            } else {
-                window.location.href = 'index.html';
-            }
-        });
+            // 2. Manejar el envío del formulario
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
+                e.preventDefault(); // Evita que la página se recargue
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const errorMsg = document.getElementById('errorMessage');
+                const loginBtn = document.getElementById('loginBtn');
+
+                // Estado de carga
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Verificando...';
+                errorMsg.classList.remove('show');
+
+                // Intentar iniciar sesión con Supabase
+                const { data, error } = await authClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    // Mostrar error si las credenciales son incorrectas
+                    errorMsg.textContent = error.message === 'Invalid login credentials' 
+                        ? 'Correo o contraseña incorrectos' 
+                        : 'Error de conexión. Inténtalo de nuevo.';
+                    errorMsg.classList.add('show');
+                    
+                    // Restaurar el botón
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'INICIAR SESIÓN';
+                } else {
+                    // ¡Éxito! Redirigir al panel
+                    window.location.href = 'index.html';
+                }
+            });
+        })();
     </script>
 </body>
 </html>
