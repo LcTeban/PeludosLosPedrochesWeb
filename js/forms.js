@@ -8,7 +8,7 @@ const EMAILJS_SERVICE_ID = 'service_2jfl1x3';
 
 // ⚠️ IMPORTANTE: Reemplaza 'template_generico' con el ID real de tu plantilla en EmailJS
 // Lo encuentras en: EmailJS > Email Templates > tu plantilla > "Template ID"
-const TEMPLATE_ID_GENERICO = 'template_generico'; 
+const TEMPLATE_ID_GENERICO = 'template_peludos'; 
 
 // Inicializar EmailJS
 (function() {
