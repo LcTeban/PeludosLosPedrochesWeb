@@ -114,74 +114,83 @@
                     <div class="donation-form-container">
                         <h2 style="color: var(--secondary); margin-bottom: 30px;">Elige tu aportación</h2>
                         
-                        <form id="donationForm">
-                            <div class="form-group">
-                                <label>Tipo de donación</label>
-                                <div style="display: flex; gap: 20px;">
-                                    <label style="display: flex; align-items: center; gap: 8px;">
-                                        <input type="radio" name="type" value="single" checked> Única
-                                    </label>
-                                    <label style="display: flex; align-items: center; gap: 8px;">
-                                        <input type="radio" name="type" value="monthly"> Mensual
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Cantidad</label>
-                                <div class="amount-buttons">
-                                    <button type="button" class="amount-btn active" data-amount="20">20€</button>
-                                    <button type="button" class="amount-btn" data-amount="50">50€</button>
-                                    <button type="button" class="amount-btn" data-amount="100">100€</button>
-                                    <button type="button" class="amount-btn" data-amount="200">200€</button>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Otra cantidad (€)</label>
-                                <input type="number" id="customAmount" min="1" placeholder="Cantidad personalizada">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Nombre completo *</label>
-                                <input type="text" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Email *</label>
-                                <input type="email" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Teléfono (opcional)</label>
-                                <input type="tel">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label>Método de pago</label>
-                                <div class="payment-methods">
-                                    <label class="payment-option"><input type="radio" name="paymentMethod" value="card" checked> 💳 Tarjeta</label>
-                                    <label class="payment-option"><input type="radio" name="paymentMethod" value="paypal"> 🅿️ PayPal</label>
-                                    <label class="payment-option"><input type="radio" name="paymentMethod" value="bizum"> 📱 Bizum</label>
-                                    <label class="payment-option"><input type="radio" name="paymentMethod" value="transfer"> 🏦 Transferencia</label>
-                                </div>
-                            </div>
-                            
-                            <div id="transferDetails" style="display: none; background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
-                                <p><strong>Banco:</strong> [Nombre del banco]</p>
-                                <p><strong>IBAN:</strong> ESXX XXXX XXXX XXXX XXXX XXXX</p>
-                                <p><strong>Beneficiario:</strong> Peludos Los Pedroches</p>
-                                <p><strong>Concepto:</strong> Donación [Tu nombre]</p>
-                            </div>
-                            
-                            <div class="form-check">
-                                <input type="checkbox" required> He leído y acepto la política de privacidad
-                            </div>
-                            
-                            <div class="donation-total">
-                                <p>Total a donar: <span id="donationTotal">20€</span></p>
-                            </div>
-                            
-                            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 1.2rem;">REALIZAR DONACIÓN ❤️</button>
-                        </form>
+<form id="donationForm">
+    <div class="form-group">
+        <label>Tipo de donación</label>
+        <div style="display: flex; gap: 20px;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="radio" name="type" value="single" checked> Única
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="radio" name="type" value="monthly"> Mensual (Socio)
+            </label>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label>Cantidad</label>
+        <div class="amount-buttons">
+            <button type="button" class="amount-btn active" data-amount="20">20€</button>
+            <button type="button" class="amount-btn" data-amount="50">50€</button>
+            <button type="button" class="amount-btn" data-amount="100">100€</button>
+            <button type="button" class="amount-btn" data-amount="200">200€</button>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label>Otra cantidad (€)</label>
+        <input type="number" id="customAmount" name="custom_amount" min="1" placeholder="Cantidad personalizada">
+    </div>
+    
+    <div class="form-group">
+        <label>Nombre completo *</label>
+        <input type="text" name="donor_name" required placeholder="Tu nombre">
+    </div>
+    <div class="form-group">
+        <label>Email *</label>
+        <input type="email" name="donor_email" required placeholder="tu@email.com">
+    </div>
+    <div class="form-group">
+        <label>Teléfono (opcional)</label>
+        <input type="tel" name="donor_phone" placeholder="Para enviarte el justificante">
+    </div>
+    
+    <div class="form-group">
+        <label>Método de pago</label>
+        <div class="payment-methods">
+            <label class="payment-option"> <input type="radio" name="paymentMethod" value="card" checked> 💳 Tarjeta </label>
+            <label class="payment-option"> <input type="radio" name="paymentMethod" value="paypal"> 🅿️ PayPal </label>
+            <label class="payment-option"> <input type="radio" name="paymentMethod" value="bizum"> 📱 Bizum </label>
+            <label class="payment-option"> <input type="radio" name="paymentMethod" value="transfer"> 🏦 Transferencia </label>
+        </div>
+    </div>
+    
+    <div id="transferDetails" style="display: none; background: #f9f9f9; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+        <p><strong>Banco:</strong> [Nombre del banco]</p>
+        <p><strong>IBAN:</strong> ESXX XXXX XXXX XXXX XXXX XXXX</p>
+        <p><strong>Beneficiario:</strong> Peludos Los Pedroches</p>
+        <p><strong>Concepto:</strong> Donación [Tu nombre]</p>
+    </div>
+    
+    <div class="form-check">
+        <input type="checkbox" required> He leído y acepto la política de privacidad
+    </div>
+    
+    <div class="donation-total">
+        <p>Total a donar: <span id="donationTotal">20€</span></p>
+    </div>
+    
+    <!-- 
+    ====================================================================
+    FUTURA INTEGRACIÓN DE PAGO:
+    Cuando tengas el código real de PayPal o Stripe, el JavaScript 
+    interceptará este envío y redirigirá a la pasarela de pago.
+    ====================================================================
+    -->
+    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 18px; font-size: 1.2rem;">
+        REALIZAR DONACIÓN ❤️
+    </button>
+</form>
                     </div>
                     
                     <div class="donation-info">
