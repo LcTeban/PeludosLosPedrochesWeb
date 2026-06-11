@@ -1,18 +1,14 @@
 // ========================================
-// PELUDOS LOS PEDROCHES – FORMULARIOS CON EMAILJS
+// PELUDOS LOS PEDROCHES – FORMULARIOS CON EMAILJS (1 PLANTILLA GENÉRICA)
 // ========================================
 
-// CONFIGURACIÓN DE EMAILJS
+// 1. CONFIGURACIÓN DE EMAILJS
 const EMAILJS_PUBLIC_KEY = 'P5E2Nyz_zPSdS4Onh';
 const EMAILJS_SERVICE_ID = 'service_2jfl1x3';
 
-// Usamos la plantilla genérica para todos hasta que crees las específicas en EmailJS
-const TEMPLATE_ID_CONTACTO = 'template_generico';
-const TEMPLATE_ID_ADOPCION = 'template_generico';
-const TEMPLATE_ID_VOLUNTARIO = 'template_generico';
-const TEMPLATE_ID_APADRINA = 'template_generico';
-const TEMPLATE_ID_ACOGIDA = 'template_generico';
-const TEMPLATE_ID_SOCIO = 'template_generico';
+// Usamos UNA SOLA plantilla para todos los formularios (Plan Gratuito)
+// ⚠️ IMPORTANTE: Reemplaza 'template_generico' con el ID real de tu plantilla en EmailJS (ej: 'template_abc123')
+const TEMPLATE_ID_GENERICO = 'template_generico'; 
 
 // Inicializar EmailJS
 (function() {
@@ -33,9 +29,10 @@ function validatePhone(phone) {
 }
 
 // Función genérica para enviar email
-function sendEmail(templateId, templateParams) {
+function sendEmail(templateParams) {
     if (typeof emailjs === 'undefined') return Promise.resolve();
-    return emailjs.send(EMAILJS_SERVICE_ID, templateId, templateParams).catch(err => console.warn('EmailJS error:', err));
+    return emailjs.send(EMAILJS_SERVICE_ID, TEMPLATE_ID_GENERICO, templateParams)
+        .catch(err => console.warn('EmailJS error:', err));
 }
 
 // Utilidad para mostrar notificaciones (Toast)
@@ -50,32 +47,19 @@ function showToast(message, type = 'info') {
     setTimeout(() => toast.remove(), 4000);
 }
 
-// Utilidad para manejar el estado de carga del botón
+// Utilidad para manejar el estado de carga del botón (evita doble clic)
 function setLoadingState(button, isLoading, originalText) {
     if (isLoading) {
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
         button.style.opacity = '0.7';
+        button.style.cursor = 'not-allowed';
     } else {
         button.disabled = false;
         button.innerHTML = originalText;
         button.style.opacity = '1';
+        button.style.cursor = 'pointer';
     }
-}
-
-function initNewsletter() {
-    document.querySelectorAll('.newsletter-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const emailInput = this.querySelector('input[type="email"]');
-            if (!emailInput || !validateEmail(emailInput.value)) {
-                showToast('Por favor, introduce un email válido.', 'error');
-                return;
-            }
-            showToast('¡Gracias por suscribirte!', 'success');
-            this.reset();
-        });
-    });
 }
 
 function initForms() {
@@ -99,7 +83,10 @@ function initForms() {
             try {
                 const { error } = await supabaseClient.from('contact_messages').insert([{ name, email, subject, message }]);
                 if (error) throw error;
-                sendEmail(TEMPLATE_ID_CONTACTO, { nombre: name, email: email, asunto: subject, mensaje: message });
+                
+                const detalles = `Asunto: ${subject}\nMensaje: ${message}`;
+                sendEmail({ nombre: name, email: email, telefono: 'No proporcionado', tipo_formulario: 'Contacto', detalles: detalles });
+                
                 showToast('¡Mensaje enviado correctamente!', 'success');
                 this.reset();
             } catch (err) {
@@ -133,7 +120,10 @@ function initForms() {
             try {
                 const { error } = await supabaseClient.from('adoption_requests').insert([{ name, email, phone, dog_name, housing_type, has_pets, message, status: 'Pendiente' }]);
                 if (error) throw error;
-                sendEmail(TEMPLATE_ID_ADOPCION, { nombre: name, email: email, telefono: phone, perro: dog_name, vivienda: housing_type, otros_animales: has_pets, mensaje: message });
+
+                const detalles = `Perro de interés: ${dog_name || 'No especificado'}\nVivienda: ${housing_type}\nOtros animales: ${has_pets}\nMensaje: ${message}`;
+                sendEmail({ nombre: name, email: email, telefono: phone, tipo_formulario: 'Adopción', detalles: detalles });
+
                 showToast('¡Solicitud enviada! Te contactaremos pronto.', 'success');
                 this.reset();
             } catch (err) {
@@ -160,11 +150,15 @@ function initForms() {
             const interests = this.querySelector('[name="intereses"]')?.value || '';
 
             if (!name || !email) { showToast('Nombre y email son obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
 
             try {
                 const { error } = await supabaseClient.from('volunteer_requests').insert([{ name, email, phone, availability, interests }]);
                 if (error) throw error;
-                sendEmail(TEMPLATE_ID_VOLUNTARIO, { nombre: name, email: email, telefono: phone, disponibilidad: availability, intereses: interests });
+
+                const detalles = `Disponibilidad: ${availability}\nIntereses: ${interests}`;
+                sendEmail({ nombre: name, email: email, telefono: phone, tipo_formulario: 'Voluntariado', detalles: detalles });
+
                 showToast('¡Solicitud enviada!', 'success');
                 this.reset();
             } catch (err) {
@@ -195,11 +189,16 @@ function initForms() {
             const dogName = dogChoice === 'especifico' ? (this.querySelector('[name="perro_nombre"]')?.value || '') : 'Elegid por mí';
 
             if (!name || !email || !amount) { showToast('Completa los campos obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
 
             try {
                 const { error } = await supabaseClient.from('sponsor_requests').insert([{ name, email, phone, dog_choice: dogChoice, specific_dog: dogChoice === 'especifico' ? dogName : '', amount }]);
                 if (error) throw error;
-                sendEmail(TEMPLATE_ID_APADRINA, { nombre: name, email: email, telefono: phone, decision: dogChoice === 'especifico' ? 'Eligió perro' : 'Elegid por mí', perro_nombre: dogName, cantidad: amount });
+
+                const decisionText = dogChoice === 'especifico' ? `Eligió perro: ${dogName}` : 'Elegid por mí';
+                const detalles = `Decisión: ${decisionText}\nAportación: ${amount}€/mes`;
+                sendEmail({ nombre: name, email: email, telefono: phone, tipo_formulario: 'Apadrinamiento', detalles: detalles });
+
                 showToast('¡Solicitud enviada!', 'success');
                 this.reset();
             } catch (err) {
@@ -227,11 +226,15 @@ function initForms() {
             const message = this.querySelector('[name="mensaje"]')?.value || '';
 
             if (!name || !email) { showToast('Nombre y email son obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
 
             try {
                 const { error } = await supabaseClient.from('foster_requests').insert([{ name, email, phone, housing_type, has_pets, message }]);
                 if (error) throw error;
-                sendEmail(TEMPLATE_ID_ACOGIDA, { nombre: name, email: email, telefono: phone, vivienda: housing_type, otros_animales: has_pets, mensaje: message });
+
+                const detalles = `Vivienda: ${housing_type}\nOtros animales: ${has_pets}\nMensaje: ${message}`;
+                sendEmail({ nombre: name, email: email, telefono: phone, tipo_formulario: 'Casa de Acogida', detalles: detalles });
+
                 showToast('¡Solicitud enviada!', 'success');
                 this.reset();
             } catch (err) {
@@ -257,11 +260,15 @@ function initForms() {
             const amount = this.querySelector('[name="cuota"]')?.value || '';
 
             if (!name || !email || !amount) { showToast('Completa los campos obligatorios.', 'error'); setLoadingState(btn, false, originalText); return; }
+            if (!validateEmail(email)) { showToast('Email no válido.', 'error'); setLoadingState(btn, false, originalText); return; }
 
             try {
                 const { error } = await supabaseClient.from('membership_requests').insert([{ name, email, phone, amount }]);
                 if (error) throw error;
-                sendEmail(TEMPLATE_ID_SOCIO, { nombre: name, email: email, telefono: phone, cuota: amount });
+
+                const detalles = `Cuota mensual elegida: ${amount}€`;
+                sendEmail({ nombre: name, email: email, telefono: phone, tipo_formulario: 'Hazte Socio', detalles: detalles });
+
                 showToast('¡Solicitud enviada!', 'success');
                 this.reset();
             } catch (err) {
@@ -272,7 +279,7 @@ function initForms() {
         });
     }
 
-    // --- Formulario de donación ---
+    // --- Formulario de donación (Simulado hasta tener PayPal real) ---
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
@@ -315,16 +322,30 @@ function initForms() {
             const originalText = btn.innerHTML;
             setLoadingState(btn, true, originalText);
             
-            // Simulamos el proceso de pago (Cuando tengas PayPal/Stripe real, esto cambiará)
             setTimeout(() => {
                 showToast('Redirigiendo a la pasarela de pago...', 'success');
                 setLoadingState(btn, false, originalText);
-                // window.location.href = 'URL_DE_PAYPAL';
+                // window.location.href = 'URL_DE_PAYPAL'; // Descomentar cuando tengas el enlace real
             }, 1500);
         });
         
         updateTotal();
     }
+}
+
+function initNewsletter() {
+    document.querySelectorAll('.newsletter-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = this.querySelector('input[type="email"]');
+            if (!emailInput || !validateEmail(emailInput.value)) {
+                showToast('Por favor, introduce un email válido.', 'error');
+                return;
+            }
+            showToast('¡Gracias por suscribirte!', 'success');
+            this.reset();
+        });
+    });
 }
 
 function setSelectedDog(dogName) { 
