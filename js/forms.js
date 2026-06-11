@@ -279,20 +279,24 @@ function initForms() {
         });
     }
 
-    // --- Formulario de donación (Simulado hasta tener PayPal real) ---
+    // ==========================================
+    // --- Formulario de donación (PREPARADO PARA PRODUCCIÓN) ---
+    // ==========================================
     const donationForm = document.getElementById('donationForm');
     if (donationForm) {
         const amountBtns = donationForm.querySelectorAll('.amount-btn');
         const customInput = donationForm.querySelector('#customAmount');
         const totalSpan = document.getElementById('donationTotal');
         
+        // Función para calcular el total visualmente
         function updateTotal() {
             const activeBtn = donationForm.querySelector('.amount-btn.active');
-            let amount = activeBtn ? parseFloat(activeBtn.dataset.amount) : (customInput?.value ? parseFloat(customInput.value) : 0);
+            let amount = activeBtn ? parseFloat(activeBtn.dataset.amount) : (customInput?.value ? parseFloat(customInput.value) : 20);
             const isMonthly = donationForm.querySelector('input[name="type"]:checked')?.value === 'monthly';
-            if (totalSpan) totalSpan.textContent = amount > 0 ? (isMonthly ? `${amount}€/mes` : `${amount}€`) : '0€';
+            if (totalSpan) totalSpan.textContent = isMonthly ? `${amount}€/mes` : `${amount}€`;
         }
 
+        // Lógica de los botones de cantidad
         amountBtns.forEach(btn => {
             btn.addEventListener('click', function() {
                 amountBtns.forEach(b => b.classList.remove('active'));
@@ -316,23 +320,89 @@ function initForms() {
             });
         });
 
-        donationForm.addEventListener('submit', function(e) {
+        // ==========================================
+        // MANEJO DEL ENVÍO DEL FORMULARIO DE DONACIÓN
+        // ==========================================
+        donationForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
-            setLoadingState(btn, true, originalText);
             
-            setTimeout(() => {
-                showToast('Redirigiendo a la pasarela de pago...', 'success');
-                setLoadingState(btn, false, originalText);
-                // window.location.href = 'URL_DE_PAYPAL'; // Descomentar cuando tengas el enlace real
-            }, 1500);
+            // 1. Activar estado de carga
+            if (typeof setLoadingState === 'function') {
+                setLoadingState(btn, true, originalText);
+            }
+
+            // 2. Recopilar datos del formulario
+            const formData = new FormData(this);
+            const amount = formData.get('custom_amount') || donationForm.querySelector('.amount-btn.active')?.dataset.amount || '20';
+            const type = formData.get('type');
+            const name = formData.get('donor_name');
+            const email = formData.get('donor_email');
+            const phone = formData.get('donor_phone');
+            const paymentMethod = formData.get('paymentMethod');
+
+            try {
+                // 3. (Opcional pero recomendado) Guardar el intento en Supabase para tener registro
+                /* 
+                await supabaseClient.from('donations').insert([{ 
+                    name, email, phone, amount, 
+                    type: type === 'monthly' ? 'Mensual' : 'Única',
+                    payment_method: paymentMethod,
+                    status: 'Pendiente de pago'
+                }]);
+                */
+
+                // ==========================================================
+                // 🚨 ZONA DE INTEGRACIÓN DE PAGO REAL 🚨
+                // Cuando tengas el código, BORRA el "setTimeout" de abajo 
+                // y DESCOMENTA la opción que vayas a usar:
+                // ==========================================================
+
+                /* 
+                // OPCIÓN A: PAYPAL (Redirección simple con Hosted Button)
+                // Reemplaza 'TU_HOSTED_BUTTON_ID' con el ID real de PayPal
+                const paypalUrl = `https://www.paypal.com/donate/?hosted_button_id=TU_HOSTED_BUTTON_ID&amount=${amount}`;
+                window.location.href = paypalUrl;
+                */
+
+                /* 
+                // OPCIÓN B: STRIPE PAYMENT LINKS (Recomendado por facilidad)
+                // Creas un "Payment Link" en Stripe y le pasas el email como referencia
+                const stripeUrl = `https://buy.stripe.com/TU_ENLACE_DE_STRIPE_AQUI?client_reference_id=${encodeURIComponent(email)}&prefilled_email=${encodeURIComponent(email)}`;
+                window.location.href = stripeUrl;
+                */
+
+                /* 
+                // OPCIÓN C: PAYPAL JS SDK (Avanzado, abre ventana modal)
+                // Requiere añadir el script de PayPal en el <head> del HTML
+                // paypal.Buttons({ createOrder: function() { ... } }).render('#paypal-button-container');
+                */
+
+                // ==========================================================
+                // MODO PRUEBA ACTUAL (Simulación)
+                // ==========================================================
+                setTimeout(() => {
+                    showToast(`Modo prueba: Se procesaría una donación de ${amount}€ por ${paymentMethod}.`, 'info');
+                    if (typeof setLoadingState === 'function') {
+                        setLoadingState(btn, false, originalText);
+                    }
+                    // this.reset(); // Descomentar en producción para limpiar el formulario
+                }, 1500);
+
+            } catch (err) {
+                console.error('Error procesando donación:', err);
+                showToast('Hubo un error al procesar la solicitud.', 'error');
+                if (typeof setLoadingState === 'function') {
+                    setLoadingState(btn, false, originalText);
+                }
+            }
         });
         
+        // Inicializar el total al cargar
         updateTotal();
     }
-}
-
 function initNewsletter() {
     document.querySelectorAll('.newsletter-form').forEach(form => {
         form.addEventListener('submit', function(e) {
