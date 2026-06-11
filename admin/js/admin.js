@@ -1,25 +1,13 @@
 // ========================================
-// CONFIGURACIÓN Y AUTENTICACIÓN
+// PELUDOS LOS PEDROCHES – PANEL ADMIN (CON AUTENTICACIÓN REAL)
 // ========================================
-(function() {
-    const token = localStorage.getItem('adminToken');
-    if (token !== 'authenticated') {
-        window.location.href = 'login.html';
-        return;
-    }
-    document.getElementById('authCheck').style.display = 'none';
-    document.getElementById('adminWrapper').style.display = 'flex';
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-})();
 
+// 1. CONFIGURACIÓN DE SUPABASE
 const SUPABASE_URL = 'https://grknhpyouzhmhqpjjomg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdya25ocHlvdXpobWhxcGpqb21nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDQ0NTQsImV4cCI6MjA5MjI4MDQ1NH0.z2z_eP7DCj_s-JY-ewzZ7RYXGZ0TgAOKzK4HxyoOeic';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// 2. VARIABLES GLOBALES
 let dogs = [];
 let blogPosts = [];
 let settings = {};
@@ -38,9 +26,28 @@ let currentSponsors = [];
 let currentFosters = [];
 let currentMembers = [];
 
-// ========================================
-// INICIALIZACIÓN Y NAVEGACIÓN
-// ========================================
+// 3. VERIFICACIÓN DE AUTENTICACIÓN (SEGURIDAD REAL)
+(async function checkAuth() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    if (!session) {
+        // Si no hay sesión, redirigir al login inmediatamente
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // Si hay sesión, mostrar el panel
+    document.getElementById('authCheck').style.display = 'none';
+    document.getElementById('adminWrapper').style.display = 'flex';
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+// 4. INICIALIZACIÓN Y NAVEGACIÓN
 async function init() {
     await loadSettings();
     await loadDogs();
@@ -78,10 +85,12 @@ function setupMobileMenu() {
             overlay.classList.add('active');
         });
     }
-    overlay.addEventListener('click', function() {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-    });
+    if (overlay) {
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
 }
 
 function setupFloatingMenu() {
@@ -96,9 +105,7 @@ function setupFloatingMenu() {
     }
 }
 
-// ========================================
-// CARGA DE DATOS
-// ========================================
+// 5. CARGA DE DATOS
 async function loadSettings() {
     try {
         const { data, error } = await supabaseClient.from('settings').select('*');
@@ -183,14 +190,13 @@ async function loadMembershipRequests() {
     } catch (err) { console.error(err); currentMembers = []; return []; }
 }
 
-// ========================================
-// RENDERIZADO DE PÁGINAS
-// ========================================
+// 6. RENDERIZADO DE PÁGINAS
 async function renderPage(page = 1) {
     adminCurrentPage = page;
     const content = document.getElementById('adminContent');
     const toggleBtn = '<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> Menú</button>';
     let html = '';
+    
     if (currentSection === 'dashboard') html = renderDashboard();
     else if (currentSection === 'dogs') html = renderDogsPage(adminCurrentPage);
     else if (currentSection === 'blog') html = renderBlogPage(adminCurrentPage);
@@ -219,6 +225,7 @@ async function renderPage(page = 1) {
         if (currentMembers.length === 0) await loadMembershipRequests();
         html = renderMembersPage(currentMembers, adminCurrentPage);
     }
+    
     content.innerHTML = toggleBtn + html;
     document.getElementById('mobileMenuToggle')?.addEventListener('click', function() {
         document.getElementById('adminSidebar').classList.add('active');
@@ -404,9 +411,7 @@ function renderSettingsPage() {
             <div class="form-group">
                 <label>Logo actual</label>
                 <div style="margin-bottom: 15px;">
-                    ${settings.logo_url ? 
-                        `<img src="${settings.logo_url}" style="max-width: 200px; max-height: 100px;">` : 
-                        '<div style="font-size: 3rem;">🐾</div>'}
+                    ${settings.logo_url ? `<img src="${settings.logo_url}" style="max-width: 200px; max-height: 100px;">` : '<div style="font-size: 3rem;">🐾</div>'}
                 </div>
             </div>
             <div class="form-group">
@@ -426,9 +431,7 @@ function renderSettingsPage() {
             <div class="form-group">
                 <label>Imagen de Voluntariado</label>
                 <div style="margin-bottom: 10px;">
-                    ${settings.volunteer_image ? 
-                        `<img src="${settings.volunteer_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                    ${settings.volunteer_image ? `<img src="${settings.volunteer_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : '<span style="color: #999;">Sin imagen</span>'}
                 </div>
                 <input type="file" id="volunteerImageInput" accept="image/*" onchange="previewSectionImage(this, 'volunteerPreview')">
                 <div class="image-preview" id="volunteerPreview"></div>
@@ -438,9 +441,7 @@ function renderSettingsPage() {
             <div class="form-group">
                 <label>Imagen de Apadrinamiento</label>
                 <div style="margin-bottom: 10px;">
-                    ${settings.apadrina_image ? 
-                        `<img src="${settings.apadrina_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                    ${settings.apadrina_image ? `<img src="${settings.apadrina_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : '<span style="color: #999;">Sin imagen</span>'}
                 </div>
                 <input type="file" id="apadrinaImageInput" accept="image/*" onchange="previewSectionImage(this, 'apadrinaPreview')">
                 <div class="image-preview" id="apadrinaPreview"></div>
@@ -450,9 +451,7 @@ function renderSettingsPage() {
             <div class="form-group">
                 <label>Imagen de Casa de Acogida</label>
                 <div style="margin-bottom: 10px;">
-                    ${settings.acoge_image ? 
-                        `<img src="${settings.acoge_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                    ${settings.acoge_image ? `<img src="${settings.acoge_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : '<span style="color: #999;">Sin imagen</span>'}
                 </div>
                 <input type="file" id="acogeImageInput" accept="image/*" onchange="previewSectionImage(this, 'acogePreview')">
                 <div class="image-preview" id="acogePreview"></div>
@@ -462,9 +461,7 @@ function renderSettingsPage() {
             <div class="form-group">
                 <label>Imagen de Quiénes Somos</label>
                 <div style="margin-bottom: 10px;">
-                    ${settings.about_image ? 
-                        `<img src="${settings.about_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : 
-                        '<span style="color: #999;">Sin imagen</span>'}
+                    ${settings.about_image ? `<img src="${settings.about_image}" style="max-width: 300px; max-height: 150px; border-radius: 8px;">` : '<span style="color: #999;">Sin imagen</span>'}
                 </div>
                 <input type="file" id="aboutImageInput" accept="image/*" onchange="previewSectionImage(this, 'aboutPreview')">
                 <div class="image-preview" id="aboutPreview"></div>
@@ -504,7 +501,7 @@ function renderSettingsPage() {
     `;
 }
 
-    function renderMessagesPage(messages, page = 1) {
+function renderMessagesPage(messages, page = 1) {
     const totalPages = Math.ceil(messages.length / adminPerPage);
     const start = (page - 1) * adminPerPage;
     const paginatedMessages = messages.slice(start, start + adminPerPage);
@@ -608,7 +605,6 @@ function renderAdoptionsAdminPage(requests, page = 1) {
     `;
 }
 
-// --- NUEVAS FUNCIONES DE RENDERIZADO CON TARJETAS RESPONSIVE ---
 function renderVolunteersPage(data, page = 1) {
     const totalPages = Math.ceil(data.length / adminPerPage);
     const start = (page - 1) * adminPerPage;
@@ -813,20 +809,21 @@ async function updateRequestStatus(id, status) {
     renderPage(adminCurrentPage);
 }
 
-// ========================================
-// FUNCIONES DE GUARDADO
-// ========================================
+// 7. FUNCIONES DE GUARDADO
 async function saveLogoSettings() {
     const logoText = document.getElementById('logoText').value;
     const logoSubtitle = document.getElementById('logoSubtitle').value;
     let logoUrl = settings.logo_url;
+    
     if (selectedLogoFile) {
         logoUrl = await uploadFile(selectedLogoFile, 'logos');
         if (!logoUrl) { showToast('Error al subir el logo', 'error'); return; }
     }
+    
     await supabaseClient.from('settings').update({ value: logoText }).eq('key', 'logo_text');
     await supabaseClient.from('settings').update({ value: logoSubtitle }).eq('key', 'logo_subtitle');
     if (logoUrl) await supabaseClient.from('settings').upsert({ key: 'logo_url', value: logoUrl });
+    
     showToast('Logo actualizado');
     selectedLogoFile = null;
     init();
@@ -845,9 +842,11 @@ async function saveContactSettings() {
     const phone1 = document.getElementById('phone1')?.value;
     const phone2 = document.getElementById('phone2')?.value;
     const email = document.getElementById('email')?.value;
+    
     if (phone1) await supabaseClient.from('settings').update({ value: phone1 }).eq('key', 'contact_phone1');
     if (phone2) await supabaseClient.from('settings').update({ value: phone2 }).eq('key', 'contact_phone2');
     if (email) await supabaseClient.from('settings').update({ value: email }).eq('key', 'contact_email');
+    
     showToast('Contacto actualizado');
     init();
 }
@@ -862,6 +861,7 @@ async function saveAboutSettings() {
         'about_values': 'aboutValues',
         'about_collaborations': 'aboutCollaborations'
     };
+    
     for (const [key, inputId] of Object.entries(fields)) {
         const value = document.getElementById(inputId)?.value || '';
         await supabaseClient.from('settings').update({ value }).eq('key', key);
@@ -870,13 +870,12 @@ async function saveAboutSettings() {
     showToast('Página "Quiénes Somos" actualizada');
 }
 
-// ========================================
-// SUBIDA DE ARCHIVOS
-// ========================================
+// 8. SUBIDA DE ARCHIVOS
 async function uploadFile(file, bucket) {
     if (!file) return null;
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+    
     try {
         const { data, error } = await supabaseClient.storage.from(bucket).upload(fileName, file, { cacheControl: '3600', upsert: true });
         if (error) throw error;
@@ -888,9 +887,7 @@ async function uploadFile(file, bucket) {
     }
 }
 
-// ========================================
-// MODALES Y FORMULARIOS
-// ========================================
+// 9. MODALES Y FORMULARIOS
 function openModal(type, id = null) {
     const modal = document.getElementById('editModal');
     const title = document.getElementById('modalTitle');
@@ -922,9 +919,26 @@ function openModal(type, id = null) {
             <div class="form-group"><label>Nombre *</label><input type="text" id="dogName" value="${dog.name || ''}" required></div>
             <div class="form-group"><label>Raza</label><input type="text" id="dogBreed" value="${dog.breed || ''}"></div>
             <div class="form-group"><label>Edad</label><input type="text" id="dogAge" value="${dog.age || ''}"></div>
-            <div class="form-group"><label>Sexo</label><select id="dogGender"><option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option><option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option></select></div>
-            <div class="form-group"><label>Tamaño</label><select id="dogSize"><option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option><option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option><option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option></select></div>
-            <div class="form-group"><label>Estado</label><select id="dogStatus"><option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option><option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option><option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option></select></div>
+            <div class="form-group"><label>Sexo</label>
+                <select id="dogGender">
+                    <option ${dog.gender === 'Macho' ? 'selected' : ''}>Macho</option>
+                    <option ${dog.gender === 'Hembra' ? 'selected' : ''}>Hembra</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Tamaño</label>
+                <select id="dogSize">
+                    <option ${dog.size === 'Pequeño' ? 'selected' : ''}>Pequeño</option>
+                    <option ${dog.size === 'Mediano' ? 'selected' : ''}>Mediano</option>
+                    <option ${dog.size === 'Grande' ? 'selected' : ''}>Grande</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Estado</label>
+                <select id="dogStatus">
+                    <option ${dog.status === 'Disponible' ? 'selected' : ''}>Disponible</option>
+                    <option ${dog.status === 'En acogida' ? 'selected' : ''}>En acogida</option>
+                    <option ${dog.status === 'Adoptado' ? 'selected' : ''}>Adoptado</option>
+                </select>
+            </div>
             <div class="form-group"><label>Etiqueta</label><input type="text" id="dogBadge" value="${dog.badge || ''}"></div>
             <div class="form-group"><label>Descripción</label><textarea id="dogDescription" rows="3">${dog.description || ''}</textarea></div>
             <button class="btn-save" onclick="saveDog(${id || 'null'})">Guardar perro</button>
@@ -933,11 +947,20 @@ function openModal(type, id = null) {
         const post = id ? blogPosts.find(p => p.id === id) : { title: '', excerpt: '', content: '', status: 'Publicado', image_url: '' };
         title.textContent = id ? 'Editar entrada' : 'Nueva entrada';
         body.innerHTML = `
-            <div class="form-group"><label>Imagen</label><input type="file" id="blogImage" accept="image/*" onchange="previewBlogImage(this)"><div class="image-preview" id="blogImagePreview">${post.image_url ? `<img src="${post.image_url}">` : ''}</div></div>
+            <div class="form-group">
+                <label>Imagen</label>
+                <input type="file" id="blogImage" accept="image/*" onchange="previewBlogImage(this)">
+                <div class="image-preview" id="blogImagePreview">${post.image_url ? `<img src="${post.image_url}">` : ''}</div>
+            </div>
             <div class="form-group"><label>Título *</label><input type="text" id="postTitle" value="${post.title || ''}" required></div>
             <div class="form-group"><label>Extracto</label><input type="text" id="postExcerpt" value="${post.excerpt || ''}"></div>
             <div class="form-group"><label>Contenido</label><textarea id="postContent" rows="6">${post.content || ''}</textarea></div>
-            <div class="form-group"><label>Estado</label><select id="postStatus"><option ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option><option ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option></select></div>
+            <div class="form-group"><label>Estado</label>
+                <select id="postStatus">
+                    <option ${post.status === 'Publicado' ? 'selected' : ''}>Publicado</option>
+                    <option ${post.status === 'Borrador' ? 'selected' : ''}>Borrador</option>
+                </select>
+            </div>
             <button class="btn-save" onclick="saveBlogPost(${id || 'null'})">Guardar entrada</button>
         `;
         selectedBlogImageFile = null;
@@ -953,7 +976,7 @@ function previewMultipleImages(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const div = document.createElement('div');
-            div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
+            div.style.cssText = 'position: relative; display:inline-block; margin:5px;';
             div.innerHTML = `
                 <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
                 <button type="button" onclick="removeNewFile(${index})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
@@ -972,7 +995,7 @@ function removeNewFile(index) {
         const reader = new FileReader();
         reader.onload = function(e) {
             const div = document.createElement('div');
-            div.style.cssText = 'position:relative; display:inline-block; margin:5px;';
+            div.style.cssText = 'position: relative; display:inline-block; margin:5px;';
             div.innerHTML = `
                 <img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:5px;">
                 <button type="button" onclick="removeNewFile(${i})" style="position:absolute; top:0; right:0; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">&times;</button>
@@ -1044,8 +1067,10 @@ async function saveSectionImage(section) {
     }
     const fileInput = document.getElementById(inputId);
     if (!fileInput || !fileInput.files[0]) { showToast('Selecciona una imagen', 'error'); return; }
+    
     const imageUrl = await uploadFile(fileInput.files[0], 'secciones');
     if (!imageUrl) { showToast('Error al subir la imagen', 'error'); return; }
+    
     await supabaseClient.from('settings').update({ value: imageUrl }).eq('key', key);
     settings[key] = imageUrl;
     showToast('Imagen guardada correctamente');
@@ -1061,31 +1086,36 @@ function closeModal() {
     existingImagesToKeep = [];
 }
 
-// ========================================
-// IMPORTACIÓN CSV
-// ========================================
+// 10. IMPORTACIÓN CSV
 function openImportModal() { document.getElementById('importModal').classList.add('active'); }
 function closeImportModal() { document.getElementById('importModal').classList.remove('active'); }
 
 async function importCSV() {
     const fileInput = document.getElementById('csvFileInput');
     const statusDiv = document.getElementById('importStatus');
+    
     if (!fileInput.files[0]) { statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Selecciona un archivo CSV primero.</p>'; return; }
+    
     const file = fileInput.files[0];
     statusDiv.innerHTML = '<p style="color: #666;">⏳ Leyendo archivo...</p>';
+    
     Papa.parse(file, {
         header: true, skipEmptyLines: true, encoding: 'UTF-8',
         complete: async function(results) {
             if (results.errors.length > 0) { statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ Error al leer el archivo CSV.</p>'; return; }
+            
             const perros = results.data.map(row => ({
                 name: row['Nombre'] || '', breed: row['Raza'] || '', age: row['Edad'] || '',
                 size: row['Tamaño'] || 'Mediano', gender: row['Sexo'] || 'Macho',
                 description: row['Descripción'] || '', badge: row['Etiqueta'] || '',
                 status: row['Estado'] || 'Disponible', image_url: '', images: []
             }));
+            
             const validos = perros.filter(p => p.name.trim() !== '');
             if (validos.length === 0) { statusDiv.innerHTML = '<p style="color: #e04f2e;">❌ No se encontraron perros válidos.</p>'; return; }
+            
             statusDiv.innerHTML = `<p style="color: #666;">⏳ Importando ${validos.length} perros...</p>`;
+            
             try {
                 const { error } = await supabaseClient.from('dogs').insert(validos);
                 if (error) throw error;
@@ -1101,12 +1131,11 @@ async function importCSV() {
     });
 }
 
-// ========================================
-// CRUD DE PERROS Y BLOG
-// ========================================
+// 11. CRUD DE PERROS Y BLOG
 async function saveDog(id) {
     const name = document.getElementById('dogName')?.value;
     if (!name) { showToast('El nombre es obligatorio', 'error'); return; }
+    
     let newUrls = [];
     if (selectedFiles.length > 0) {
         for (const file of selectedFiles) {
@@ -1114,6 +1143,7 @@ async function saveDog(id) {
             if (url) newUrls.push(url);
         }
     }
+    
     const finalImages = [...existingImagesToKeep, ...newUrls];
     const dogData = {
         name, breed: document.getElementById('dogBreed')?.value || '',
@@ -1126,11 +1156,13 @@ async function saveDog(id) {
         images: finalImages,
         image_url: finalImages.length > 0 ? finalImages[0] : ''
     };
+    
     if (id && id !== 'null') {
         await supabaseClient.from('dogs').update(dogData).eq('id', id);
     } else {
         await supabaseClient.from('dogs').insert([dogData]);
     }
+    
     closeModal();
     await loadDogs();
     renderPage();
@@ -1149,16 +1181,27 @@ async function deleteDog(id) {
 async function saveBlogPost(id) {
     const title = document.getElementById('postTitle')?.value;
     if (!title) { showToast('El título es obligatorio', 'error'); return; }
+    
     let imageUrl = id && id !== 'null' ? blogPosts.find(p => p.id === id)?.image_url || '' : '';
     if (selectedBlogImageFile) {
         imageUrl = await uploadFile(selectedBlogImageFile, 'blog');
         if (!imageUrl) { showToast('Error al subir la imagen', 'error'); return; }
     }
-    const postData = { title, excerpt: document.getElementById('postExcerpt')?.value || '',
+    
+    const postData = { 
+        title, 
+        excerpt: document.getElementById('postExcerpt')?.value || '',
         content: document.getElementById('postContent')?.value || '',
-        status: document.getElementById('postStatus')?.value || 'Publicado', image_url: imageUrl };
-    if (id && id !== 'null') await supabaseClient.from('blog_posts').update(postData).eq('id', id);
-    else await supabaseClient.from('blog_posts').insert([postData]);
+        status: document.getElementById('postStatus')?.value || 'Publicado', 
+        image_url: imageUrl 
+    };
+    
+    if (id && id !== 'null') {
+        await supabaseClient.from('blog_posts').update(postData).eq('id', id);
+    } else {
+        await supabaseClient.from('blog_posts').insert([postData]);
+    }
+    
     closeModal();
     await loadBlogPosts();
     renderPage();
@@ -1174,9 +1217,7 @@ async function deleteBlogPost(id) {
     }
 }
 
-// ========================================
-// UTILIDADES
-// ========================================
+// 12. UTILIDADES
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.style.cssText = `position:fixed;bottom:20px;right:20px;background:${type === 'success' ? '#2c5f2d' : '#e04f2e'};color:white;padding:12px 18px;border-radius:8px;z-index:9999;`;
@@ -1185,14 +1226,13 @@ function showToast(message, type = 'success') {
     setTimeout(() => toast.remove(), 3000);
 }
 
-function logout() {
-    localStorage.removeItem('adminToken');
+async function logout() {
+    // Cerrar sesión real en Supabase
+    await supabaseClient.auth.signOut();
     window.location.href = 'login.html';
 }
 
-// ========================================
-// EXPONER FUNCIONES GLOBALES
-// ========================================
+// 13. EXPONER FUNCIONES GLOBALES
 window.openModal = openModal;
 window.closeModal = closeModal;
 window.saveDog = saveDog;
