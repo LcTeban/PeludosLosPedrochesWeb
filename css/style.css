@@ -2080,348 +2080,481 @@ html {
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
 }
 
-* ========================================
-MODO OSCURO - FORMULARIOS MEJORADOS
-======================================== */
+/* ========================================
+   MODO OSCURO (DARK MODE) - PROFESIONAL MEJORADO
+   ======================================== */
 
-/* Variables del tema oscuro */
+/* Variables del tema oscuro (contraste mejorado) */
 [data-theme="dark"] {
---bg-color: #1a1a1a;
---bg-secondary: #2d2d2d;
---bg-tertiary: #3d3d3d;
---text-color: #f5f5f5;
---text-muted: #b0b0b0;
---border-color: #404040;
---card-bg: #2d2d2d;
---input-bg: #1a1a1a;
---input-border: #555555;
---header-bg: rgba(26, 26, 26, 0.98);
---shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --bg-color: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-tertiary: #2a2a2a;
+    --card-bg: #252525;
+    --text-color: #f0f0f0;
+    --text-muted: #b0b0b0;
+    --border-color: #404040;
+    --input-bg: #2a2a2a;
+    --input-border: #5a5a5a;
+    --input-border-focus: #e04f2e;
+    --placeholder-color: #888;
+    --header-bg: rgba(18, 18, 18, 0.98);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
+
 /* Fondo general */
 [data-theme="dark"] body {
-background-color: var(--bg-color);
-color: var(--text-color);
+    background-color: var(--bg-color);
+    color: var(--text-color);
 }
+
 /* Header */
 [data-theme="dark"] .header {
-background: var(--header-bg);
-border-bottom: 1px solid var(--border-color);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .header-top {
-background: #1a3a1b;
-border-bottom: 1px solid var(--border-color);
+    background: #1a3a1b;
+    border-bottom: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .header-contact a,
 [data-theme="dark"] .header-social a {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .logo-text h1 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .logo-text span {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 /* Navegación */
 [data-theme="dark"] .nav-list > li > a {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .nav-list > li > a:hover,
 [data-theme="dark"] .nav-list > li > a.active {
-color: var(--primary);
-background: rgba(224, 79, 46, 0.15);
+    color: var(--primary);
+    background: rgba(224, 79, 46, 0.15);
 }
+
 [data-theme="dark"] .dropdown-menu {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .dropdown-menu li a {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .dropdown-menu li a:hover {
-background: rgba(224, 79, 46, 0.15);
-color: var(--primary);
+    background: rgba(224, 79, 46, 0.15);
+    color: var(--primary);
 }
+
 /* Secciones */
 [data-theme="dark"] .hero {
-background: linear-gradient(135deg, #1a3a1b 0%, #0f2410 100%);
+    background: linear-gradient(135deg, #1a3a1b 0%, #0f2410 100%);
 }
+
 [data-theme="dark"] .how-help,
 [data-theme="dark"] .featured-dogs,
 [data-theme="dark"] .blog-preview {
-background: var(--bg-secondary);
+    background: var(--bg-secondary);
 }
+
 [data-theme="dark"] .about-preview,
 [data-theme="dark"] .urgencies {
-background: var(--bg-color);
+    background: var(--bg-color);
 }
+
 [data-theme="dark"] .page-header {
-background: linear-gradient(135deg, #1a3a1b 0%, #0f2410 100%);
+    background: linear-gradient(135deg, #1a3a1b 0%, #0f2410 100%);
 }
+
 /* Tarjetas */
 [data-theme="dark"] .dog-card,
 [data-theme="dark"] .blog-card,
 [data-theme="dark"] .help-card,
 [data-theme="dark"] .mission-card {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
-color: var(--text-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .dog-name,
 [data-theme="dark"] .blog-title,
 [data-theme="dark"] .help-card h3,
 [data-theme="dark"] .mission-card h3 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .dog-description,
 [data-theme="dark"] .blog-excerpt,
 [data-theme="dark"] .help-card p,
 [data-theme="dark"] .mission-card p {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 [data-theme="dark"] .dog-details {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
-/* ========================================
-FORMULARIOS EN MODO OSCURO - MEJORADO
-======================================== */
-/* Labels de formularios */
+
+/* ===== FORMULARIOS EN MODO OSCURO - PROFESIONAL ===== */
 [data-theme="dark"] .form-group label {
-color: var(--text-color);
-font-weight: 600;
+    color: var(--text-color);
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
 }
-/* Inputs, Selects y Textareas */
+
 [data-theme="dark"] .form-group input,
 [data-theme="dark"] .form-group select,
 [data-theme="dark"] .form-group textarea {
-background: var(--input-bg);
-border: 1px solid var(--input-border);
-color: var(--text-color);
-transition: all 0.3s ease;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-color);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
 }
-/* Placeholder */
-[data-theme="dark"] .form-group input::placeholder,
-[data-theme="dark"] .form-group textarea::placeholder {
-color: var(--text-muted);
-opacity: 0.7;
+
+[data-theme="dark"] .form-group input:hover,
+[data-theme="dark"] .form-group select:hover,
+[data-theme="dark"] .form-group textarea:hover {
+    border-color: #7a7a7a;
 }
-/* Focus */
+
 [data-theme="dark"] .form-group input:focus,
 [data-theme="dark"] .form-group select:focus,
 [data-theme="dark"] .form-group textarea:focus {
-border-color: var(--primary);
-background: #0f0f0f;
-color: var(--text-color);
+    border-color: var(--input-border-focus);
+    box-shadow: 0 0 0 3px rgba(224, 79, 46, 0.2);
+    outline: none;
+    background-color: #2f2f2f;
 }
-/* Select - flecha personalizada */
+
+/* Placeholders */
+[data-theme="dark"] .form-group input::placeholder,
+[data-theme="dark"] .form-group textarea::placeholder {
+    color: var(--placeholder-color);
+    opacity: 1;
+    font-weight: 400;
+}
+
+/* Selects con flecha personalizada */
 [data-theme="dark"] .form-group select {
-background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f5f5f5' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 12 12'%3E%3Cpath fill='%23f0f0f0' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    appearance: none;
+    padding-right: 32px;
 }
-/* Checkboxes */
+
+/* Checkboxes y radios */
 [data-theme="dark"] .form-check {
-color: var(--text-color);
+    color: var(--text-color);
 }
-[data-theme="dark"] .form-check input[type="checkbox"] {
-accent-color: var(--primary);
+
+[data-theme="dark"] .form-check input[type="checkbox"],
+[data-theme="dark"] .form-check input[type="radio"] {
+    accent-color: var(--primary);
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    cursor: pointer;
 }
+
 [data-theme="dark"] .form-check a {
-color: var(--primary);
+    color: var(--primary);
+    text-decoration: none;
 }
+
+[data-theme="dark"] .form-check a:hover {
+    text-decoration: underline;
+}
+
+/* Corrección autocompletado (fondo amarillo) */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] textarea:-webkit-autofill,
+[data-theme="dark"] select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #2a2a2a inset !important;
+    -webkit-text-fill-color: var(--text-color) !important;
+    caret-color: var(--text-color);
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Mensajes de error y ayuda */
+[data-theme="dark"] .error-message,
+[data-theme="dark"] .form-error {
+    color: #ff6b6b;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+[data-theme="dark"] .form-hint {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
 /* Botones de formulario */
 [data-theme="dark"] .btn-primary {
-background: var(--primary);
-color: white;
+    background: var(--primary);
+    color: white;
+    border: none;
 }
+
 [data-theme="dark"] .btn-primary:hover {
-background: var(--primary-dark);
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+
 [data-theme="dark"] .btn-secondary {
-background: transparent;
-color: var(--text-color);
-border-color: var(--text-color);
+    background: transparent;
+    color: var(--text-color);
+    border: 2px solid var(--input-border);
 }
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: var(--primary);
+}
+
 [data-theme="dark"] .btn-outline {
-background: rgba(224, 79, 46, 0.15);
-border-color: var(--primary);
-color: var(--primary);
+    background: rgba(224, 79, 46, 0.15);
+    border-color: var(--primary);
+    color: var(--primary);
 }
+
 /* Newsletter */
 [data-theme="dark"] .newsletter-form input {
-background: var(--input-bg);
-border: 1px solid var(--input-border);
-color: var(--text-color);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .newsletter-form input::placeholder {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 /* Modales */
 [data-theme="dark"] .modal-content {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .modal-header {
-border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .modal-header h2 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .modal-close {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 [data-theme="dark"] .modal-body {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 /* Toast notifications */
 [data-theme="dark"] .toast {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
-color: var(--text-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }
+
 /* Breadcrumbs */
 [data-theme="dark"] .breadcrumb {
-background: var(--bg-secondary);
-border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .breadcrumb a,
 [data-theme="dark"] .breadcrumb span {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 [data-theme="dark"] .breadcrumb a:hover {
-color: var(--primary);
+    color: var(--primary);
 }
+
 /* Footer */
 [data-theme="dark"] .footer {
-background: #0f0f0f;
-border-top: 1px solid var(--border-color);
+    background: #0f0f0f;
+    border-top: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .footer h3 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .footer-about p,
 [data-theme="dark"] .footer-links a {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 [data-theme="dark"] .footer-links a:hover {
-color: var(--primary);
+    color: var(--primary);
 }
+
 [data-theme="dark"] .footer-bottom {
-color: var(--text-muted);
-border-top-color: var(--border-color);
+    color: var(--text-muted);
+    border-top-color: var(--border-color);
 }
+
 /* Skeleton loaders */
 [data-theme="dark"] .skeleton {
-background: linear-gradient(90deg, #2d2d2d 25%, #404040 50%, #2d2d2d 75%);
-background-size: 200% 100%;
+    background: linear-gradient(90deg, #2d2d2d 25%, #404040 50%, #2d2d2d 75%);
+    background-size: 200% 100%;
 }
+
 [data-theme="dark"] .skeleton-dog-card {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
 }
+
 /* Placeholders */
 [data-theme="dark"] .placeholder-image {
-background: linear-gradient(135deg, #2d2d2d, #404040);
-color: var(--text-muted);
+    background: linear-gradient(135deg, #2d2d2d, #404040);
+    color: var(--text-muted);
 }
+
 /* Colaboraciones */
 [data-theme="dark"] .collaborations-section {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .collaborations-section h2 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .collaborations-grid div {
-background: var(--bg-secondary);
-border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
 }
+
 [data-theme="dark"] .collaborations-grid h3 {
-color: var(--primary);
+    color: var(--primary);
 }
+
 [data-theme="dark"] .collaborations-grid p {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 /* About CTA */
 [data-theme="dark"] .about-cta h2 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .about-cta p {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 /* Donation page */
 [data-theme="dark"] .donation-info .info-card {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
-color: var(--text-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .donation-info .info-card h3 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .donation-info .info-card p,
 [data-theme="dark"] .donation-info .info-card li {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 [data-theme="dark"] .amount-btn {
-background: var(--card-bg);
-border-color: var(--input-border);
-color: var(--text-color);
+    background: var(--card-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .amount-btn.active {
-background: var(--primary);
-color: white;
-border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
 }
+
 [data-theme="dark"] .payment-option {
-background: var(--card-bg);
-border-color: var(--input-border);
-color: var(--text-color);
+    background: var(--card-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .payment-option:hover {
-border-color: var(--primary);
+    border-color: var(--primary);
 }
+
 [data-theme="dark"] .donation-total {
-background: var(--card-bg);
-border: 1px solid var(--border-color);
-color: var(--text-color);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
 }
+
 /* Pagination */
 [data-theme="dark"] .page-btn {
-background: var(--card-bg);
-border-color: var(--input-border);
-color: var(--text-color);
+    background: var(--card-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .page-btn:hover {
-background: var(--bg-secondary);
+    background: var(--bg-secondary);
 }
+
 [data-theme="dark"] .page-btn.active {
-background: var(--primary);
-color: white;
-border-color: var(--primary);
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
 }
+
 /* Contact page */
 [data-theme="dark"] .contact-item h4 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .contact-item a,
 [data-theme="dark"] .contact-item p {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 /* Section titles */
 [data-theme="dark"] .section-title {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .section-subtitle {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 /* About content */
 [data-theme="dark"] .about-content h2 {
-color: var(--text-color);
+    color: var(--text-color);
 }
+
 [data-theme="dark"] .about-content p {
-color: var(--text-muted);
+    color: var(--text-muted);
 }
+
 [data-theme="dark"] .about-subtitle {
-color: var(--primary);
+    color: var(--primary);
 }
+
 /* ========================================
    BOTÓN DE MODO OSCURO - TAMAÑO REDUCIDO
    ======================================== */
@@ -2456,8 +2589,8 @@ color: var(--primary);
 /* En móvil, ajustar aún más */
 @media (max-width: 768px) {
     .theme-toggle {
-        width: 26px;
-        height: 26px;
+        width: 25px;
+        height: 25px;
         font-size: 0.75rem;
         margin-left: 10px;
     }
@@ -2466,6 +2599,7 @@ color: var(--primary);
         font-size: 0.75rem;
     }
 }
+
 /* ========================================
    BREADCRUMBS (MIGAS DE NAVEGACIÓN)
    ======================================== */
