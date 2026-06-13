@@ -2029,3 +2029,53 @@ html {
         min-width: 120px;
     }
 }
+
+/* ========================================
+   CORRECCIÓN DE CLS (LAYOUT SHIFT)
+   ======================================== */
+.dog-image,
+.blog-image-wrapper,
+.modal-image {
+    position: relative;
+    width: 100%;
+    background: #f3f4f6;
+    overflow: hidden;
+    border-radius: var(--radius);
+}
+
+/* Forzar proporción antes de que cargue la imagen */
+.dog-image {
+    aspect-ratio: 4 / 3;
+}
+
+.blog-image-wrapper {
+    aspect-ratio: 16 / 9;
+}
+
+/* Asegurar que la imagen ocupe todo el contenedor sin deformarse */
+.dog-image img,
+.blog-image-wrapper img,
+.modal-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Placeholder que aparece mientras carga la imagen real */
+.dog-image .placeholder-image,
+.blog-image-wrapper .placeholder-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+}
