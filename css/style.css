@@ -2555,6 +2555,44 @@ html {
     color: var(--primary);
 }
 
+/* Forzar legibilidad en cualquier contenedor con fondo blanco heredado */
+[data-theme="dark"] div[style*="background: white"],
+[data-theme="dark"] section[style*="background: white"],
+[data-theme="dark"] .about-preview,
+[data-theme="dark"] .contact-form-box,
+[data-theme="dark"] div[style*="max-width: 600px"] {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+}
+
+[data-theme="dark"] p, 
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4, 
+[data-theme="dark"] li, 
+[data-theme="dark"] span:not(.status-badge):not(.dog-badge),
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .section-subtitle,
+[data-theme="dark"] .about-content p,
+[data-theme="dark"] .about-content h2 {
+    color: var(--text-color) !important;
+}
+
+[data-theme="dark"] .about-subtitle {
+    color: var(--primary) !important;
+}
+
+[data-theme="dark"] .form-group select option {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+}
+
+/* Asegurar que el texto del placeholder del select también se vea */
+[data-theme="dark"] select option:first-child {
+    color: var(--placeholder-color);
+}
+
 /* ========================================
    BOTÓN DE MODO OSCURO - TAMAÑO REDUCIDO
    ======================================== */
