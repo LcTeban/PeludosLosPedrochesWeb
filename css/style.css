@@ -2079,3 +2079,119 @@ html {
     font-size: 3rem;
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
 }
+/* ========================================
+   MODO OSCURO (DARK MODE)
+   ======================================== */
+:root {
+    color-scheme: light;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+    --bg-color: #0f172a;
+    --bg-secondary: #1e293b;
+    --text-color: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --card-bg: #1e293b;
+    --header-bg: rgba(15, 23, 42, 0.95);
+    --input-bg: #0f172a;
+    --input-border: #334155;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .hero,
+[data-theme="dark"] .section-alt,
+[data-theme="dark"] footer {
+    background: var(--bg-secondary);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .dog-card,
+[data-theme="dark"] .blog-card,
+[data-theme="dark"] .help-card,
+[data-theme="dark"] .mission-card,
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+[data-theme="dark"] .dog-card .dog-info,
+[data-theme="dark"] .blog-card .blog-content,
+[data-theme="dark"] .form-admin-card,
+[data-theme="dark"] .admin-table th,
+[data-theme="dark"] .admin-table td {
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .cookie-banner {
+    background: var(--card-bg);
+    border-top: 3px solid var(--primary);
+}
+
+[data-theme="dark"] .cookie-banner-text,
+[data-theme="dark"] .footer-links h3 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] a,
+[data-theme="dark"] .btn-outline {
+    color: var(--primary);
+}
+
+[data-theme="dark"] .skeleton {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background-size: 200% 100%;
+}
+
+/* Botón de toggle de modo oscuro */
+.theme-toggle {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+
+.theme-toggle:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    transform: rotate(15deg);
+}
+
+@media (max-width: 768px) {
+    .theme-toggle {
+        margin: 10px 0;
+    }
+}
