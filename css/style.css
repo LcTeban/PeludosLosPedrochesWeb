@@ -2079,8 +2079,9 @@ html {
     font-size: 3rem;
     background: linear-gradient(135deg, #f8fafc, #e2e8f0);
 }
+
 /* ========================================
-   MODO OSCURO (DARK MODE)
+   MODO OSCURO (DARK MODE) - MEJORADO
    ======================================== */
 :root {
     color-scheme: light;
@@ -2088,86 +2089,321 @@ html {
 
 [data-theme="dark"] {
     color-scheme: dark;
-    --bg-color: #0f172a;
-    --bg-secondary: #1e293b;
-    --text-color: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border-color: #334155;
-    --card-bg: #1e293b;
-    --header-bg: rgba(15, 23, 42, 0.95);
-    --input-bg: #0f172a;
-    --input-border: #334155;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --bg-color: #1a1a1a;
+    --bg-secondary: #2d2d2d;
+    --text-color: #f5f5f5;
+    --text-muted: #b0b0b0;
+    --border-color: #404040;
+    --card-bg: #2d2d2d;
+    --header-bg: rgba(26, 26, 26, 0.98);
+    --input-bg: #1a1a1a;
+    --input-border: #404040;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.7);
 }
 
+/* Fondo general */
 [data-theme="dark"] body {
     background-color: var(--bg-color);
     color: var(--text-color);
 }
 
+/* Header */
 [data-theme="dark"] .header {
     background: var(--header-bg);
     border-bottom: 1px solid var(--border-color);
 }
 
-[data-theme="dark"] .hero,
-[data-theme="dark"] .section-alt,
-[data-theme="dark"] footer {
-    background: var(--bg-secondary);
+[data-theme="dark"] .header-top {
+    background: #1a3a1b;
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .header-contact a,
+[data-theme="dark"] .header-social a {
     color: var(--text-color);
 }
 
-[data-theme="dark"] .dog-card,
-[data-theme="dark"] .blog-card,
-[data-theme="dark"] .help-card,
-[data-theme="dark"] .mission-card,
-[data-theme="dark"] .form-group input,
-[data-theme="dark"] .form-group select,
-[data-theme="dark"] .form-group textarea {
-    background: var(--card-bg);
-    border-color: var(--border-color);
-    color: var(--text-color);
-}
-[data-theme="dark"] .dog-card .dog-info,
-[data-theme="dark"] .blog-card .blog-content,
-[data-theme="dark"] .form-admin-card,
-[data-theme="dark"] .admin-table th,
-[data-theme="dark"] .admin-table td {
-    background: transparent;
-    border-color: var(--border-color);
+[data-theme="dark"] .logo-text h1 {
     color: var(--text-color);
 }
 
-[data-theme="dark"] .modal-content {
+[data-theme="dark"] .logo-text span {
+    color: var(--text-muted);
+}
+/* Navegación */
+[data-theme="dark"] .nav-list > li > a {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .nav-list > li > a:hover,
+[data-theme="dark"] .nav-list > li > a.active {
+    color: var(--primary);
+    background: rgba(224, 79, 46, 0.15);
+}
+
+[data-theme="dark"] .dropdown-menu {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
 }
 
-[data-theme="dark"] .modal-header {
-    border-bottom: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .cookie-banner {
-    background: var(--card-bg);
-    border-top: 3px solid var(--primary);
-}
-
-[data-theme="dark"] .cookie-banner-text,
-[data-theme="dark"] .footer-links h3 {
+[data-theme="dark"] .dropdown-menu li a {
     color: var(--text-color);
 }
 
-[data-theme="dark"] a,
-[data-theme="dark"] .btn-outline {
+[data-theme="dark"] .dropdown-menu li a:hover {
+    background: rgba(224, 79, 46, 0.15);
     color: var(--primary);
 }
 
+/* Hero y secciones */
+[data-theme="dark"] .hero {
+    background: linear-gradient(135deg, #1a3a1b 0%, #0f2410 100%);
+}
+
+[data-theme="dark"] .how-help,
+[data-theme="dark"] .featured-dogs,
+[data-theme="dark"] .blog-preview {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .about-preview,
+[data-theme="dark"] .urgencies {
+    background: var(--bg-color);
+}
+
+[data-theme="dark"] .quick-contact {
+    background: var(--primary);
+}
+
+/* Tarjetas */
+[data-theme="dark"] .dog-card,
+[data-theme="dark"] .blog-card,
+[data-theme="dark"] .help-card,[data-theme="dark"] .mission-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .dog-name,
+[data-theme="dark"] .blog-title,
+[data-theme="dark"] .help-card h3,
+[data-theme="dark"] .mission-card h3 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .dog-description,
+[data-theme="dark"] .blog-excerpt,
+[data-theme="dark"] .help-card p,
+[data-theme="dark"] .mission-card p {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .dog-details {
+    color: var(--text-muted);
+}
+
+/* Botones */
+[data-theme="dark"] .btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: transparent;
+    color: var(--text-color);
+    border-color: var(--text-color);
+}
+
+[data-theme="dark"] .btn-outline {
+    background: rgba(224, 79, 46, 0.15);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+[data-theme="dark"] .btn-adopt {
+    background: var(--primary);
+    color: white;
+}
+
+[data-theme="dark"] .btn-donate {
+    background: var(--primary);
+    color: white;}
+
+/* Formularios */
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    background: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .form-group label {
+    color: var(--text-color);
+}
+
+/* Footer */
+[data-theme="dark"] .footer {
+    background: #0f0f0f;
+    border-top: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .footer h3 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .footer-about p,
+[data-theme="dark"] .footer-links a {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .footer-links a:hover {
+    color: var(--primary);
+}
+
+[data-theme="dark"] .footer-bottom {
+    color: var(--text-muted);
+    border-top-color: var(--border-color);
+}
+
+/* Newsletter */
+[data-theme="dark"] .newsletter-form input {
+    background: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
+}
+
+/* Modales */
+[data-theme="dark"] .modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);}
+
+[data-theme="dark"] .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-header h2 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .modal-close {
+    color: var(--text-muted);
+}
+
+/* Skeleton loaders */
 [data-theme="dark"] .skeleton {
-    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+    background: linear-gradient(90deg, #2d2d2d 25%, #404040 50%, #2d2d2d 75%);
     background-size: 200% 100%;
 }
 
-/* Botón de toggle de modo oscuro */
+[data-theme="dark"] .skeleton-dog-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+/* Placeholders */
+[data-theme="dark"] .placeholder-image {
+    background: linear-gradient(135deg, #2d2d2d, #404040);
+    color: var(--text-muted);
+}
+
+/* Page headers */
+[data-theme="dark"] .page-header {
+    background: linear-gradient(135deg, #1a3a1b 0%, #0f2410 100%);
+}
+
+/* Breadcrumbs */
+[data-theme="dark"] .breadcrumb {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .breadcrumb a,
+[data-theme="dark"] .breadcrumb span {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .breadcrumb a:hover {
+    color: var(--primary);
+}
+/* Contact info */
+[data-theme="dark"] .contact-item h4 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .contact-item a,
+[data-theme="dark"] .contact-item p {
+    color: var(--text-muted);
+}
+
+/* Donation page */
+[data-theme="dark"] .donation-info .info-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .donation-info .info-card h3 {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .donation-info .info-card p,
+[data-theme="dark"] .donation-info .info-card li {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .amount-btn {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .amount-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+[data-theme="dark"] .payment-option {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .payment-option:hover {
+    border-color: var(--primary);
+}
+
+[data-theme="dark"] .donation-total {    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+/* Toast notifications */
+[data-theme="dark"] .toast {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+/* Pagination */
+[data-theme="dark"] .page-btn {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .page-btn:hover {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] .page-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Botón toggle del modo oscuro - INTEGRADO EN EL HEADER */
 .theme-toggle {
     background: transparent;
     border: 2px solid var(--border-color);
@@ -2177,24 +2413,40 @@ html {
     border-radius: 50%;
     display: flex;
     align-items: center;
-    justify-content: center;    cursor: pointer;
+    justify-content: center;
+    cursor: pointer;
     font-size: 1.2rem;
     transition: all 0.3s ease;
+    padding: 0;
     margin-left: 10px;
 }
 
 .theme-toggle:hover {
     background: var(--primary);
+    border-color: var(--primary);    color: white;
+    transform: rotate(15deg);
+}
+
+[data-theme="dark"] .theme-toggle {
+    border-color: var(--text-muted);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background: var(--primary);
     border-color: var(--primary);
     color: white;
-    transform: rotate(15deg);
 }
 
 @media (max-width: 768px) {
     .theme-toggle {
-        margin: 10px 0;
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        margin-left: 8px;
     }
 }
+
 /* ========================================
    BREADCRUMBS (MIGAS DE NAVEGACIÓN)
    ======================================== */
