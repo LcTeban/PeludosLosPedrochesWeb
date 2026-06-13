@@ -38,14 +38,16 @@ function applySettings() {
     const logoIcon = document.getElementById('logoIcon');
     if (logoIcon) {
         logoIcon.innerHTML = '';
-        if (settings.logo_url) {
-            const img = document.createElement('img');
-            img.src = settings.logo_url;
-            img.alt = settings.logo_text || 'Logo';
-            img.style.maxHeight = '45px';
-            img.onerror = () => { logoIcon.innerHTML = '<span class="logo-emoji">🐾</span>'; };
-            logoIcon.appendChild(img);
-        } else {
+if (settings.logo_url) {
+    const img = document.createElement('img');
+    // Añade un parámetro de timestamp para evitar caché
+    const cacheBuster = Date.now();
+    img.src = settings.logo_url + (settings.logo_url.includes('?') ? '&' : '?') + 'v=' + cacheBuster;
+    img.alt = settings.logo_text || 'Logo';
+    img.style.maxHeight = '45px';
+    img.onerror = () => { logoIcon.innerHTML = '<span class="logo-emoji">🐾</span>'; };
+    logoIcon.appendChild(img);
+} else {
             logoIcon.innerHTML = '<span class="logo-emoji">🐾</span>';
         }
     }
