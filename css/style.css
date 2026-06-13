@@ -2593,6 +2593,49 @@ html {
     color: var(--placeholder-color);
 }
 
+/* ===== FORZAR FONDOS CLAROS EN MODO OSCURO ===== */
+[data-theme="dark"] div[style*="background: #f9f9f9"],
+[data-theme="dark"] div[style*="background: #f5f5f5"],
+[data-theme="dark"] div[style*="background-color: #f9f9f9"],
+[data-theme="dark"] div[style*="background-color: #f5f5f5"],
+[data-theme="dark"] .benefits-box,
+[data-theme="dark"] .collaborations-grid div,
+[data-theme="dark"] .mission-card,
+[data-theme="dark"] .donation-info .info-card,
+[data-theme="dark"] .admin-section,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .contact-form-box,
+[data-theme="dark"] .donation-total,
+[data-theme="dark"] .about-content div[style*="background"] {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-color) !important;
+}
+
+/* Forzar color de texto dentro de esos cuadros */
+[data-theme="dark"] div[style*="background: #f9f9f9"] p,
+[data-theme="dark"] div[style*="background: #f9f9f9"] li,
+[data-theme="dark"] div[style*="background: #f9f9f9"] h3,
+[data-theme="dark"] div[style*="background: #f9f9f9"] span,
+[data-theme="dark"] .benefits-box p,
+[data-theme="dark"] .benefits-box li,
+[data-theme="dark"] .benefits-box h3,
+[data-theme="dark"] .collaborations-grid div p,
+[data-theme="dark"] .collaborations-grid div h3 {
+    color: var(--text-color) !important;
+}
+
+/* Mantener el color primario en iconos de check */
+[data-theme="dark"] div[style*="background: #f9f9f9"] ul li i,
+[data-theme="dark"] .benefits-box ul li i {
+    color: var(--primary) !important;
+}
+
+/* Ajustar el color de los títulos dentro de esos cuadros */
+[data-theme="dark"] div[style*="background: #f9f9f9"] h3,
+[data-theme="dark"] .benefits-box h3 {
+    color: var(--primary) !important;
+}
+
 /* ========================================
    BOTÓN DE MODO OSCURO - TAMAÑO REDUCIDO
    ======================================== */
