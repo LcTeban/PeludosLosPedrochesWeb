@@ -2081,7 +2081,7 @@ html {
 }
 
 /* ========================================
-   MODO OSCURO (DARK MODE) - MEJORADO
+   MODO OSCURO (DARK MODE) - CORREGIDO
    ======================================== */
 :root {
     color-scheme: light;
@@ -2096,6 +2096,7 @@ html {
     --border-color: #404040;
     --card-bg: #2d2d2d;
     --header-bg: rgba(26, 26, 26, 0.98);
+    --header-top-bg: #1a3a1b;
     --input-bg: #1a1a1a;
     --input-border: #404040;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.7);
@@ -2107,14 +2108,9 @@ html {
     color: var(--text-color);
 }
 
-/* Header */
-[data-theme="dark"] .header {
-    background: var(--header-bg);
-    border-bottom: 1px solid var(--border-color);
-}
-
+/* Header superior (barra verde) */
 [data-theme="dark"] .header-top {
-    background: #1a3a1b;
+    background: var(--header-top-bg);
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -2123,13 +2119,19 @@ html {
     color: var(--text-color);
 }
 
+/* Header principal */
+[data-theme="dark"] .header {
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
 [data-theme="dark"] .logo-text h1 {
     color: var(--text-color);
 }
 
-[data-theme="dark"] .logo-text span {
-    color: var(--text-muted);
+[data-theme="dark"] .logo-text span {    color: var(--text-muted);
 }
+
 /* Navegación */
 [data-theme="dark"] .nav-list > li > a {
     color: var(--text-color);
@@ -2176,9 +2178,9 @@ html {
 }
 
 /* Tarjetas */
-[data-theme="dark"] .dog-card,
-[data-theme="dark"] .blog-card,
-[data-theme="dark"] .help-card,[data-theme="dark"] .mission-card {
+[data-theme="dark"] .dog-card,[data-theme="dark"] .blog-card,
+[data-theme="dark"] .help-card,
+[data-theme="dark"] .mission-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -2225,9 +2227,9 @@ html {
     color: white;
 }
 
-[data-theme="dark"] .btn-donate {
-    background: var(--primary);
-    color: white;}
+[data-theme="dark"] .btn-donate {    background: var(--primary);
+    color: white;
+}
 
 /* Formularios */
 [data-theme="dark"] .form-group input,
@@ -2274,9 +2276,9 @@ html {
 }
 
 /* Modales */
-[data-theme="dark"] .modal-content {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);}
+[data-theme="dark"] .modal-content {    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
 
 [data-theme="dark"] .modal-header {
     border-bottom-color: var(--border-color);
@@ -2323,9 +2325,9 @@ html {
     color: var(--text-muted);
 }
 
-[data-theme="dark"] .breadcrumb a:hover {
-    color: var(--primary);
+[data-theme="dark"] .breadcrumb a:hover {    color: var(--primary);
 }
+
 /* Contact info */
 [data-theme="dark"] .contact-item h4 {
     color: var(--text-color);
@@ -2373,8 +2375,8 @@ html {
 [data-theme="dark"] .payment-option:hover {
     border-color: var(--primary);
 }
-
-[data-theme="dark"] .donation-total {    background: var(--card-bg);
+[data-theme="dark"] .donation-total {
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     color: var(--text-color);
 }
@@ -2403,33 +2405,33 @@ html {
     border-color: var(--primary);
 }
 
-/* Botón toggle del modo oscuro - INTEGRADO EN EL HEADER */
+/* Botón de modo oscuro - ahora en el header-top */
 .theme-toggle {
     background: transparent;
-    border: 2px solid var(--border-color);
-    color: var(--text-color);
-    width: 40px;
-    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1rem;
     transition: all 0.3s ease;
     padding: 0;
-    margin-left: 10px;
+    margin-left: 15px;
 }
 
-.theme-toggle:hover {
-    background: var(--primary);
-    border-color: var(--primary);    color: white;
+.theme-toggle:hover {    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
     transform: rotate(15deg);
 }
 
 [data-theme="dark"] .theme-toggle {
-    border-color: var(--text-muted);
-    color: var(--text-color);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
 }
 
 [data-theme="dark"] .theme-toggle:hover {
@@ -2438,15 +2440,15 @@ html {
     color: white;
 }
 
+/* En móvil, el botón se adapta */
 @media (max-width: 768px) {
     .theme-toggle {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-        margin-left: 8px;
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+        margin-left: 10px;
     }
 }
-
 /* ========================================
    BREADCRUMBS (MIGAS DE NAVEGACIÓN)
    ======================================== */
