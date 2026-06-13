@@ -439,15 +439,45 @@ function initForms() {
 // 7. NEWSLETTER
 function initNewsletter() {
     document.querySelectorAll('.newsletter-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const emailInput = this.querySelector('input[type="email"]');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
             if (!emailInput || !validateEmail(emailInput.value)) {
                 showToast('Por favor, introduce un email válido.', 'error');
                 return;
             }
-            showToast('¡Gracias por suscribirte!', 'success');
-            this.reset();
+            
+            // Estado de carga
+            const originalHTML = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            
+            try {
+                // Guardar en Supabase
+                const { error } = await supabaseClient
+                    .from('subscribers')
+                    .insert([{ email: emailInput.value }]);
+                
+                if (error) {
+                    if (error.code === '23505') {
+                        // Error de duplicado (email ya existe)
+                        showToast('Este email ya está suscrito.', 'info');
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    showToast('¡Gracias por suscribirte! 🐾', 'success');
+                    this.reset();
+                }
+            } catch (err) {
+                console.error('Error newsletter:', err);
+                showToast('Error al suscribirse. Intenta de nuevo.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHTML;
+            }
         });
     });
 }
