@@ -2195,3 +2195,55 @@ html {
         margin: 10px 0;
     }
 }
+/* ========================================
+   BREADCRUMBS (MIGAS DE NAVEGACIÓN)
+   ======================================== */
+.breadcrumbs {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.9rem;
+}
+
+[data-theme="dark"] .breadcrumbs {
+    background: rgba(15, 23, 42, 0.8);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.breadcrumbs-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+}
+
+.breadcrumbs-list li {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+}
+
+.breadcrumbs-list li:not(:last-child)::after {
+    content: "/";
+    margin-left: 8px;
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+.breadcrumbs-list li a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumbs-list li a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.breadcrumbs-list li.active {
+    color: var(--primary);
+    font-weight: 600;
+}
