@@ -2405,7 +2405,6 @@ html {
     border-color: var(--primary);
 }
 
-/* Botón de modo oscuro - ahora en el header-top */
 /* ========================================
    BOTÓN DE MODO OSCURO - TAMAÑO REDUCIDO
    ======================================== */
@@ -2440,8 +2439,8 @@ html {
 /* En móvil, ajustar aún más */
 @media (max-width: 768px) {
     .theme-toggle {
-        width: 28px;
-        height: 28px;
+        width: 26px;
+        height: 26px;
         font-size: 0.75rem;
         margin-left: 10px;
     }
