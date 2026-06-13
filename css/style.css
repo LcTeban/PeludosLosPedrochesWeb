@@ -2768,3 +2768,11 @@ html {
     box-shadow: none;
     border: none;
 }
+/* Si el logo tiene fondo blanco fijo, hazlo coincidir con el fondo de la web */
+.logo-icon img {
+    background: var(--white); /* En modo claro será blanco, en oscuro... */
+}
+
+[data-theme="dark"] .logo-icon img {
+    background: var(--bg-color); /* fondo oscuro, parecerá que no tiene fondo */
+}
