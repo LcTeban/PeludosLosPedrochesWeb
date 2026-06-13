@@ -2748,3 +2748,23 @@ html {
     object-fit: contain;
     display: block;
 }
+/* ===== FORZAR FONDO TRANSPARENTE EN EL LOGO ===== */
+.logo-icon,
+.logo-icon img {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Asegurar que en modo oscuro no se añada ningún fondo */
+[data-theme="dark"] .logo-icon,
+[data-theme="dark"] .logo-icon img {
+    background: transparent !important;
+    background-color: transparent !important;
+    filter: none; /* Elimina cualquier filtro que pueda estar aplicado */
+}
+
+/* Si la imagen tiene un borde o sombra no deseada */
+.logo-icon img {
+    box-shadow: none;
+    border: none;
+}
