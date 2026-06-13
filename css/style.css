@@ -2733,3 +2733,18 @@ html {
     color: var(--primary);
     font-weight: 600;
 }
+
+/* Asegurar que el logo se vea bien en cualquier tema */
+.logo-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+}
+
+.logo-icon img {
+    max-height: 45px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+}
