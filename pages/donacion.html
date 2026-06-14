@@ -103,18 +103,6 @@
         </div>
     </header>
 
-<!-- Breadcrumbs -->
-<div class="breadcrumbs">
-    <div class="container">
-        <nav aria-label="Ruta de navegación">
-            <ol class="breadcrumbs-list">
-                <li><a href="/">Inicio</a></li>
-                <li class="active">Donación</li>
-            </ol>
-        </nav>
-    </div>
-</div>
-    
     <main>
         <section class="page-header">
             <div class="container">
@@ -154,7 +142,7 @@
     
     <div class="form-group">
         <label>Otra cantidad (€)</label>
-        <input type="number" id="customAmount" name="custom_amount" min="1" placeholder="Cantidad personalizada">
+        <input type="number" id="customAmount" name="custom_amount" min="1" step="1" placeholder="Cantidad personalizada">
     </div>
     
     <div class="form-group">
@@ -353,9 +341,21 @@
             }
             const isMonthly = document.querySelector('input[name="type"]:checked')?.value === 'monthly';
             const totalEl = document.getElementById('donationTotal');
-            if (totalEl) totalEl.textContent = isMonthly ? `${amount}€/mes` : `${amount}€`;
+            if (totalEl) totalEl.textContent = amount > 0 ? (isMonthly ? `${amount}€/mes` : `${amount}€`) : '0€';
         }
         document.querySelectorAll('input[name="type"]').forEach(radio => radio.addEventListener('change', updateTotal));
+
+        // Validación adicional para evitar cantidades negativas o cero
+        const donationForm = document.getElementById('donationForm');
+        if (donationForm) {
+            donationForm.addEventListener('submit', function(e) {
+                const customAmount = document.getElementById('customAmount');
+                if (customAmount && customAmount.value && customAmount.value < 1) {
+                    e.preventDefault();
+                    showToast('La cantidad debe ser al menos 1€', 'error');
+                }
+            });
+        }
     </script>
     <script src="../js/cookies.js"></script>
     <script src="../js/darkmode.js"></script>
