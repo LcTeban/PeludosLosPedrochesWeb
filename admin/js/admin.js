@@ -814,19 +814,47 @@ async function saveLogoSettings() {
     const logoText = document.getElementById('logoText').value;
     const logoSubtitle = document.getElementById('logoSubtitle').value;
     let logoUrl = settings.logo_url;
-    
+
+    // 1. Subir nueva imagen si se seleccionó
     if (selectedLogoFile) {
         logoUrl = await uploadFile(selectedLogoFile, 'logos');
-        if (!logoUrl) { showToast('Error al subir el logo', 'error'); return; }
+        if (!logoUrl) {
+            showToast('Error al subir el logo', 'error');
+            return;
+        }
     }
-    
-    await supabaseClient.from('settings').update({ value: logoText }).eq('key', 'logo_text');
-    await supabaseClient.from('settings').update({ value: logoSubtitle }).eq('key', 'logo_subtitle');
-    if (logoUrl) await supabaseClient.from('settings').upsert({ key: 'logo_url', value: logoUrl });
-    
-    showToast('Logo actualizado');
+
+    // 2. Actualizar o insertar cada setting usando upsert con la clave primaria
+    const updates = [
+        { key: 'logo_text', value: logoText },
+        { key: 'logo_subtitle', value: logoSubtitle }
+    ];
+    if (logoUrl) {
+        updates.push({ key: 'logo_url', value: logoUrl });
+    }
+
+    for (const item of updates) {
+        const { error } = await supabaseClient
+            .from('settings')
+            .upsert(item, { onConflict: 'key' }); // Especifica la columna clave
+        if (error) {
+            console.error('Error guardando', item.key, error);
+            showToast('Error al guardar ' + item.key, 'error');
+            return;
+        }
+    }
+
+    showToast('Logo actualizado correctamente');
     selectedLogoFile = null;
-    init();
+    
+    // 3. Recargar la página para aplicar cambios (o llamar a init() y recargar settings)
+    await loadSettings();
+    await init(); // O simplemente location.reload()
+    
+    // Forzar recarga visual
+    if (typeof applySettings === 'function') {
+        applySettings();
+    }
 }
 
 async function saveColorSettings() {
