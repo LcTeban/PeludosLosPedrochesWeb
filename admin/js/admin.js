@@ -522,11 +522,11 @@ function renderMessagesPage(messages, page = 1) {
                     <tbody>
                         ${paginatedMessages.map(m => `
                             <tr>
-                                <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
-                                <td>${m.name}</td>
-                                <td>${m.email}</td>
-                                <td>${m.subject || '-'}</td>
-                                <td>${m.message}</td>
+                                <td data-label="Fecha">${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                                <td data-label="Nombre">${m.name}</td>
+                                <td data-label="Email">${m.email}</td>
+                                <td data-label="Asunto">${m.subject || '-'}</td>
+                                <td data-label="Mensaje">${m.message}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -569,13 +569,13 @@ function renderAdoptionsAdminPage(requests, page = 1) {
                     <tbody>
                         ${paginatedRequests.map(r => `
                             <tr>
-                                <td>${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
-                                <td>${r.name}</td>
-                                <td>${r.email}</td>
-                                <td>${r.phone || '-'}</td>
-                                <td>${r.dog_name || '-'}</td>
-                                <td><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
-                                <td>
+                                <td data-label="Fecha">${new Date(r.created_at).toLocaleDateString('es-ES')}</td>
+                                <td data-label="Nombre">${r.name}</td>
+                                <td data-label="Email">${r.email}</td>
+                                <td data-label="Teléfono">${r.phone || '-'}</td>
+                                <td data-label="Perro">${r.dog_name || '-'}</td>
+                                <td data-label="Estado"><span class="status-badge status-${r.status?.toLowerCase() || 'pendiente'}">${r.status || 'Pendiente'}</span></td>
+                                <td data-label="Acciones">
                                     <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Aprobada')">✅</button>
                                     <button class="btn-icon" onclick="updateRequestStatus(${r.id}, 'Rechazada')">❌</button>
                                 </td>
@@ -626,12 +626,12 @@ function renderVolunteersPage(data, page = 1) {
                     <tbody>
                         ${paginated.map(v => `
                             <tr>
-                                <td>${new Date(v.created_at).toLocaleDateString('es-ES')}</td>
-                                <td>${v.name}</td>
-                                <td>${v.email}</td>
-                                <td>${v.phone || '-'}</td>
-                                <td>${v.availability || '-'}</td>
-                                <td>${v.interests || '-'}</td>
+                                <td data-label="Fecha">${new Date(v.created_at).toLocaleDateString('es-ES')}</td>
+                                <td data-label="Nombre">${v.name}</td>
+                                <td data-label="Email">${v.email}</td>
+                                <td data-label="Teléfono">${v.phone || '-'}</td>
+                                <td data-label="Disponibilidad">${v.availability || '-'}</td>
+                                <td data-label="Intereses">${v.interests || '-'}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -675,13 +675,13 @@ function renderSponsorsPage(data, page = 1) {
                     <tbody>
                         ${paginated.map(s => `
                             <tr>
-                                <td>${new Date(s.created_at).toLocaleDateString('es-ES')}</td>
-                                <td>${s.name}</td>
-                                <td>${s.email}</td>
-                                <td>${s.phone || '-'}</td>
-                                <td>${s.dog_choice === 'especifico' ? 'Eligió perro' : 'Elegid por mí'}</td>
-                                <td>${s.specific_dog || '-'}</td>
-                                <td>${s.amount ? s.amount + '€/mes' : '-'}</td>
+                                <td data-label="Fecha">${new Date(s.created_at).toLocaleDateString('es-ES')}</td>
+                                <td data-label="Nombre">${s.name}</td>
+                                <td data-label="Email">${s.email}</td>
+                                <td data-label="Teléfono">${s.phone || '-'}</td>
+                                <td data-label="Decisión">${s.dog_choice === 'especifico' ? 'Eligió perro' : 'Elegid por mí'}</td>
+                                <td data-label="Perro">${s.specific_dog || '-'}</td>
+                                <td data-label="Aportación">${s.amount ? s.amount + '€/mes' : '-'}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -726,13 +726,13 @@ function renderFostersPage(data, page = 1) {
                     <tbody>
                         ${paginated.map(f => `
                             <tr>
-                                <td>${new Date(f.created_at).toLocaleDateString('es-ES')}</td>
-                                <td>${f.name}</td>
-                                <td>${f.email}</td>
-                                <td>${f.phone || '-'}</td>
-                                <td>${f.housing_type || '-'}</td>
-                                <td>${f.has_pets || '-'}</td>
-                                <td>${f.message || '-'}</td>
+                                <td data-label="Fecha">${new Date(f.created_at).toLocaleDateString('es-ES')}</td>
+                                <td data-label="Nombre">${f.name}</td>
+                                <td data-label="Email">${f.email}</td>
+                                <td data-label="Teléfono">${f.phone || '-'}</td>
+                                <td data-label="Vivienda">${f.housing_type || '-'}</td>
+                                <td data-label="Otros animales">${f.has_pets || '-'}</td>
+                                <td data-label="Mensaje">${f.message || '-'}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -777,11 +777,11 @@ function renderMembersPage(data, page = 1) {
                     <tbody>
                         ${paginated.map(m => `
                             <tr>
-                                <td>${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
-                                <td>${m.name}</td>
-                                <td>${m.email}</td>
-                                <td>${m.phone || '-'}</td>
-                                <td>${m.amount ? m.amount + '€/mes' : '-'}</td>
+                                <td data-label="Fecha">${new Date(m.created_at).toLocaleDateString('es-ES')}</td>
+                                <td data-label="Nombre">${m.name}</td>
+                                <td data-label="Email">${m.email}</td>
+                                <td data-label="Teléfono">${m.phone || '-'}</td>
+                                <td data-label="Cuota">${m.amount ? m.amount + '€/mes' : '-'}</td>
                             </tr>
                         `).join('')}
                     </tbody>
@@ -814,56 +814,33 @@ async function saveLogoSettings() {
     const logoText = document.getElementById('logoText').value;
     const logoSubtitle = document.getElementById('logoSubtitle').value;
     let logoUrl = settings.logo_url;
-
-    // 1. Subir nueva imagen si se seleccionó
+    
     if (selectedLogoFile) {
         logoUrl = await uploadFile(selectedLogoFile, 'logos');
-        if (!logoUrl) {
-            showToast('Error al subir el logo', 'error');
-            return;
-        }
+        if (!logoUrl) { showToast('Error al subir el logo', 'error'); return; }
     }
-
-    // 2. Actualizar o insertar cada setting usando upsert con la clave primaria
-    const updates = [
-        { key: 'logo_text', value: logoText },
-        { key: 'logo_subtitle', value: logoSubtitle }
-    ];
+    
+    // Actualizar texto y subtítulo usando upsert para evitar conflicto 409
+    await supabaseClient.from('settings').upsert({ key: 'logo_text', value: logoText }, { onConflict: 'key' });
+    await supabaseClient.from('settings').upsert({ key: 'logo_subtitle', value: logoSubtitle }, { onConflict: 'key' });
     if (logoUrl) {
-        updates.push({ key: 'logo_url', value: logoUrl });
+        await supabaseClient.from('settings').upsert({ key: 'logo_url', value: logoUrl }, { onConflict: 'key' });
     }
-
-    for (const item of updates) {
-        const { error } = await supabaseClient
-            .from('settings')
-            .upsert(item, { onConflict: 'key' }); // Especifica la columna clave
-        if (error) {
-            console.error('Error guardando', item.key, error);
-            showToast('Error al guardar ' + item.key, 'error');
-            return;
-        }
-    }
-
-    showToast('Logo actualizado correctamente');
+    
+    showToast('Logo actualizado');
     selectedLogoFile = null;
-    
-    // 3. Recargar la página para aplicar cambios (o llamar a init() y recargar settings)
     await loadSettings();
-    await init(); // O simplemente location.reload()
-    
-    // Forzar recarga visual
-    if (typeof applySettings === 'function') {
-        applySettings();
-    }
+    await init(); // Recargar todo para aplicar cambios
 }
 
 async function saveColorSettings() {
     const primary = document.getElementById('primaryColor').value;
     const secondary = document.getElementById('secondaryColor').value;
-    await supabaseClient.from('settings').update({ value: primary }).eq('key', 'primary_color');
-    await supabaseClient.from('settings').update({ value: secondary }).eq('key', 'secondary_color');
+    await supabaseClient.from('settings').upsert({ key: 'primary_color', value: primary }, { onConflict: 'key' });
+    await supabaseClient.from('settings').upsert({ key: 'secondary_color', value: secondary }, { onConflict: 'key' });
     showToast('Colores actualizados');
-    init();
+    await loadSettings();
+    if (typeof applySettings === 'function') applySettings();
 }
 
 async function saveContactSettings() {
@@ -871,12 +848,13 @@ async function saveContactSettings() {
     const phone2 = document.getElementById('phone2')?.value;
     const email = document.getElementById('email')?.value;
     
-    if (phone1) await supabaseClient.from('settings').update({ value: phone1 }).eq('key', 'contact_phone1');
-    if (phone2) await supabaseClient.from('settings').update({ value: phone2 }).eq('key', 'contact_phone2');
-    if (email) await supabaseClient.from('settings').update({ value: email }).eq('key', 'contact_email');
+    if (phone1) await supabaseClient.from('settings').upsert({ key: 'contact_phone1', value: phone1 }, { onConflict: 'key' });
+    if (phone2) await supabaseClient.from('settings').upsert({ key: 'contact_phone2', value: phone2 }, { onConflict: 'key' });
+    if (email) await supabaseClient.from('settings').upsert({ key: 'contact_email', value: email }, { onConflict: 'key' });
     
     showToast('Contacto actualizado');
-    init();
+    await loadSettings();
+    if (typeof applySettings === 'function') applySettings();
 }
 
 async function saveAboutSettings() {
@@ -892,10 +870,11 @@ async function saveAboutSettings() {
     
     for (const [key, inputId] of Object.entries(fields)) {
         const value = document.getElementById(inputId)?.value || '';
-        await supabaseClient.from('settings').update({ value }).eq('key', key);
+        await supabaseClient.from('settings').upsert({ key, value }, { onConflict: 'key' });
         settings[key] = value;
     }
     showToast('Página "Quiénes Somos" actualizada');
+    if (typeof applyAboutContent === 'function') applyAboutContent();
 }
 
 // 8. SUBIDA DE ARCHIVOS
@@ -908,7 +887,8 @@ async function uploadFile(file, bucket) {
         const { data, error } = await supabaseClient.storage.from(bucket).upload(fileName, file, { cacheControl: '3600', upsert: true });
         if (error) throw error;
         const { data: urlData } = supabaseClient.storage.from(bucket).getPublicUrl(fileName);
-        return urlData.publicUrl;
+        // Añadir timestamp para evitar caché del navegador
+        return urlData.publicUrl + '?v=' + Date.now();
     } catch (error) {
         console.error('Error subiendo archivo:', error);
         return null;
@@ -1099,7 +1079,7 @@ async function saveSectionImage(section) {
     const imageUrl = await uploadFile(fileInput.files[0], 'secciones');
     if (!imageUrl) { showToast('Error al subir la imagen', 'error'); return; }
     
-    await supabaseClient.from('settings').update({ value: imageUrl }).eq('key', key);
+    await supabaseClient.from('settings').upsert({ key, value: imageUrl }, { onConflict: 'key' });
     settings[key] = imageUrl;
     showToast('Imagen guardada correctamente');
     renderPage();
