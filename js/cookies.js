@@ -18,7 +18,7 @@
 
     // Crear el banner de cookies dinámicamente
     function createCookieBanner() {
-        // Si ya dio consentimiento, no mostrar el banner
+        // Si ya dio consentimiento, NO mostrar el banner
         if (getCookieConsent()) return;
 
         const banner = document.createElement('div');
@@ -38,10 +38,8 @@
 
         document.body.appendChild(banner);
 
-        // Mostrar el banner con animación después de 1 segundo
-        setTimeout(() => {
-            banner.classList.add('show');
-        }, 1000);
+        // Mostrar el banner inmediatamente (sin setTimeout)
+        banner.classList.add('show');
 
         // Eventos de los botones
         document.getElementById('cookieAccept').addEventListener('click', function() {
