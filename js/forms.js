@@ -385,6 +385,13 @@ function initForms() {
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
             
+            // Validación extra para cantidad personalizada
+            const customAmount = document.getElementById('customAmount');
+            if (customAmount && customAmount.value && customAmount.value < 1) {
+                showToast('La cantidad debe ser al menos 1€', 'error');
+                return;
+            }
+            
             if (typeof setLoadingState === 'function') {
                 setLoadingState(btn, true, originalText);
             }
@@ -434,7 +441,7 @@ function initForms() {
         
         updateTotal();
     }
-} // ← AQUÍ ESTABA LA LLAVE QUE FALTABA
+}
 
 // 7. NEWSLETTER
 function initNewsletter() {
