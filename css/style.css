@@ -2776,3 +2776,15 @@ html {
 [data-theme="dark"] .logo-icon img {
     background: var(--bg-color); /* fondo oscuro, parecerá que no tiene fondo */
 }
+
+@media (max-width: 768px) {
+    .blog-modal-image {
+        max-height: 250px;
+    }
+    .blog-modal-image img {
+        width: 100%;
+        height: auto;
+        max-height: 250px;
+        object-fit: contain;
+    }
+}
