@@ -243,8 +243,8 @@ function renderDogModalBody(dog) {
                     style="max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 10px; cursor: pointer;" 
                     onclick="openLightbox(document.getElementById('dogCarouselImage').src)">
                ${currentDogImages.length > 1 ? `
-                    <button onclick="prevImage()" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">‹</button>
-                    <button onclick="nextImage()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.5); color:white; border:none; border-radius:50%; width:40px; height:40px; cursor:pointer; font-size:20px;">›</button>
+                    <button onclick="prevImage()" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:44px; height:44px; cursor:pointer; font-size:24px; z-index:10;">‹</button>
+                    <button onclick="nextImage()" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,0.6); color:white; border:none; border-radius:50%; width:44px; height:44px; cursor:pointer; font-size:24px; z-index:10;">›</button>
                     <div style="margin-top:10px;">
                        ${currentDogImages.map((_, i) => `<span style="display:inline-block; width:10px; height:10px; background:${i === currentImageIndex ? '#e04f2e' : '#ccc'}; border-radius:50%; margin:0 3px;"></span>`).join('')}
                     </div>
